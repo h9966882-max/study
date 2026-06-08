@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ソクラテス講義 — ChatGPT版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #888;
+    --border: #e2e2de;
+    --green: #10a37f;
+    --green-light: #e8f5f1;
+    --green-pale: #f0faf7;
+    --accent: #0d8a6b;
+    --warn: #c47f17;
+    --warn-light: #fef6e4;
+    --fact-bg: #f0faf7;
+    --interp-bg: #fff9f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.85;
+  }
+
+  /* ===== BACK ===== */
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .back-link {
+    font-size: 0.78rem;
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: opacity 0.2s;
+  }
+  .back-link:hover { opacity: 0.7; }
+
+  .back-sep { color: var(--border); font-size: 0.8rem; }
+  .back-current { font-size: 0.78rem; color: var(--muted); }
+
+  .ai-pill {
+    margin-left: auto;
+    background: var(--green);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 3.5rem 2rem 3rem;
+  }
+
+  .hero-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 0.25rem 0.7rem;
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+
+  .hero-lead {
+    font-size: 1rem;
+    color: #444;
+    max-width: 580px;
+    line-height: 1.9;
+    border-left: 3px solid var(--green);
+    padding-left: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  /* ===== NOTICE BOX ===== */
+  .notice {
+    max-width: 760px;
+    margin: 2rem auto 0;
+    padding: 0 2rem;
+  }
+
+  .notice-inner {
+    background: var(--warn-light);
+    border: 1px solid rgba(196,127,23,0.3);
+    border-radius: 6px;
+    padding: 1rem 1.3rem;
+    font-size: 0.82rem;
+    color: #7a5010;
+    display: flex;
+    gap: 0.8rem;
+    align-items: flex-start;
+  }
+
+  .notice-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  /* ===== TOC ===== */
+  .toc {
+    max-width: 760px;
+    margin: 1.5rem auto;
+    padding: 0 2rem;
+  }
+
+  .toc-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .toc-head {
+    background: var(--green);
+    color: #fff;
+    padding: 0.6rem 1rem;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li {
+    border-bottom: 1px solid var(--border);
+  }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .toc-list a:hover { background: var(--green-pale); color: var(--green); }
+
+  .toc-part {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  /* ===== LAYOUT ===== */
+  .content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  /* ===== PART HEADER ===== */
+  .part-header {
+    margin: 3rem 0 1.5rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .part-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .part-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .part-sub {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 0.2rem;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-bottom: 3rem;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--green);
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 1.8rem 0 0.8rem;
+  }
+
+  p {
+    font-size: 0.92rem;
+    margin-bottom: 1rem;
+    color: #2a2a2a;
+  }
+
+  /* ===== FACT / INTERP BOXES ===== */
+  .fact-box {
+    margin: 1.2rem 0;
+    background: var(--fact-bg);
+    border: 1px solid rgba(16,163,127,0.25);
+    border-radius: 6px;
+    padding: 1.2rem 1.4rem;
+  }
+
+  .interp-box {
+    margin: 1.2rem 0;
+    background: var(--interp-bg);
+    border: 1px solid rgba(196,127,23,0.25);
+    border-radius: 6px;
+    padding: 1.2rem 1.4rem;
+  }
+
+  .box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .fact-box .box-label { color: var(--green); }
+  .interp-box .box-label { color: var(--warn); }
+
+  .box-label::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .fact-box .box-label::before { background: var(--green); }
+  .interp-box .box-label::before { background: var(--warn); }
+
+  /* ===== TABLE ===== */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .data-table thead {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .data-table th {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .data-table td {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border);
+    color: #333;
+  }
+
+  .data-table tbody tr:nth-child(even) { background: var(--bg); }
+
+  .ok { color: var(--green); font-weight: 500; }
+  .ng { color: #c44; font-weight: 500; }
+
+  /* ===== DIALOGUE ===== */
+  .dialogue {
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .dialogue-head {
+    background: var(--ink);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
+  .dialogue-body { padding: 1.2rem; }
+
+  .d-step {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+
+  .d-step:last-child { margin-bottom: 0; }
+
+  .d-arrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--green);
+    flex-shrink: 0;
+    padding-top: 0.15rem;
+    min-width: 28px;
+  }
+
+  .d-text {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #333;
+  }
+
+  .d-text strong { color: var(--ink); font-weight: 500; }
+
+  /* ===== LIST ===== */
+  ul.clean {
+    list-style: none;
+    margin: 0.8rem 0 1.2rem;
+  }
+
+  ul.clean li {
+    font-size: 0.9rem;
+    color: #333;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  ul.clean li:last-child { border-bottom: none; }
+
+  ul.clean li::before {
+    content: '→';
+    color: var(--green);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  /* ===== QUOTE ===== */
+  .quote {
+    margin: 1.5rem 0;
+    padding: 1.2rem 1.5rem;
+    background: var(--surface);
+    border-left: 4px solid var(--green);
+    font-size: 0.95rem;
+    color: #222;
+    line-height: 1.8;
+    border-radius: 0 6px 6px 0;
+  }
+
+  /* ===== DEEP BOX ===== */
+  .deep-box {
+    margin: 1.5rem 0;
+    padding: 1.4rem;
+    border: 1px dashed var(--green);
+    border-radius: 6px;
+    background: var(--green-pale);
+  }
+
+  .deep-box-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  /* ===== NEXT ===== */
+  .next-box {
+    margin: 2rem 0;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 6px;
+    padding: 1.5rem;
+  }
+
+  .next-box-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--green);
+    margin-bottom: 1rem;
+  }
+
+  .next-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .next-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .next-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  /* ===== FOOTER NAV ===== */
+  .foot-nav {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a {
+    font-size: 0.82rem;
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+  .foot-nav a:hover { opacity: 0.7; }
+
+  .foot-center {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2rem; }
+    .content, .toc, .notice { padding-left: 1.2rem; padding-right: 1.2rem; }
+    h1 { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACK -->
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">ソクラテス</span>
+  <span class="ai-pill">ChatGPT</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">🏛️ Philosopher · Ancient Greece</div>
+    <h1>ソクラテス</h1>
+    <p class="hero-sub">Socrates · BC 469–399 · アテナイ</p>
+    <p class="hero-lead">
+      「無知の自覚」から始まる哲学。<br>
+      問いそのものを人生にした男の、事実と解釈を分けて読む講義。
+    </p>
+  </div>
+</div>
+
+<!-- NOTICE -->
+<div class="notice">
+  <div class="notice-inner">
+    <span class="notice-icon">⚠️</span>
+    <div>この講義では <strong>【事実】</strong>（歴史的に確認可能な情報）と <strong>【解釈】</strong>（後世の意味づけ）を明確に区別して進める。混ぜると「ソクラテスが言ったこと」と「現代人が投影していること」が区別できなくなる。</div>
+  </div>
+</div>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-inner">
+    <div class="toc-head">CONTENTS</div>
+    <ul class="toc-list">
+      <li><a href="#part1"><span class="toc-part">Part 1</span>入門編 — ソクラテスって誰？</a></li>
+      <li><a href="#mukuchi">無知の知とは何か</a></li>
+      <li><a href="#kirai">なぜソクラテスは嫌われたのか</a></li>
+      <li><a href="#part2"><span class="toc-part">Part 2</span>中級編 — 問答法と魂への配慮</a></li>
+      <li><a href="#elenchus">エレンコス（反駁法）</a></li>
+      <li><a href="#soul">魂への配慮</a></li>
+      <li><a href="#part3"><span class="toc-part">Part 3</span>上級編 — 定義の哲学・民主主義との関係</a></li>
+      <li><a href="#next">次に読むべき哲学者</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- PART 1 -->
+  <div class="part-header" id="part1">
+    <div class="part-num">01</div>
+    <div>
+      <div class="part-title">入門編</div>
+      <div class="part-sub">ソクラテスって誰？</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="fact-box">
+      <div class="box-label">FACT — 歴史的事実</div>
+      <ul class="clean">
+        <li>紀元前469年頃〜399年頃に生きた</li>
+        <li>アテナイで活動、弟子にプラトン・クセノポン</li>
+        <li>自分では本を書いていない</li>
+        <li>「青年を堕落させた」「国家の神々を認めない」として裁判にかけられた</li>
+        <li>毒ニンジン（ヘムロック）を飲み処刑された</li>
+      </ul>
+      <p style="font-size:0.8rem;color:var(--muted);margin-top:0.5rem;margin-bottom:0">出典：プラトン、クセノポン、アリストファネスの記録より</p>
+    </div>
+
+    <div class="interp-box">
+      <div class="box-label">INTERPRETATION — 後世の解釈</div>
+      <p>「真理のために死んだ聖人」「対話の神」「論破王」「哲学の父」——これらは後世の評価。特にプラトンは弟子なので、<strong>理想化されたソクラテス像</strong>が混ざっている可能性が高い。哲学史ではこれを「ソクラテス問題」と呼ぶ。</p>
+    </div>
+  </div>
+
+  <!-- 無知の知 -->
+  <div class="section" id="mukuchi">
+    <h2>「無知の知」とは何か</h2>
+
+    <div class="quote">
+      「私は、自分が何も知らないということを知っている」
+    </div>
+
+    <div class="fact-box">
+      <div class="box-label">FACT</div>
+      <p>この思想は主にプラトンの対話篇『ソクラテスの弁明』などから知られている。</p>
+    </div>
+
+    <div class="interp-box">
+      <div class="box-label">INTERPRETATION</div>
+      <p>現代では「謙虚でいよう」という意味で使われがちだが、本質はそこだけではない。ソクラテスが問題視したのは<strong>「知らないのに、知っているつもりになること」</strong>だった。</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr><th>状態</th><th>ソクラテスの評価</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>知らない自覚がある</td><td class="ok">✓ OK</td></tr>
+        <tr><td>知らないのに知ってる気になる</td><td class="ng">✗ 危険</td></tr>
+      </tbody>
+    </table>
+
+    <p>「正義って何？」「善って何？」——多くの人はなんとなく分かった気になる。でもソクラテスは「じゃあ定義してみて」と詰める。すると、大体崩れる。</p>
+  </div>
+
+  <!-- なぜ嫌われたか -->
+  <div class="section" id="kirai">
+    <h2>深掘り：なぜソクラテスは嫌われたのか</h2>
+
+    <div class="fact-box">
+      <div class="box-label">FACT</div>
+      <p>ソクラテスは裁判で死刑になった。</p>
+    </div>
+
+    <div class="interp-box">
+      <div class="box-label">INTERPRETATION</div>
+      <p>「悪人に殺された正義の哲学者」というより、<strong>アテナイ社会にとって"不穏"な存在だった</strong>という見方が現代研究では強い。</p>
+      <ul class="clean">
+        <li>若者が既存権威を疑い始める</li>
+        <li>政治家や知識人の無知を暴く</li>
+        <li>「常識」を揺らす</li>
+      </ul>
+      <p>本気で「それって本当に正しいの？」をやる人は、現代でもかなり煙たがられる。</p>
+    </div>
+  </div>
+
+  <!-- PART 2 -->
+  <div class="part-header" id="part2">
+    <div class="part-num">02</div>
+    <div>
+      <div class="part-title">中級編</div>
+      <div class="part-sub">ソクラテス式対話法と魂への配慮</div>
+    </div>
+  </div>
+
+  <!-- エレンコス -->
+  <div class="section" id="elenchus">
+    <h2>問答法（エレンコス）</h2>
+    <p>ソクラテスは講義型ではなく、対話型だった。相手に質問を重ねる——これをエレンコス（反駁法）という。</p>
+
+    <div class="dialogue">
+      <div class="dialogue-head">// ELENCHUS — 問答の基本構造</div>
+      <div class="dialogue-body">
+        <div class="d-step">
+          <span class="d-arrow">①</span>
+          <div class="d-text"><strong>相手が主張する</strong><br>「勇気とは恐れないことだ！」</div>
+        </div>
+        <div class="d-step">
+          <span class="d-arrow">↓</span>
+          <div class="d-text"><strong>ソクラテスが質問</strong><br>「でも無知で恐れない人もいるよね？」</div>
+        </div>
+        <div class="d-step">
+          <span class="d-arrow">↓</span>
+          <div class="d-text"><strong>定義が崩れる</strong><br>「あれ……違うかも……」</div>
+        </div>
+        <div class="d-step">
+          <span class="d-arrow">↓</span>
+          <div class="d-text"><strong>無知が露出する → アポリア</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="interp-box">
+      <div class="box-label">INTERPRETATION</div>
+      <p>現代では批判的思考・ロジカルシンキングの祖型と見なされることが多い。ただし——ソクラテスは単なる論破屋ではない。目的は「より良く生きるには何か？」を探すことだった。</p>
+    </div>
+  </div>
+
+  <!-- 魂への配慮 -->
+  <div class="section" id="soul">
+    <h2>「魂への配慮」</h2>
+    <p>ソクラテスは、お金・名誉・権力よりも<strong>魂（プシュケー）</strong>を重視した。</p>
+
+    <div class="fact-box">
+      <div class="box-label">FACT</div>
+      <p>『ソクラテスの弁明』で、魂への配慮が繰り返し語られる。</p>
+    </div>
+
+    <div class="interp-box">
+      <div class="box-label">INTERPRETATION</div>
+      <p>ここでいう「魂」は現代の霊的な意味ではなく、<strong>「人格・生の在り方」</strong>に近い。どんな人間になるか、どんな判断をするか、どう生きるか——それを最重要視した。</p>
+    </div>
+
+    <div class="deep-box">
+      <div class="deep-box-title">🔍 深掘り — ソクラテスは「答え」を持っていたのか？</div>
+      <table class="data-table">
+        <thead><tr><th>見解</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>見解 A</td><td>無知を徹底した。永遠に問い続ける人。</td></tr>
+          <tr><td>見解 B</td><td>実は明確な倫理観を持っていた（善く生きるべき・不正は悪）</td></tr>
+          <tr><td>現代研究</td><td>方法は「常に問い直す」、軸は「善く生きたい」——両立している</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PART 3 -->
+  <div class="part-header" id="part3">
+    <div class="part-num">03</div>
+    <div>
+      <div class="part-title">上級編</div>
+      <div class="part-sub">定義の哲学・民主主義との関係</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>ソクラテスと「定義」の哲学</h2>
+
+    <p>ソクラテス以前の哲学者は「万物の根源は何か」を問うていた（タレス：水、ヘラクレイトス：流転）。ソクラテスはそこから<strong>「人間はどう生きるべきか？」</strong>へ焦点を移した。これが哲学史上に与えた転換の大きさは計り知れない。</p>
+
+    <p>個別事例ではなく「それは本質的に何か？」を問うスタイル——これが後のプラトンのイデア論、アリストテレスの本質論、西洋論理学へとつながっていく。</p>
+
+    <h2 id="democracy">深掘り：ソクラテスは「民主主義の敵」だったのか？</h2>
+
+    <div class="fact-box">
+      <div class="box-label">FACT</div>
+      <p>ソクラテスはアテナイ民主政下で処刑された。弟子には民主政批判的な人物もいた。</p>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>解釈</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>民主政批判者だった</td><td>大衆の無知を問題視・専門性を重視</td></tr>
+        <tr><td>民主政に必要な存在だった</td><td>権力を問い直す・思考停止を防ぐ・対話を重視</td></tr>
+      </tbody>
+    </table>
+
+    <div class="interp-box">
+      <div class="box-label">INTERPRETATION — 現代政治哲学</div>
+      <p>「民主主義にはソクラテス的批判が必要」という議論も強い。多数決だけでは危険、でも批判者排除も危険——その緊張関係こそが民主主義の核心かもしれない。</p>
+    </div>
+  </div>
+
+  <!-- まとめ -->
+  <div class="section">
+    <h2>まとめ — ソクラテスの核心</h2>
+    <p>ソクラテスは「知識を増やす人」というより、<strong>思考停止を破壊する人</strong>だった。</p>
+    <ul class="clean">
+      <li>正義とは？善とは？幸福とは？知るとは？良く生きるとは？</li>
+      <li>これらを問い続けた</li>
+      <li>「問いそのもの」を人生化した——単なる学問ではなく、生き方そのものだった</li>
+    </ul>
+  </div>
+
+  <!-- 次に読むべき -->
+  <div id="next">
+    <div class="next-box">
+      <div class="next-box-title">📚 次に読むべき哲学者</div>
+      <ul class="next-list">
+        <li><span class="next-num">01.</span>プラトン</li>
+        <li><span class="next-num">02.</span>アリストテレス</li>
+        <li><span class="next-num">03.</span>ストア哲学</li>
+        <li><span class="next-num">04.</span>ニーチェ（によるソクラテス批判）</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOT NAV -->
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">ChatGPT講義 · Socrates · BC 469–399</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
