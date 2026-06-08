@@ -3,106 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>5つのAIが選んだ哲学者50選 比較</title>
+<title>哲学者・思想家50選 — AI比較</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0e0e0f;
-    --surface: #161618;
-    --border: #2a2a2e;
-    --text: #e8e6e0;
-    --muted: #7a7870;
+    --bg: #fdf8f4;
+    --surface: #fff9f5;
+    --ink: #2a1f1a;
+    --sepia: #4a3728;
+    --warm: #9a7860;
+    --rule: #e8d8cc;
+    --border: #ecddd4;
+
+    /* flower palette */
+    --dahlia: #c4506a;      /* ダリア — ローズレッド */
+    --dahlia-light: #f7e8ec;
+    --sunflower: #e8a020;   /* ヒマワリ — ゴールド */
+    --sunflower-light: #fdf3e0;
+    --ranunculus: #e07090;  /* ラナンキュラス — コーラルピンク */
+    --ranunculus-light: #fdeef3;
+    --leaf: #7a9e6e;        /* 葉 — セージグリーン */
+    --leaf-light: #eef4ea;
+    --petal: #f5e8d8;       /* 花弁ベージュ */
+
+    /* AI colors */
     --claude:   #c9a84c;
     --chatgpt:  #10a37f;
     --gemini:   #4285f4;
     --copilot:  #0078d4;
     --grok:     #e04444;
     --spark:    #9b59b6;
-    --all:      #e8e6e0;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
 
   body {
     background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
     font-weight: 300;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
-  /* ========== HEADER ========== */
-  header {
-    padding: 3.5rem 2rem 2.5rem;
-    border-bottom: 1px solid var(--border);
-    position: relative;
+  /* ===== DECORATIVE FLOWERS (SVG inline) ===== */
+  .deco-flowers {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
     overflow: hidden;
   }
 
-  header::after {
-    content: '哲学';
-    position: absolute;
-    right: -1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-family: 'Shippori Mincho', serif;
-    font-size: 12rem;
-    font-weight: 700;
-    color: rgba(255,255,255,0.02);
-    line-height: 1;
-    pointer-events: none;
+  /* ===== HEADER ===== */
+  header {
+    position: relative;
+    padding: 3.5rem 1.5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+    text-align: center;
+    overflow: hidden;
+    z-index: 1;
   }
 
-  .header-inner {
-    max-width: 1300px;
-    margin: 0 auto;
+  .header-flowers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
   }
+
+  .header-inner { position: relative; z-index: 1; }
 
   .eyebrow {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.75rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
     letter-spacing: 0.4em;
-    color: var(--muted);
+    text-transform: uppercase;
+    color: var(--dahlia);
     margin-bottom: 0.8rem;
   }
 
   h1 {
-    font-family: 'Shippori Mincho', serif;
-    font-size: clamp(1.6rem, 4vw, 3rem);
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 5vw, 3rem);
     font-weight: 700;
-    line-height: 1.3;
-    margin-bottom: 0.5rem;
+    line-height: 1.2;
+    color: var(--sepia);
+    margin-bottom: 0.4rem;
   }
 
-  h1 span {
-    color: var(--claude);
+  h1 em {
+    font-style: italic;
+    color: var(--dahlia);
   }
 
   .header-sub {
-    font-size: 0.8rem;
-    color: var(--muted);
+    font-size: 0.78rem;
+    color: var(--warm);
     letter-spacing: 0.1em;
-    margin-top: 1rem;
+    margin-top: 0.8rem;
   }
 
-  /* ========== AI LEGEND ========== */
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 1rem auto;
+    color: var(--ranunculus);
+    font-size: 0.9rem;
+  }
+  .ornament::before, .ornament::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--ranunculus));
+  }
+  .ornament::after { background: linear-gradient(90deg, var(--ranunculus), transparent); }
+
+  /* ===== LEGEND ===== */
   .legend {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    padding: 1.2rem 2rem;
-    border-bottom: 1px solid var(--border);
-    max-width: 1300px;
-    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    background: rgba(253,248,244,0.95);
   }
 
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 0.75rem;
-    color: var(--muted);
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    color: var(--warm);
+    font-family: 'Cormorant Garamond', serif;
     letter-spacing: 0.05em;
   }
 
@@ -113,708 +154,897 @@
     flex-shrink: 0;
   }
 
-  /* ========== CONTROLS ========== */
-  .controls {
+  /* ===== FILTER BAR ===== */
+  .filter-bar {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(14,14,15,0.95);
+    background: rgba(253,248,244,0.97);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    padding: 0.8rem 2rem;
+    border-bottom: 1px solid var(--rule);
+    padding: 0.8rem 1.5rem;
   }
 
-  .controls-inner {
-    max-width: 1300px;
-    margin: 0 auto;
+  .filter-inner {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
     align-items: center;
-  }
-
-  .ctrl-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    margin-right: 0.4rem;
-    font-family: 'Bebas Neue', sans-serif;
-  }
-
-  .btn {
-    font-family: 'Noto Sans JP', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.05em;
-    padding: 0.3rem 0.75rem;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 2px;
-    white-space: nowrap;
-  }
-
-  .btn:hover { border-color: #555; color: var(--text); }
-  .btn.active { color: var(--bg); border-color: transparent; }
-
-  .btn[data-ai="all"].active    { background: var(--all); color: var(--bg); }
-  .btn[data-ai="claude"].active { background: var(--claude); }
-  .btn[data-ai="chatgpt"].active{ background: var(--chatgpt); }
-  .btn[data-ai="gemini"].active { background: var(--gemini); }
-  .btn[data-ai="copilot"].active{ background: var(--copilot); }
-  .btn[data-ai="grok"].active   { background: var(--grok); }
-  .btn[data-ai="spark"].active  { background: var(--spark); }
-
-  .divider { width: 1px; height: 20px; background: var(--border); margin: 0 0.3rem; }
-
-  /* ========== STATS BAR ========== */
-  .stats {
     max-width: 1300px;
     margin: 0 auto;
-    padding: 1rem 2rem 0;
-    font-size: 0.75rem;
-    color: var(--muted);
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
   }
 
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
-    color: var(--text);
+  .filter-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
     margin-right: 0.2rem;
   }
 
-  /* ========== TABLE ========== */
-  .table-wrap {
+  .fbtn {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--warm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 20px;
+  }
+
+  .fbtn:hover { border-color: var(--dahlia); color: var(--dahlia); }
+  .fbtn.active { background: var(--dahlia); color: #fff; border-color: var(--dahlia); }
+
+  .fbtn[data-ai="claude"].active   { background: var(--claude); border-color: var(--claude); }
+  .fbtn[data-ai="chatgpt"].active  { background: var(--chatgpt); border-color: var(--chatgpt); }
+  .fbtn[data-ai="gemini"].active   { background: var(--gemini); border-color: var(--gemini); }
+  .fbtn[data-ai="copilot"].active  { background: var(--copilot); border-color: var(--copilot); }
+  .fbtn[data-ai="grok"].active     { background: var(--grok); border-color: var(--grok); }
+  .fbtn[data-ai="spark"].active    { background: var(--spark); border-color: var(--spark); }
+
+  .fdivider { width: 1px; height: 18px; background: var(--rule); margin: 0 0.2rem; }
+
+  /* ===== STATS ===== */
+  .stats {
+    padding: 0.9rem 1.5rem 0;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    max-width: 1300px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--dahlia);
+    margin-right: 0.2rem;
+  }
+
+  .stat-label { font-size: 0.75rem; color: var(--warm); }
+
+  /* ===== GRID ===== */
+  .grid-wrap {
     max-width: 1300px;
     margin: 1rem auto 4rem;
-    padding: 0 2rem;
-    overflow-x: auto;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.82rem;
-  }
+  .era-section { margin-bottom: 0.5rem; }
 
-  thead th {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    text-align: left;
-    padding: 0.7rem 0.8rem;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-    position: sticky;
-    top: 54px;
-    background: var(--bg);
-    z-index: 50;
-  }
-
-  thead th.ai-col {
-    text-align: center;
-    width: 80px;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid rgba(42,42,46,0.6);
-    transition: background 0.15s ease;
-  }
-
-  tbody tr:hover { background: rgba(255,255,255,0.03); }
-  tbody tr.hidden { display: none; }
-
-  td {
-    padding: 0.65rem 0.8rem;
-    vertical-align: middle;
-  }
-
-  .td-num {
-    font-family: 'Bebas Neue', sans-serif;
-    color: var(--muted);
-    font-size: 0.75rem;
-    width: 36px;
-    text-align: right;
-    padding-right: 1rem;
-  }
-
-  .td-name {
-    font-family: 'Shippori Mincho', serif;
-    font-size: 0.95rem;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .td-en {
-    font-size: 0.72rem;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-
-  .td-era {
-    white-space: nowrap;
-  }
-
-  .era-badge {
-    display: inline-block;
-    font-size: 0.62rem;
-    letter-spacing: 0.1em;
-    padding: 0.15rem 0.45rem;
-    border-radius: 2px;
-    border: 1px solid;
-    white-space: nowrap;
-  }
-
-  .era-古代   { color: #d4a757; border-color: rgba(212,167,87,0.3); }
-  .era-中世   { color: #7b9e87; border-color: rgba(123,158,135,0.3); }
-  .era-近世   { color: #7ab3c8; border-color: rgba(122,179,200,0.3); }
-  .era-近代   { color: #b07fc4; border-color: rgba(176,127,196,0.3); }
-  .era-現代   { color: #c87b7b; border-color: rgba(200,123,123,0.3); }
-  .era-東洋   { color: #c4a96e; border-color: rgba(196,169,110,0.3); }
-  .era-中世宗教 { color: #8fbfb0; border-color: rgba(143,191,176,0.3); }
-
-  /* AI presence cells */
-  td.ai-cell {
-    text-align: center;
-    width: 80px;
-  }
-
-  .check {
-    display: inline-block;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    line-height: 22px;
-    font-size: 0.65rem;
-    font-weight: 500;
-    color: var(--bg);
-  }
-
-  .check.claude  { background: var(--claude); }
-  .check.chatgpt { background: var(--chatgpt); }
-  .check.gemini  { background: var(--gemini); }
-  .check.copilot { background: var(--copilot); }
-  .check.grok    { background: var(--grok); }
-  .check.spark   { background: var(--spark); }
-  .check.absent  { background: transparent; color: var(--border); border: 1px solid var(--border); }
-
-  .td-count {
-    text-align: center;
-  }
-
-  .count-bar-wrap {
+  .era-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    justify-content: center;
+    gap: 0.8rem;
+    padding: 1rem 0.5rem 0.5rem;
+    margin-bottom: 0.3rem;
   }
 
-  .count-bar {
-    height: 4px;
-    border-radius: 2px;
-    background: linear-gradient(90deg, var(--claude), var(--chatgpt));
-    min-width: 4px;
-    transition: width 0.3s ease;
-  }
+  .era-flower { font-size: 1rem; }
 
-  .count-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.9rem;
-    color: var(--text);
-    width: 14px;
-    text-align: left;
-  }
-
-  /* unique badge */
-  .unique-badge {
-    display: inline-block;
-    font-size: 0.6rem;
-    padding: 0.1rem 0.35rem;
-    border: 1px solid rgba(201,168,76,0.5);
-    color: var(--claude);
-    border-radius: 2px;
-    margin-left: 0.3rem;
-    vertical-align: middle;
-    white-space: nowrap;
-  }
-
-  /* section header rows */
-  tr.section-row td {
-    padding: 1.2rem 0.8rem 0.4rem;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.65rem;
+  .era-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
     letter-spacing: 0.3em;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
+    color: var(--warm);
+    text-transform: uppercase;
   }
 
-  /* UNIQUE ONLY filter highlight */
-  tbody tr.unique-row { }
+  .era-rule { flex: 1; height: 1px; background: var(--rule); }
 
-  /* ========== INSIGHT PANEL ========== */
-  .insights {
-    max-width: 1300px;
-    margin: 0 auto 4rem;
-    padding: 0 2rem;
+  .era-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.6rem;
+  }
+
+  /* ===== PHILOSOPHER CARD ===== */
+  .phil-card {
+    position: relative;
+    background: var(--surface);
     border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 0.9rem;
+    transition: all 0.25s ease;
+    cursor: default;
+    overflow: hidden;
   }
 
-  .insight-card {
-    padding: 1.5rem;
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+  .phil-card.has-lecture {
+    cursor: pointer;
+    border-color: var(--ranunculus);
+    background: linear-gradient(135deg, #fff9f5 0%, #fdeef3 100%);
   }
 
-  .insight-label {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    color: var(--muted);
+  .phil-card.has-lecture::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--dahlia), var(--ranunculus), var(--sunflower));
+    border-radius: 12px 12px 0 0;
+  }
+
+  .phil-card.has-lecture:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(196,80,106,0.15);
+    border-color: var(--dahlia);
+  }
+
+  .phil-card.greyed {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .phil-card.hidden { display: none; }
+
+  /* lecture badge */
+  .lecture-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1;
+  }
+
+  .phil-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    color: var(--ranunculus);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+    opacity: 0.7;
+  }
+
+  .phil-name-ja {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--sepia);
+    line-height: 1.3;
+    margin-bottom: 0.15rem;
+  }
+
+  .phil-name-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.75rem;
+    color: var(--warm);
     margin-bottom: 0.6rem;
   }
 
-  .insight-value {
-    font-family: 'Shippori Mincho', serif;
+  .ai-dots {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+  }
+
+  .ai-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  .ai-dot.absent {
+    background: var(--border);
+    opacity: 0.4;
+  }
+
+  /* ===== POPUP ===== */
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42,31,26,0.5);
+    z-index: 500;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .popup-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .popup {
+    background: var(--surface);
+    border-radius: 20px 20px 0 0;
+    padding: 1.5rem 1.5rem 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    border-top: 1px solid var(--border);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .popup-overlay.active .popup {
+    transform: translateY(0);
+  }
+
+  .popup-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 1.2rem;
+  }
+
+  .popup-flower {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .popup-name {
+    font-family: 'Playfair Display', serif;
     font-size: 1.5rem;
     font-weight: 700;
-    line-height: 1.3;
+    color: var(--sepia);
+    text-align: center;
+    margin-bottom: 0.15rem;
+  }
+
+  .popup-name-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--warm);
+    text-align: center;
+    margin-bottom: 1.2rem;
+  }
+
+  .popup-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--warm);
+    text-align: center;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  .popup-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .ai-lecture-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.85rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.2s ease;
+  }
+
+  .ai-lecture-btn:hover {
+    background: var(--petal);
+    border-color: var(--ranunculus);
+    transform: translateX(3px);
+  }
+
+  .ai-btn-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .ai-btn-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+
+  .ai-btn-arrow {
+    font-size: 0.8rem;
+    color: var(--ranunculus);
+    opacity: 0.6;
+  }
+
+  .popup-close {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: transparent;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--warm);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.1em;
+  }
+
+  .popup-close:hover { border-color: var(--warm); }
+
+  /* ===== INSIGHTS ===== */
+  .insights-wrap {
+    max-width: 1300px;
+    margin: 0 auto 4rem;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .insights-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .insight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+  }
+
+  .insight-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    color: var(--warm);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+
+  .insight-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--dahlia);
+    line-height: 1.2;
   }
 
   .insight-sub {
     font-size: 0.72rem;
-    color: var(--muted);
+    color: var(--warm);
     margin-top: 0.3rem;
+    line-height: 1.6;
   }
 
   .insight-list {
-    font-size: 0.78rem;
-    line-height: 2;
-    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1.9;
+    color: var(--warm);
+    margin-top: 0.4rem;
   }
 
-  .insight-list span {
-    color: var(--text);
-    font-family: 'Shippori Mincho', serif;
-  }
-
-  /* section title */
-  .section-title {
-    max-width: 1300px;
-    margin: 2.5rem auto 1rem;
-    padding: 0 2rem;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.35em;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.5rem;
-  }
+  .insight-list span { color: var(--sepia); }
 
   footer {
     text-align: center;
-    padding: 2rem;
-    font-size: 0.72rem;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--warm);
+    font-size: 0.85rem;
     letter-spacing: 0.1em;
+    border-top: 1px solid var(--rule);
+    position: relative;
+    z-index: 1;
   }
 
-  @media (max-width: 700px) {
-    .table-wrap { padding: 0 0.5rem; }
-    header { padding: 2rem 1rem 1.5rem; }
-    .controls { padding: 0.7rem 1rem; }
-    .stats { padding: 0.8rem 1rem 0; }
-    .legend { padding: 0.8rem 1rem; }
-    .section-title { padding: 0 1rem; }
-    .insights { margin: 0 1rem 3rem; }
+  @media (max-width: 500px) {
+    .era-grid { grid-template-columns: repeat(2, 1fr); }
+    .phil-name-en { font-size: 0.68rem; }
   }
 </style>
 </head>
 <body>
 
+<!-- 固定背景の花装飾 -->
+<div class="deco-flowers" aria-hidden="true">
+  <svg width="100%" height="100%" viewBox="0 0 800 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" opacity="0.06">
+    <!-- ダリア 左上 -->
+    <g transform="translate(60,80) rotate(-15)">
+      <circle cx="0" cy="0" r="8" fill="#c4506a"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-22" rx="7" ry="14" fill="#c4506a" opacity="0.8" transform="rotate(315)"/>
+    </g>
+    <!-- ヒマワリ 右上 -->
+    <g transform="translate(740,120) rotate(10)">
+      <circle cx="0" cy="0" r="18" fill="#8b6000"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(30)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(150)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(210)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(300)"/>
+      <ellipse cx="0" cy="-32" rx="9" ry="18" fill="#e8a020" opacity="0.9" transform="rotate(330)"/>
+    </g>
+    <!-- ラナンキュラス 右下 -->
+    <g transform="translate(760,750) rotate(5)">
+      <circle cx="0" cy="0" r="6" fill="#e07090"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(40)"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(80)"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(160)"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(200)"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(280)"/>
+      <ellipse cx="0" cy="-16" rx="6" ry="11" fill="#e07090" opacity="0.7" transform="rotate(320)"/>
+    </g>
+    <!-- 小さいダリア 左下 -->
+    <g transform="translate(40,800) rotate(-5)">
+      <circle cx="0" cy="0" r="5" fill="#c4506a"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="9" fill="#c4506a" opacity="0.8" transform="rotate(315)"/>
+    </g>
+    <!-- 葉っぱたち -->
+    <ellipse cx="100" cy="200" rx="8" ry="20" fill="#7a9e6e" opacity="0.6" transform="rotate(-30 100 200)"/>
+    <ellipse cx="700" cy="400" rx="6" ry="16" fill="#7a9e6e" opacity="0.5" transform="rotate(20 700 400)"/>
+    <ellipse cx="50" cy="500" rx="5" ry="14" fill="#7a9e6e" opacity="0.4" transform="rotate(-10 50 500)"/>
+    <ellipse cx="750" cy="600" rx="7" ry="18" fill="#7a9e6e" opacity="0.5" transform="rotate(15 750 600)"/>
+  </svg>
+</div>
+
+<!-- HEADER -->
 <header>
+  <div class="header-flowers" aria-hidden="true">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(20,20) rotate(-20)" opacity="0.5">
+        <circle cx="0" cy="0" r="5" fill="#c4506a"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a" transform="rotate(45)"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a" transform="rotate(90)"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a" transform="rotate(135)"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a" transform="rotate(180)"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a" transform="rotate(225)"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a" transform="rotate(270)"/>
+        <ellipse cx="0" cy="-13" rx="5" ry="9" fill="#c4506a" transform="rotate(315)"/>
+      </g>
+    </svg>
+  </div>
   <div class="header-inner">
-    <p class="eyebrow">AI Philosophers Comparison</p>
-    <h1>5つのAIが選んだ<br><span>哲学者・思想家 50選</span><br>比較表</h1>
-    <p class="header-sub">Claude · ChatGPT · Gemini · Copilot · Grok · Genspark — 同じ質問への回答を横断比較</p>
+    <p class="eyebrow">✿ AI Philosophers Comparison ✿</p>
+    <h1>6つのAIが選んだ<br><em>哲学者・思想家</em><br>比較表</h1>
+    <div class="ornament">🌸</div>
+    <p class="header-sub">Claude · ChatGPT · Gemini · Copilot · Grok · Genspark</p>
   </div>
 </header>
 
-<div class="legend" style="padding-top:1rem;padding-bottom:1rem;">
+<!-- LEGEND -->
+<div class="legend">
   <div class="legend-item"><div class="dot" style="background:var(--claude)"></div>Claude</div>
   <div class="legend-item"><div class="dot" style="background:var(--chatgpt)"></div>ChatGPT</div>
   <div class="legend-item"><div class="dot" style="background:var(--gemini)"></div>Gemini</div>
   <div class="legend-item"><div class="dot" style="background:var(--copilot)"></div>Copilot</div>
   <div class="legend-item"><div class="dot" style="background:var(--grok)"></div>Grok</div>
   <div class="legend-item"><div class="dot" style="background:var(--spark)"></div>Genspark</div>
-</div>
-
-<div class="controls">
-  <div class="controls-inner">
-    <span class="ctrl-label">表示</span>
-    <button class="btn active" data-ai="all">全員</button>
-    <button class="btn" data-filter="unique">独自選出のみ</button>
-    <button class="btn" data-filter="consensus">全AI一致のみ</button>
-    <div class="divider"></div>
-    <span class="ctrl-label">AI別</span>
-    <button class="btn" data-ai="claude">Claude</button>
-    <button class="btn" data-ai="chatgpt">ChatGPT</button>
-    <button class="btn" data-ai="gemini">Gemini</button>
-    <button class="btn" data-ai="copilot">Copilot</button>
-    <button class="btn" data-ai="grok">Grok</button>
-    <button class="btn" data-ai="spark">Genspark</button>
+  <div class="legend-item" style="margin-left:0.5rem">
+    <span style="font-size:0.8rem">🌸</span>
+    <span style="font-size:0.68rem;color:var(--dahlia)">= 講義あり</span>
   </div>
 </div>
 
-<div class="stats" id="stats">
-  <div><span class="stat-num" id="stat-shown">—</span>人 表示中</div>
-  <div><span class="stat-num" id="stat-consensus">—</span>人 全AI一致</div>
-  <div><span class="stat-num" id="stat-unique">—</span>人 独自選出あり</div>
+<!-- FILTER -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">表示</span>
+    <button class="fbtn active" data-filter="all">すべて</button>
+    <button class="fbtn" data-filter="consensus">全AI一致</button>
+    <button class="fbtn" data-filter="unique">独自選出</button>
+    <div class="fdivider"></div>
+    <span class="filter-label">AI別</span>
+    <button class="fbtn" data-ai="claude">Claude</button>
+    <button class="fbtn" data-ai="chatgpt">ChatGPT</button>
+    <button class="fbtn" data-ai="gemini">Gemini</button>
+    <button class="fbtn" data-ai="copilot">Copilot</button>
+    <button class="fbtn" data-ai="grok">Grok</button>
+    <button class="fbtn" data-ai="spark">Genspark</button>
+  </div>
 </div>
 
-<div class="table-wrap">
-  <table id="main-table">
-    <thead>
-      <tr>
-        <th style="width:36px"></th>
-        <th>人物</th>
-        <th></th>
-        <th>時代</th>
-        <th class="ai-col">Claude</th>
-        <th class="ai-col">ChatGPT</th>
-        <th class="ai-col">Gemini</th>
-        <th class="ai-col">Copilot</th>
-        <th class="ai-col">Grok</th>
-        <th class="ai-col">Genspark</th>
-        <th style="width:90px;text-align:center">一致数</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
+<!-- STATS -->
+<div class="stats">
+  <div><span class="stat-num" id="stat-shown">—</span><span class="stat-label"> 人表示中</span></div>
+  <div><span class="stat-num" id="stat-consensus">—</span><span class="stat-label"> 人全AI一致</span></div>
+  <div><span class="stat-num" id="stat-unique">—</span><span class="stat-label"> 人独自選出</span></div>
 </div>
 
-<p class="section-title">INSIGHTS</p>
-<div class="insights" id="insights-grid"></div>
+<!-- GRID -->
+<div class="grid-wrap" id="grid-wrap"></div>
 
-<footer>同じ質問に、AIはどう答えるか — 光沙の実験記録より</footer>
+<!-- INSIGHTS -->
+<div class="insights-wrap">
+  <div class="insights-title">🌼 Insights</div>
+  <div class="insights-grid" id="insights-grid"></div>
+</div>
+
+<footer>「哲学とは死の練習である」— ソクラテス 🌸</footer>
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popup-overlay">
+  <div class="popup" id="popup">
+    <div class="popup-handle"></div>
+    <div class="popup-flower" id="popup-flower">🌸</div>
+    <div class="popup-name" id="popup-name"></div>
+    <div class="popup-name-en" id="popup-name-en"></div>
+    <div class="popup-label">AIの講義を選んでください</div>
+    <div class="popup-buttons" id="popup-buttons"></div>
+    <button class="popup-close" id="popup-close">閉じる</button>
+  </div>
+</div>
 
 <script>
 // ===== DATA =====
-// [名前, 英語名, 時代, claude, chatgpt, gemini, copilot, grok, spark]
-const data = [
-  // 古代
-  ["ソクラテス",        "Socrates",            "古代", 1,1,1,1,1,1],
-  ["プラトン",          "Plato",               "古代", 1,1,1,1,1,1],
-  ["アリストテレス",    "Aristotle",           "古代", 1,1,1,1,1,1],
-  ["ヘラクレイトス",    "Heraclitus",          "古代", 1,1,0,1,1,1],
-  ["エピクロス",        "Epicurus",            "古代", 1,1,1,1,1,0],
-  ["マルクス・アウレリウス","Marcus Aurelius",  "古代", 1,1,1,1,1,1],
-  ["ゼノン（ストア派）","Zeno of Citium",      "古代", 0,1,1,1,1,0],
-  ["セネカ",            "Seneca",              "古代", 0,1,0,1,0,0],
-  ["パルメニデス",      "Parmenides",          "古代", 0,0,0,1,1,1],
-  ["デモクリトス",      "Democritus",          "古代", 0,0,0,1,1,1],
-  ["プロティノス",      "Plotinus",            "古代", 1,0,0,0,1,1],
-  ["エピクテトス",      "Epictetus",           "古代", 0,0,0,0,1,0],
-  ["タレス",            "Thales",              "古代", 0,0,0,0,0,1],
-  // 東洋
-  ["孔子",              "Confucius",           "東洋", 1,1,1,1,1,1],
-  ["老子",              "Laozi",               "東洋", 1,1,1,1,1,1],
-  ["荘子",              "Zhuangzi",            "東洋", 1,1,1,1,1,1],
-  ["孟子",              "Mencius",             "東洋", 0,0,1,0,1,1],
-  ["荀子",              "Xunzi",               "東洋", 0,0,0,0,1,1],
-  ["釈迦",              "Buddha",              "東洋", 0,0,1,1,1,1],
-  ["龍樹",              "Nāgārjuna",           "東洋", 1,0,1,1,1,1],
-  ["道元",              "Dōgen",               "東洋", 1,0,0,0,0,1],
-  ["西田幾多郎",        "Nishida Kitarō",      "東洋", 1,1,0,1,0,1],
-  ["空海",              "Kūkai",               "東洋", 0,0,1,0,0,1],
-  ["孫子",              "Sun Tzu",             "東洋", 0,1,0,0,0,0],
-  ["親鸞",              "Shinran",             "東洋", 0,1,0,0,0,0],
-  ["和辻哲郎",          "Watsuji Tetsurō",     "東洋", 1,0,0,0,0,1],
-  ["九鬼周造",          "Kuki Shūzō",          "東洋", 1,0,0,0,0,0],
-  ["墨子",              "Mozi",                "東洋", 0,0,0,0,0,1],
-  ["韓非子",            "Han Feizi",           "東洋", 0,0,0,0,0,1],
-  ["朱熹",              "Zhu Xi",              "東洋", 0,0,0,0,1,1],
-  // 中世
-  ["アウグスティヌス",  "Augustine",           "中世", 1,1,1,1,1,1],
-  ["トマス・アクィナス","Thomas Aquinas",      "中世", 1,1,1,1,1,1],
-  ["ウィリアム・オッカム","William of Ockham", "中世", 1,0,0,0,0,1],
-  ["アヴィセンナ",      "Avicenna",            "中世", 0,0,1,1,1,1],
-  ["アヴェロエス",      "Averroës",            "中世", 0,0,1,1,1,1],
-  ["マイモニデス",      "Maimonides",          "中世", 0,0,0,1,0,1],
-  ["ボエティウス",      "Boethius",            "中世", 0,0,0,0,1,0],
-  ["エックハルト",      "Meister Eckhart",     "中世", 0,0,0,1,0,0],
-  ["アンセルムス",      "Anselm",              "中世", 0,0,0,0,0,1],
-  ["ヒルデガルト",      "Hildegard von Bingen","中世", 0,0,0,0,0,1],
-  // 近世
-  ["デカルト",          "Descartes",           "近世", 1,1,1,1,1,1],
-  ["スピノザ",          "Spinoza",             "近世", 1,1,1,1,1,1],
-  ["ライプニッツ",      "Leibniz",             "近世", 1,1,1,1,1,1],
-  ["ロック",            "Locke",               "近世", 1,1,1,1,1,1],
-  ["ヒューム",          "Hume",                "近世", 1,1,1,1,1,1],
-  ["ルソー",            "Rousseau",            "近世", 1,1,1,1,1,1],
-  ["ベーコン",          "Francis Bacon",       "近世", 0,1,0,0,1,0],
-  ["ホッブズ",          "Hobbes",              "近世", 0,0,1,0,1,0],
-  ["モンテスキュー",    "Montesquieu",         "近世", 0,0,1,0,0,0],
-  // 近代
-  ["カント",            "Kant",                "近代", 1,1,1,1,1,1],
-  ["ヘーゲル",          "Hegel",               "近代", 1,1,1,1,1,1],
-  ["マルクス",          "Marx",                "近代", 1,1,1,1,1,1],
-  ["ニーチェ",          "Nietzsche",           "近代", 1,1,1,1,1,1],
-  ["ショーペンハウアー","Schopenhauer",        "近代", 1,1,1,1,1,1],
-  ["キルケゴール",      "Kierkegaard",         "近代", 1,1,1,1,1,1],
-  ["ミル",              "J.S. Mill",           "近代", 1,0,1,0,1,0],
-  ["ジェームズ",        "William James",       "近代", 1,0,1,0,1,0],
-  ["フレーゲ",          "Frege",               "近代", 1,0,0,0,0,1],
-  ["ウェーバー",        "Max Weber",           "近代", 0,1,1,0,0,0],
-  ["デュルケーム",      "Durkheim",            "近代", 0,1,1,0,0,0],
-  ["ベンサム",          "Bentham",             "近代", 0,0,1,0,1,0],
-  ["ベルクソン",        "Bergson",             "近代", 0,0,1,0,1,0],
-  ["トクヴィル",        "Tocqueville",         "近代", 0,0,1,0,0,0],
-  ["ガンディー",        "Gandhi",              "近代", 0,0,0,0,1,0],
-  // 現代
-  ["フッサール",        "Husserl",             "現代", 1,1,1,1,1,1],
-  ["ハイデガー",        "Heidegger",           "現代", 1,1,1,1,1,1],
-  ["サルトル",          "Sartre",              "現代", 1,1,1,1,1,1],
-  ["ボーヴォワール",    "Beauvoir",            "現代", 1,1,1,1,1,1],
-  ["ウィトゲンシュタイン","Wittgenstein",      "現代", 1,1,1,1,1,1],
-  ["アーレント",        "Arendt",              "現代", 1,1,1,1,1,1],
-  ["フーコー",          "Foucault",            "現代", 1,1,1,1,1,1],
-  ["デリダ",            "Derrida",             "現代", 1,1,1,1,1,1],
-  ["ロールズ",          "Rawls",               "現代", 1,0,0,1,1,1],
-  ["ラッセル",          "Russell",             "現代", 1,0,0,1,1,1],
-  ["メルロ＝ポンティ", "Merleau-Ponty",       "現代", 1,0,0,0,0,1],
-  ["ポパー",            "Popper",              "現代", 1,1,1,1,1,0],
-  ["クーン",            "Kuhn",                "現代", 1,1,1,1,1,0],
-  ["クワイン",          "Quine",               "現代", 1,0,0,0,1,1],
-  ["ハーバーマス",      "Habermas",            "現代", 0,0,1,1,1,1],
-  ["レヴィナス",        "Levinas",             "現代", 0,0,1,1,0,0],
-  ["チョムスキー",      "Chomsky",             "現代", 1,0,1,1,1,1],
-  ["デネット",          "Dennett",             "現代", 1,0,0,0,0,0],
-  ["パトナム",          "Putnam",              "現代", 1,0,0,0,1,0],
-  ["フロイト",          "Freud",               "現代", 0,1,1,1,1,0],
-  ["ユング",            "Jung",                "現代", 0,1,1,1,1,0],
-  ["カミュ",            "Camus",               "現代", 0,1,0,0,1,0],
-  ["グラムシ",          "Gramsci",             "現代", 0,1,1,0,0,0],
-  ["ボードリヤール",    "Baudrillard",         "現代", 0,1,1,0,0,0],
-  ["ブルデュー",        "Bourdieu",            "現代", 0,1,0,0,0,0],
-  ["ドゥルーズ",        "Deleuze",             "現代", 0,1,0,0,0,0],
-  ["ベンヤミン",        "Benjamin",            "現代", 0,0,1,0,0,0],
-  ["レヴィ＝ストロース","Lévi-Strauss",        "現代", 0,0,1,0,0,0],
-  ["バトラー",          "Judith Butler",       "現代", 0,0,1,0,0,0],
-  ["サイード",          "Edward Said",         "現代", 0,0,1,0,0,0],
-  ["ハーバーマス",      "Habermas",            "現代", 0,0,0,0,0,0],
-  ["ジジェク",          "Žižek",               "現代", 0,0,1,0,0,0],
-  ["サンデル",          "Michael Sandel",      "現代", 0,0,1,0,0,0],
-  ["ローティ",          "Richard Rorty",       "現代", 0,0,0,0,1,0],
-  ["デューイ",          "John Dewey",          "現代", 0,0,0,0,1,0],
-  ["ピーター・シンガー","Peter Singer",        "現代", 0,0,0,1,0,0],
-  ["コーネル・ウェスト","Cornel West",         "現代", 0,0,0,1,0,0],
-  ["フランクル",        "Viktor Frankl",       "現代", 0,1,0,0,0,0],
-  ["カーネマン",        "Daniel Kahneman",     "現代", 0,1,0,0,0,0],
-  ["ファイヤアーベント","Feyerabend",          "現代", 0,0,0,1,0,0],
-  ["田辺元",            "Tanabe Hajime",       "東洋", 0,0,0,0,0,1],
-  ["本居宣長",          "Motoori Norinaga",    "東洋", 0,0,0,0,0,1],
-  ["マハーヴィーラ",    "Mahāvīra",            "東洋", 0,0,0,0,0,1],
-  ["牟宗三",            "Mou Zongsan",         "東洋", 0,0,0,0,0,1],
-  ["黄宗羲",            "Huang Zongxi",        "東洋", 0,0,0,0,0,1],
-  ["世親",              "Vasubandhu",          "東洋", 0,0,0,1,0,0],
-  ["アダム・スミス",    "Adam Smith",          "近代", 0,0,0,1,0,0],
-  ["ダーウィン",        "Charles Darwin",      "近代", 0,0,0,1,0,0],
-];
-
-// deduplicate (ハーバーマスが重複しているので除去)
-const seen = new Set();
-const philosophers = data.filter(p => {
-  if (seen.has(p[0])) return false;
-  seen.add(p[0]);
-  return true;
-});
-
-const AI_KEYS = ['claude','chatgpt','gemini','copilot','grok','spark'];
+const AI_KEYS   = ['claude','chatgpt','gemini','copilot','grok','spark'];
 const AI_LABELS = ['Claude','ChatGPT','Gemini','Copilot','Grok','Genspark'];
 const AI_COLORS = {
   claude:'#c9a84c', chatgpt:'#10a37f', gemini:'#4285f4',
   copilot:'#0078d4', grok:'#e04444', spark:'#9b59b6'
 };
+const AI_FILES = {
+  claude:  'socrates.html',
+  chatgpt: 'socrates-chatgpt.html',
+  gemini:  'socrates-gemini.html',
+  copilot: 'socrates-copilot.html',
+  grok:    'socrates-grok.html',
+  spark:   'socrates-genspark.html',
+};
 
-const tbody = document.getElementById('tbody');
+const ERA_FLOWERS = {
+  '古代':'🌻', '中世':'🌼', '近世':'🌸', '近代':'💐', '現代':'🌺', '東洋':'🌷'
+};
+
+// [名前, 英語名, 時代, claude, chatgpt, gemini, copilot, grok, spark, hasLecture]
+const philosophers = [
+  // 古代
+  ["ソクラテス","Socrates","古代",1,1,1,1,1,1,true],
+  ["プラトン","Plato","古代",1,1,1,1,1,1,false],
+  ["アリストテレス","Aristotle","古代",1,1,1,1,1,1,false],
+  ["ヘラクレイトス","Heraclitus","古代",1,1,0,1,1,1,false],
+  ["エピクロス","Epicurus","古代",1,1,1,1,1,0,false],
+  ["マルクス・アウレリウス","Marcus Aurelius","古代",1,1,1,1,1,1,false],
+  ["ゼノン（ストア派）","Zeno of Citium","古代",0,1,1,1,1,0,false],
+  ["セネカ","Seneca","古代",0,1,0,1,0,0,false],
+  ["パルメニデス","Parmenides","古代",0,0,0,1,1,1,false],
+  ["デモクリトス","Democritus","古代",0,0,0,1,1,1,false],
+  ["プロティノス","Plotinus","古代",1,0,0,0,1,1,false],
+  ["エピクテトス","Epictetus","古代",0,0,0,0,1,0,false],
+  ["タレス","Thales","古代",0,0,0,0,0,1,false],
+  // 中世
+  ["アウグスティヌス","Augustine","中世",1,1,1,1,1,1,false],
+  ["トマス・アクィナス","Thomas Aquinas","中世",1,1,1,1,1,1,false],
+  ["ウィリアム・オッカム","William of Ockham","中世",1,0,0,0,0,1,false],
+  ["アヴィセンナ","Avicenna","中世",0,0,1,1,1,1,false],
+  ["アヴェロエス","Averroës","中世",0,0,1,1,1,1,false],
+  ["マイモニデス","Maimonides","中世",0,0,0,1,0,1,false],
+  ["ボエティウス","Boethius","中世",0,0,0,0,1,0,false],
+  ["エックハルト","Meister Eckhart","中世",0,0,0,1,0,0,false],
+  ["アンセルムス","Anselm","中世",0,0,0,0,0,1,false],
+  ["ヒルデガルト","Hildegard von Bingen","中世",0,0,0,0,0,1,false],
+  // 近世
+  ["デカルト","Descartes","近世",1,1,1,1,1,1,false],
+  ["スピノザ","Spinoza","近世",1,1,1,1,1,1,false],
+  ["ライプニッツ","Leibniz","近世",1,1,1,1,1,1,false],
+  ["ロック","Locke","近世",1,1,1,1,1,1,false],
+  ["ヒューム","Hume","近世",1,1,1,1,1,1,false],
+  ["ルソー","Rousseau","近世",1,1,1,1,1,1,false],
+  ["ベーコン","Francis Bacon","近世",0,1,0,0,1,0,false],
+  ["ホッブズ","Hobbes","近世",0,0,1,0,1,0,false],
+  ["モンテスキュー","Montesquieu","近世",0,0,1,0,0,0,false],
+  // 近代
+  ["カント","Kant","近代",1,1,1,1,1,1,false],
+  ["ヘーゲル","Hegel","近代",1,1,1,1,1,1,false],
+  ["マルクス","Marx","近代",1,1,1,1,1,1,false],
+  ["ニーチェ","Nietzsche","近代",1,1,1,1,1,1,false],
+  ["ショーペンハウアー","Schopenhauer","近代",1,1,1,1,1,1,false],
+  ["キルケゴール","Kierkegaard","近代",1,1,1,1,1,1,false],
+  ["ミル","J.S. Mill","近代",1,0,1,0,1,0,false],
+  ["ジェームズ","William James","近代",1,0,1,0,1,0,false],
+  ["フレーゲ","Frege","近代",1,0,0,0,0,1,false],
+  ["ウェーバー","Max Weber","近代",0,1,1,0,0,0,false],
+  ["デュルケーム","Durkheim","近代",0,1,1,0,0,0,false],
+  ["ベンサム","Bentham","近代",0,0,1,0,1,0,false],
+  ["ベルクソン","Bergson","近代",0,0,1,0,1,0,false],
+  ["ガンディー","Gandhi","近代",0,0,0,0,1,0,false],
+  ["アダム・スミス","Adam Smith","近代",0,0,0,1,0,0,false],
+  // 現代
+  ["フッサール","Husserl","現代",1,1,1,1,1,1,false],
+  ["ハイデガー","Heidegger","現代",1,1,1,1,1,1,false],
+  ["サルトル","Sartre","現代",1,1,1,1,1,1,false],
+  ["ボーヴォワール","Beauvoir","現代",1,1,1,1,1,1,false],
+  ["ウィトゲンシュタイン","Wittgenstein","現代",1,1,1,1,1,1,false],
+  ["アーレント","Arendt","現代",1,1,1,1,1,1,false],
+  ["フーコー","Foucault","現代",1,1,1,1,1,1,false],
+  ["デリダ","Derrida","現代",1,1,1,1,1,1,false],
+  ["ロールズ","Rawls","現代",1,0,0,1,1,1,false],
+  ["ラッセル","Russell","現代",1,0,0,1,1,1,false],
+  ["メルロ＝ポンティ","Merleau-Ponty","現代",1,0,0,0,0,1,false],
+  ["ポパー","Popper","現代",1,1,1,1,1,0,false],
+  ["クーン","Kuhn","現代",1,1,1,1,1,0,false],
+  ["クワイン","Quine","現代",1,0,0,0,1,1,false],
+  ["ハーバーマス","Habermas","現代",0,0,1,1,1,1,false],
+  ["レヴィナス","Levinas","現代",0,0,1,1,0,0,false],
+  ["チョムスキー","Chomsky","現代",1,0,1,1,1,1,false],
+  ["デネット","Dennett","現代",1,0,0,0,0,0,false],
+  ["パトナム","Putnam","現代",1,0,0,0,1,0,false],
+  ["フロイト","Freud","現代",0,1,1,1,1,0,false],
+  ["ユング","Jung","現代",0,1,1,1,1,0,false],
+  ["カミュ","Camus","現代",0,1,0,0,1,0,false],
+  ["グラムシ","Gramsci","現代",0,1,1,0,0,0,false],
+  ["ボードリヤール","Baudrillard","現代",0,1,1,0,0,0,false],
+  ["ブルデュー","Bourdieu","現代",0,1,0,0,0,0,false],
+  ["ドゥルーズ","Deleuze","現代",0,1,0,0,0,0,false],
+  ["ベンヤミン","Benjamin","現代",0,0,1,0,0,0,false],
+  ["バトラー","Judith Butler","現代",0,0,1,0,0,0,false],
+  ["サイード","Edward Said","現代",0,0,1,0,0,0,false],
+  ["ジジェク","Žižek","現代",0,0,1,0,0,0,false],
+  ["サンデル","Michael Sandel","現代",0,0,1,0,0,0,false],
+  ["ローティ","Richard Rorty","現代",0,0,0,0,1,0,false],
+  ["デューイ","John Dewey","現代",0,0,0,0,1,0,false],
+  ["フランクル","Viktor Frankl","現代",0,1,0,0,0,0,false],
+  ["カーネマン","Daniel Kahneman","現代",0,1,0,0,0,0,false],
+  // 東洋
+  ["孔子","Confucius","東洋",1,1,1,1,1,1,false],
+  ["老子","Laozi","東洋",1,1,1,1,1,1,false],
+  ["荘子","Zhuangzi","東洋",1,1,1,1,1,1,false],
+  ["孟子","Mencius","東洋",0,0,1,0,1,1,false],
+  ["荀子","Xunzi","東洋",0,0,0,0,1,1,false],
+  ["釈迦","Buddha","東洋",0,0,1,1,1,1,false],
+  ["龍樹","Nāgārjuna","東洋",1,0,1,1,1,1,false],
+  ["道元","Dōgen","東洋",1,0,0,0,0,1,false],
+  ["西田幾多郎","Nishida Kitarō","東洋",1,1,0,1,0,1,false],
+  ["空海","Kūkai","東洋",0,0,1,0,0,1,false],
+  ["和辻哲郎","Watsuji Tetsurō","東洋",1,0,0,0,0,1,false],
+  ["九鬼周造","Kuki Shūzō","東洋",1,0,0,0,0,0,false],
+  ["朱熹","Zhu Xi","東洋",0,0,0,0,1,1,false],
+  ["田辺元","Tanabe Hajime","東洋",0,0,0,0,0,1,false],
+  ["本居宣長","Motoori Norinaga","東洋",0,0,0,0,0,1,false],
+];
+
+function countFor(p){ return p[3]+p[4]+p[5]+p[6]+p[7]+p[8]; }
+function isConsensus(p){ return countFor(p)===6; }
+function isUnique(p){ return countFor(p)===1; }
+
 let currentFilter = 'all';
 let currentAI = null;
 
-function countFor(p) {
-  return p[3]+p[4]+p[5]+p[6]+p[7]+p[8];
-}
+// ===== RENDER =====
+function render(){
+  const wrap = document.getElementById('grid-wrap');
+  wrap.innerHTML = '';
 
-function isUnique(p) {
-  return countFor(p) === 1;
-}
-
-function isConsensus(p) {
-  return countFor(p) === 6;
-}
-
-function renderTable() {
-  tbody.innerHTML = '';
-
-  const eras = ["古代","中世","近世","近代","現代","東洋"];
-  let rowNum = 0;
+  const eras = ['古代','中世','近世','近代','現代','東洋'];
+  let totalShown = 0;
 
   eras.forEach(era => {
     const rows = philosophers.filter(p => {
-      if (p[2] !== era) return false;
-      if (currentFilter === 'unique') return isUnique(p);
-      if (currentFilter === 'consensus') return isConsensus(p);
-      if (currentAI) {
+      if(p[2] !== era) return false;
+      if(currentFilter === 'consensus') return isConsensus(p);
+      if(currentFilter === 'unique')    return isUnique(p);
+      if(currentAI){
         const idx = AI_KEYS.indexOf(currentAI);
-        return p[3 + idx] === 1;
+        return p[3+idx] === 1;
       }
       return true;
     });
+    if(rows.length === 0) return;
 
-    if (rows.length === 0) return;
+    const sec = document.createElement('div');
+    sec.className = 'era-section';
 
-    // section header
-    const sRow = document.createElement('tr');
-    sRow.className = 'section-row';
-    sRow.innerHTML = `<td colspan="11">${era}</td>`;
-    tbody.appendChild(sRow);
+    const header = document.createElement('div');
+    header.className = 'era-header';
+    header.innerHTML = `<span class="era-flower">${ERA_FLOWERS[era]}</span><span class="era-title">${era}</span><div class="era-rule"></div>`;
+    sec.appendChild(header);
 
-    rows.forEach(p => {
-      rowNum++;
-      const count = countFor(p);
-      const unique = isUnique(p);
-      const tr = document.createElement('tr');
-      if (unique) tr.classList.add('unique-row');
+    const grid = document.createElement('div');
+    grid.className = 'era-grid';
 
-      const aiCells = AI_KEYS.map((key, i) => {
-        const has = p[3 + i];
-        if (has) {
-          return `<td class="ai-cell"><span class="check ${key}">${AI_LABELS[i].slice(0,2)}</span></td>`;
-        } else {
-          return `<td class="ai-cell"><span class="check absent">—</span></td>`;
-        }
+    rows.forEach((p, i) => {
+      totalShown++;
+      const card = document.createElement('div');
+      card.className = 'phil-card' + (p[9] ? ' has-lecture' : ' greyed');
+
+      const aiDots = AI_KEYS.map((key,ki) => {
+        const has = p[3+ki];
+        return `<div class="ai-dot${has?'':' absent'}" style="${has?'background:'+AI_COLORS[key]:''}"></div>`;
       }).join('');
 
-      const barW = Math.round((count / 6) * 60);
-
-      tr.innerHTML = `
-        <td class="td-num">${rowNum}</td>
-        <td class="td-name">${p[0]}${unique ? '<span class="unique-badge">独自</span>' : ''}</td>
-        <td class="td-en">${p[1]}</td>
-        <td class="td-era"><span class="era-badge era-${p[2]}">${p[2]}</span></td>
-        ${aiCells}
-        <td class="td-count">
-          <div class="count-bar-wrap">
-            <div class="count-bar" style="width:${barW}px"></div>
-            <span class="count-num">${count}</span>
-          </div>
-        </td>
+      card.innerHTML = `
+        ${p[9] ? '<div class="lecture-badge">🌸</div>' : ''}
+        <div class="phil-num">No.${String(philosophers.indexOf(p)+1).padStart(2,'0')}</div>
+        <div class="phil-name-ja">${p[0]}</div>
+        <div class="phil-name-en">${p[1]}</div>
+        <div class="ai-dots">${aiDots}</div>
       `;
-      tbody.appendChild(tr);
+
+      if(p[9]){
+        card.addEventListener('click', () => openPopup(p));
+      }
+
+      grid.appendChild(card);
     });
+
+    sec.appendChild(grid);
+    wrap.appendChild(sec);
   });
 
-  updateStats();
+  document.getElementById('stat-shown').textContent = totalShown;
+  document.getElementById('stat-consensus').textContent = philosophers.filter(isConsensus).length;
+  document.getElementById('stat-unique').textContent = philosophers.filter(isUnique).length;
 }
 
-function updateStats() {
-  const shown = tbody.querySelectorAll('tr:not(.section-row)').length;
-  document.getElementById('stat-shown').textContent = shown;
-  document.getElementById('stat-consensus').textContent =
-    philosophers.filter(isConsensus).length;
-  document.getElementById('stat-unique').textContent =
-    philosophers.filter(isUnique).length;
-}
+// ===== POPUP =====
+function openPopup(p){
+  const overlay = document.getElementById('popup-overlay');
+  document.getElementById('popup-flower').textContent = ERA_FLOWERS[p[2]] || '🌸';
+  document.getElementById('popup-name').textContent = p[0];
+  document.getElementById('popup-name-en').textContent = p[1];
 
-// filter buttons
-document.querySelectorAll('.btn[data-ai]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.btn[data-ai]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const ai = btn.dataset.ai;
-    currentAI = ai === 'all' ? null : ai;
-    currentFilter = 'all';
-    document.querySelectorAll('.btn[data-filter]').forEach(b => b.classList.remove('active'));
-    renderTable();
+  const btns = document.getElementById('popup-buttons');
+  btns.innerHTML = '';
+
+  AI_KEYS.forEach((key, i) => {
+    const has = p[3+i];
+    if(!has) return;
+    const a = document.createElement('a');
+    a.className = 'ai-lecture-btn';
+    a.href = AI_FILES[key] || '#';
+    a.innerHTML = `
+      <div class="ai-btn-dot" style="background:${AI_COLORS[key]}"></div>
+      <span class="ai-btn-name">${AI_LABELS[i]}の講義</span>
+      <span class="ai-btn-arrow">→</span>
+    `;
+    btns.appendChild(a);
   });
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePopup(){
+  document.getElementById('popup-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('popup-close').addEventListener('click', closePopup);
+document.getElementById('popup-overlay').addEventListener('click', e => {
+  if(e.target === e.currentTarget) closePopup();
 });
 
-document.querySelectorAll('.btn[data-filter]').forEach(btn => {
+// ===== FILTERS =====
+document.querySelectorAll('.fbtn[data-filter]').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.btn[data-filter]').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.btn[data-ai]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentFilter = btn.dataset.filter;
     currentAI = null;
-    renderTable();
+    render();
   });
 });
 
-// Insights
-function buildInsights() {
+document.querySelectorAll('.fbtn[data-ai]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentAI = btn.dataset.ai;
+    currentFilter = 'all';
+    render();
+  });
+});
+
+// ===== INSIGHTS =====
+function buildInsights(){
+  const grid = document.getElementById('insights-grid');
   const consensus = philosophers.filter(isConsensus);
   const uniqueRows = philosophers.filter(isUnique);
 
-  // per-AI unique
-  const aiUniques = AI_KEYS.map((key, i) => ({
-    label: AI_LABELS[i],
-    color: AI_COLORS[key],
-    names: philosophers.filter(p => isUnique(p) && p[3+i] === 1).map(p => p[0])
-  }));
-
-  // most picked
-  const sorted = [...philosophers].sort((a,b) => countFor(b) - countFor(a));
-
-  const grid = document.getElementById('insights-grid');
-
-  // card 1: 全AI一致
   grid.innerHTML += `
     <div class="insight-card">
-      <div class="insight-label">ALL 6 AI 一致選出</div>
-      <div class="insight-value" style="color:var(--claude)">${consensus.length}<span style="font-size:1rem;color:var(--muted)"> 人</span></div>
-      <div class="insight-list">${consensus.map(p=>`<span>${p[0]}</span>`).join(' · ')}</div>
+      <div class="insight-label">🌸 全AI一致</div>
+      <div class="insight-value">${consensus.length}<span style="font-size:1rem;color:var(--warm)"> 人</span></div>
+      <div class="insight-list">${consensus.slice(0,6).map(p=>`<span>${p[0]}</span>`).join(' · ')}…</div>
     </div>`;
 
-  // card 2: 独自選出数
   grid.innerHTML += `
     <div class="insight-card">
-      <div class="insight-label">1つのAIだけが選んだ人物</div>
-      <div class="insight-value" style="color:var(--grok)">${uniqueRows.length}<span style="font-size:1rem;color:var(--muted)"> 人</span></div>
-      <div class="insight-sub">AIごとの個性が最も出る部分</div>
+      <div class="insight-label">🌼 独自選出</div>
+      <div class="insight-value">${uniqueRows.length}<span style="font-size:1rem;color:var(--warm)"> 人</span></div>
+      <div class="insight-sub">1つのAIだけが選んだ人物</div>
     </div>`;
 
-  // card 3-8: per AI unique
-  aiUniques.forEach(ai => {
+  AI_KEYS.forEach((key,i) => {
+    const names = philosophers.filter(p => isUnique(p) && p[3+i]===1).map(p=>p[0]);
     grid.innerHTML += `
       <div class="insight-card">
-        <div class="insight-label">${ai.label} だけが選んだ人物</div>
-        <div class="insight-value" style="color:${ai.color}">${ai.names.length}<span style="font-size:1rem;color:var(--muted)"> 人</span></div>
-        <div class="insight-list">${ai.names.length ? ai.names.map(n=>`<span>${n}</span>`).join('<br>') : '<span style="color:var(--muted)">なし</span>'}</div>
+        <div class="insight-label" style="color:${AI_COLORS[key]}">${AI_LABELS[i]} 独自選出</div>
+        <div class="insight-value" style="color:${AI_COLORS[key]}">${names.length}<span style="font-size:1rem;color:var(--warm)"> 人</span></div>
+        <div class="insight-list">${names.length ? names.map(n=>`<span>${n}</span>`).join('<br>') : '<span style="color:var(--warm)">なし</span>'}</div>
       </div>`;
   });
 
-  // card: 西洋 vs 東洋
-  const western = philosophers.filter(p => !['東洋'].includes(p[2]));
-  const eastern = philosophers.filter(p => p[2] === '東洋');
+  const eastern = philosophers.filter(p=>p[2]==='東洋').length;
+  const western = philosophers.length - eastern;
   grid.innerHTML += `
     <div class="insight-card">
-      <div class="insight-label">西洋 vs 東洋</div>
-      <div class="insight-value">${western.length} <span style="font-size:0.9rem;color:var(--muted)">vs</span> ${eastern.length}</div>
-      <div class="insight-sub">西洋 ${western.length}人 / 東洋 ${eastern.length}人</div>
+      <div class="insight-label">🌷 東洋 vs 西洋</div>
+      <div class="insight-value">${eastern} <span style="font-size:0.9rem;color:var(--warm)">vs</span> ${western}</div>
+      <div class="insight-sub">東洋 ${eastern}人 / 西洋 ${western}人</div>
     </div>`;
 }
 
-renderTable();
+render();
 buildInsights();
 </script>
 </body>
+</html>
