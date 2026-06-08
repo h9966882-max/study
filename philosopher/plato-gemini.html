@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プラトン講義 — Gemini版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&family=Kaisei+Opti:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafbff;
+    --surface: #ffffff;
+    --ink: #1e1e2e;
+    --muted: #8888aa;
+    --border: #e4e6f0;
+    --blue: #4285f4;
+    --blue-light: #e8f0fe;
+    --blue-pale: #f4f7ff;
+    --red: #ea4335;
+    --yellow: #fbbc04;
+    --green: #34a853;
+    --fact: #e8f5e9;
+    --fact-border: rgba(52,168,83,0.3);
+    --interp: #e8f0fe;
+    --interp-border: rgba(66,133,244,0.3);
+    --warm: #fff8e1;
+    --warm-border: rgba(251,188,4,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  /* ===== BACK ===== */
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+
+  .back-link {
+    font-size: 0.78rem;
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--border); }
+  .back-current { font-size: 0.78rem; color: var(--muted); }
+
+  .ai-pill {
+    margin-left: auto;
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .gemini-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .ai-name { font-size: 0.7rem; font-weight: 500; color: var(--muted); margin-left: 4px; letter-spacing: 0.05em; }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%);
+    padding: 4rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .hero-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+  h1 {
+    font-family: 'Kaisei Opti', serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .hero-sub {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-lead {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.92rem;
+    color: #fff;
+    line-height: 1.8;
+    border: 1px solid rgba(255,255,255,0.3);
+    max-width: 600px;
+  }
+
+  /* ===== CONTENT ===== */
+  .content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 2rem 6rem;
+  }
+
+  /* ===== STEP CARD ===== */
+  .step-card {
+    background: var(--surface);
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(66,133,244,0.08);
+    border: 1px solid var(--border);
+  }
+
+  .step-header {
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .step-header.nyumon { background: linear-gradient(90deg, #34a853, #1e8e3e); }
+  .step-header.chukyu { background: linear-gradient(90deg, #fbbc04, #f09300); }
+  .step-header.jokyu  { background: linear-gradient(90deg, #ea4335, #c5221f); }
+
+  .step-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .step-level { font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.8); font-weight: 500; margin-bottom: 0.2rem; }
+  .step-title { font-family: 'Kaisei Opti', serif; font-size: 1.2rem; font-weight: 700; color: #fff; }
+
+  .step-body { padding: 1.5rem; }
+
+  /* fact / interp */
+  .fact-block {
+    background: var(--fact);
+    border: 1px solid var(--fact-border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .interp-block {
+    background: var(--interp);
+    border: 1px solid var(--interp-border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .fact-block .block-label { color: var(--green); }
+  .interp-block .block-label { color: var(--blue); }
+
+  .block-label span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .fact-block .block-label span { background: var(--green); }
+  .interp-block .block-label span { background: var(--blue); }
+
+  .block-text { font-size: 0.88rem; color: #2a2a3e; line-height: 1.85; }
+  .block-text strong { font-weight: 500; }
+
+  /* message box */
+  .message-box {
+    background: var(--warm);
+    border: 1px solid var(--warm-border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1rem;
+    font-size: 0.86rem;
+    color: #5a4500;
+    line-height: 1.8;
+  }
+
+  /* ===== DEEP SECTION ===== */
+  .deep-section {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 16px rgba(66,133,244,0.06);
+  }
+
+  .deep-title {
+    font-family: 'Kaisei Opti', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .deep-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 0.5rem;
+  }
+
+  p.body-text {
+    font-size: 0.9rem;
+    color: #333;
+    margin-bottom: 1rem;
+    line-height: 1.9;
+  }
+
+  /* cave steps */
+  .cave-step {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    align-items: flex-start;
+  }
+
+  .cave-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+  }
+
+  .cave-body { flex: 1; }
+
+  .cave-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--blue);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  .cave-text {
+    font-size: 0.88rem;
+    color: #333;
+    line-height: 1.8;
+  }
+
+  .cave-text strong { font-weight: 500; }
+
+  /* meaning grid */
+  .meaning-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    margin: 1.2rem 0;
+  }
+
+  @media (max-width: 500px) { .meaning-grid { grid-template-columns: 1fr; } }
+
+  .meaning-card {
+    background: var(--blue-pale);
+    border: 1px solid rgba(66,133,244,0.15);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: #2a2a3e;
+  }
+
+  .meaning-eq {
+    font-size: 0.65rem;
+    color: var(--blue);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  /* ===== FOOTER ===== */
+  .foot-nav {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a {
+    font-size: 0.82rem;
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-size: 0.72rem; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2rem; }
+    .content { padding: 1.5rem 1.2rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACK -->
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">プラトン</span>
+  <div class="ai-pill">
+    <div class="gemini-dot" style="background:#4285f4"></div>
+    <div class="gemini-dot" style="background:#34a853"></div>
+    <div class="gemini-dot" style="background:#fbbc04"></div>
+    <div class="gemini-dot" style="background:#ea4335"></div>
+    <span class="ai-name">Gemini</span>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-emoji">🏛️</span>
+    <h1>プラトン<br>白熱教室</h1>
+    <p class="hero-sub">Plato · BC 427–347 · 古代ギリシャ</p>
+    <div class="hero-lead">
+      師ソクラテスの死から始まった問い——「どうすれば正義が行われる社会を作れるのか」をトコトン突き詰めた哲学者。3つのステップでプラトン哲学の核心をのぞいてみよう ☕️🌿
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- 入門 -->
+  <div class="step-card">
+    <div class="step-header nyumon">
+      <span class="step-icon">🟢</span>
+      <div>
+        <div class="step-level">STEP 01 · BEGINNER</div>
+        <div class="step-title">入門：目に見える世界を超えて「イデア論」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          プラトンは、私たちが目で見て触れることができる現実世界のものは、すべて時間とともに変化し、いつかは衰えて消えてしまう（例：枯れてしまう花、いつか崩れる建物）と考えた。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（プラトン流の捉え方）</div>
+        <div class="block-text">
+          現実世界にあるものは、すべて「不完全なコピー」にすぎない。時間の流れる現実世界とは別に、<strong>絶対に変化しない完璧な「本物の姿（イデア）」が存在する世界（イデア界）がどこかにある</strong>。
+        </div>
+      </div>
+      <div class="message-box">
+        💡 例えば、編み物でどんなに綺麗な正方形を編んでも、糸の太さや手加減でほんの少しは歪むよね。でも、私たちの頭の中には「完璧な正方形のイメージ」がちゃんとある。プラトンは、その頭の中にある<strong>「完璧な本物」こそがイデアであり、真実の姿</strong>だと考えたんだ 🧶✨
+      </div>
+    </div>
+  </div>
+
+  <!-- 中級 -->
+  <div class="step-card">
+    <div class="step-header chukyu">
+      <span class="step-icon">🟡</span>
+      <div>
+        <div class="step-level">STEP 02 · INTERMEDIATE</div>
+        <div class="step-title">中級：私たちはかつて知っていた「想起説（アナムネーシス）」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          人間は、生まれてから誰も「完璧な正義」や「完璧な美」を直接見たことがない。それなのに、私たちは「これは美しい」「これは不正だ」と判断することができる。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（プラトン流の捉え方）</div>
+        <div class="block-text">
+          人間の魂は、この肉体に宿って生まれてくる前に、イデア界で本物のイデアを見ていた。生まれるときにそれを忘れてしまったけれど、現実世界で美しいものや不完全な形を見ることで、<strong>魂がかつて見ていたイデアを「思い出している（想起）」</strong>のだ。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 上級 -->
+  <div class="step-card">
+    <div class="step-header jokyu">
+      <span class="step-icon">🔴</span>
+      <div>
+        <div class="step-level">STEP 03 · ADVANCED</div>
+        <div class="step-title">上級：理想の国家をデザインする「哲人政治」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          プラトンは、当時のアテナイの民主政治（多数決）が衆愚政治に陥り、もっとも正しい人間であったソクラテスを死刑にしたのを目の当たりにした。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（プラトン流の捉え方）</div>
+        <div class="block-text">
+          国家を導くべきなのは、感情や利害関係に振り回される大衆ではない。<strong>イデア界にある「善のイデア」を認識できる知恵を持った哲学者（または哲学を身につけた王）が統治するべきだ（哲人政治）</strong>。そうして初めて、国家に「正義」が実現する。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 深掘り：洞窟の比喩 -->
+  <div class="deep-section">
+    <h2 class="deep-title">🔍 深掘りコーナー：洞窟の比喩</h2>
+
+    <p class="body-text">哲学の歴史のなかで最も有名な比喩のひとつ——『国家』の中で語られた、ちょっとゾクッとするお話。</p>
+
+    <div class="cave-step">
+      <div class="cave-icon">🕯️</div>
+      <div class="cave-body">
+        <div class="cave-label">囚人たちの世界</div>
+        <div class="cave-text">地下の洞窟に、子供の頃からずっと後ろを振り向けないように縛られている囚人たち。後ろで火が燃えていて、壁に人形の影が映し出される。生まれたときから壁の「影」しか見ていないから、<strong>「影こそが本物の世界だ」</strong>と信じ込んでいる。</div>
+      </div>
+    </div>
+
+    <div class="cave-step">
+      <div class="cave-icon">🚶</div>
+      <div class="cave-body">
+        <div class="cave-label">ある囚人の解放（哲学の始まり）</div>
+        <div class="cave-text">一人の囚人が紐を解かれ、後ろを振り向く。眩しい光に目を細めながら、今まで信じていたものがただの影と気づく。さらに洞窟の外へ。目が慣れると、本物の植物、動物、そして万物を照らす太陽そのものを見る。</div>
+      </div>
+    </div>
+
+    <div class="cave-step">
+      <div class="cave-icon">🔄</div>
+      <div class="cave-body">
+        <div class="cave-label">洞窟への帰還</div>
+        <div class="cave-text">「みんなに本物の世界を伝えなきゃ！」と洞窟に戻るが、囚人仲間には言葉が理解できない。「頭がおかしくなったんだ」と笑い、彼を殺そうとさえする。</div>
+      </div>
+    </div>
+
+    <p class="body-text" style="margin-top:1.5rem">この比喩が意味すること：</p>
+
+    <div class="meaning-grid">
+      <div class="meaning-card">
+        <div class="meaning-eq">洞窟の壁に映る影 ＝</div>
+        私たちが五感で捉えている「現実世界（不完全なコピー）」
+      </div>
+      <div class="meaning-card">
+        <div class="meaning-eq">洞窟の外の本物の世界 ＝</div>
+        「イデア界（真実の世界）」
+      </div>
+      <div class="meaning-card">
+        <div class="meaning-eq">外に出て太陽を見た囚人 ＝</div>
+        真理を悟った「哲学者（ソクラテス）」
+      </div>
+      <div class="meaning-card">
+        <div class="meaning-eq">戻ってきた彼を拒絶する囚人たち ＝</div>
+        ソクラテスを処刑した「アテナイの市民たち」
+      </div>
+    </div>
+
+    <div class="message-box">
+      ☀️ プラトンは、私たちが「これが現実だ」と信じている日常の景色が、実はイデアの薄暗い影にすぎないかもしれないと警告した。眩しさに耐えながらも「本物（イデア）」を見ようと視点を変えることこそが、哲学（愛知）の本質なんだよ。
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Gemini講義 · Plato · BC 427–347</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
