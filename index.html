@@ -485,6 +485,63 @@
     opacity: 0.6;
   }
 
+  /* 総括ボタン */
+  .summary-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem 1.1rem;
+    border: 1.5px solid var(--dahlia);
+    border-radius: 10px;
+    background: var(--dahlia-light);
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--dahlia);
+    transition: all 0.2s ease;
+    margin-bottom: 0.8rem;
+  }
+
+  .summary-btn:hover {
+    background: var(--dahlia);
+    color: #fff;
+    transform: translateX(3px);
+  }
+
+  .summary-btn-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+  .summary-btn-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    flex: 1;
+  }
+
+  .summary-btn-sub {
+    font-size: 0.68rem;
+    opacity: 0.7;
+    display: block;
+    letter-spacing: 0.05em;
+  }
+
+  .popup-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.2rem 0 0.8rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+  }
+
+  .popup-divider::before, .popup-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
   .popup-close {
     width: 100%;
     padding: 0.7rem;
@@ -945,6 +1002,11 @@ function render(){
 }
 
 // ===== POPUP =====
+// 哲学者ごとの総括ページファイル名
+const SUMMARY_FILES = {
+  'ソクラテス': 'socrates-summary.html',
+};
+
 function openPopup(p){
   const overlay = document.getElementById('popup-overlay');
   document.getElementById('popup-flower').textContent = ERA_FLOWERS[p[2]] || '🌸';
@@ -953,6 +1015,28 @@ function openPopup(p){
 
   const btns = document.getElementById('popup-buttons');
   btns.innerHTML = '';
+
+  // 総括ページがあれば最上部に表示
+  const summaryFile = SUMMARY_FILES[p[0]];
+  if(summaryFile){
+    const summary = document.createElement('a');
+    summary.className = 'summary-btn';
+    summary.href = summaryFile;
+    summary.innerHTML = `
+      <span class="summary-btn-icon">🌸</span>
+      <span class="summary-btn-text">
+        6AI総括講義
+        <span class="summary-btn-sub">全AIの内容をまとめて読む</span>
+      </span>
+      <span class="ai-btn-arrow">→</span>
+    `;
+    btns.appendChild(summary);
+
+    const divider = document.createElement('div');
+    divider.className = 'popup-divider';
+    divider.textContent = 'または AI別に読む';
+    btns.appendChild(divider);
+  }
 
   AI_KEYS.forEach((key, i) => {
     const has = p[3+i];
