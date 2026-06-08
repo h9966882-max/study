@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ソクラテス講義 — Grok版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --ink: #e8e8e8;
+    --muted: #666;
+    --border: #2a2a2a;
+    --red: #e04444;
+    --red-dim: rgba(224,68,68,0.12);
+    --red-border: rgba(224,68,68,0.25);
+    --fact-bg: rgba(255,255,255,0.04);
+    --fact-border: rgba(255,255,255,0.1);
+    --interp-bg: rgba(224,68,68,0.06);
+    --interp-border: rgba(224,68,68,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  /* ===== BACK ===== */
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .back-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--red);
+    text-decoration: none;
+    transition: opacity 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--border); }
+  .back-current { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); }
+
+  .ai-pill {
+    margin-left: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    border: 1px solid var(--red-border);
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 4rem 2rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: 'SOCRATES';
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(4rem, 12vw, 8rem);
+    color: rgba(224,68,68,0.05);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .hero-inner {
+    max-width: 760px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-en {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 2rem;
+  }
+
+  .hero-quote {
+    border-left: 2px solid var(--red);
+    padding: 0.8rem 1.2rem;
+    font-family: 'Space Mono', monospace;
+    font-style: italic;
+    font-size: 0.8rem;
+    color: rgba(232,232,232,0.7);
+    line-height: 1.8;
+    max-width: 560px;
+    margin-bottom: 1.5rem;
+  }
+
+  .level-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .level-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ===== CONTENT ===== */
+  .content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 2rem 6rem;
+  }
+
+  /* ===== LEVEL ===== */
+  .level-block {
+    margin-bottom: 3.5rem;
+  }
+
+  .level-num-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .level-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--red);
+    line-height: 1;
+    opacity: 0.4;
+  }
+
+  .level-info {}
+
+  .level-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+    margin-bottom: 0.2rem;
+  }
+
+  .level-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* ===== FACT / INTERP ===== */
+  .fact-block {
+    background: var(--fact-bg);
+    border: 1px solid var(--fact-border);
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .interp-block {
+    background: var(--interp-bg);
+    border: 1px solid var(--interp-border);
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .fact-block .block-label { color: rgba(255,255,255,0.4); }
+  .interp-block .block-label { color: var(--red); }
+
+  .block-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.3;
+  }
+
+  ul.mono-list {
+    list-style: none;
+  }
+
+  ul.mono-list li {
+    font-size: 0.87rem;
+    color: rgba(232,232,232,0.8);
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 0.8rem;
+    line-height: 1.75;
+  }
+
+  ul.mono-list li:last-child { border-bottom: none; }
+
+  ul.mono-list li::before {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+
+  .fact-block ul.mono-list li::before {
+    content: '//';
+    color: rgba(255,255,255,0.2);
+  }
+
+  .interp-block ul.mono-list li::before {
+    content: '→';
+    color: var(--red);
+  }
+
+  .block-text {
+    font-size: 0.87rem;
+    color: rgba(232,232,232,0.8);
+    line-height: 1.85;
+  }
+
+  .block-text strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ===== DEEP ===== */
+  .deep-section {
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .deep-head {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .deep-head-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--red);
+  }
+
+  .deep-head-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .deep-body { padding: 1.5rem; }
+
+  .deep-theme {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* insight rows */
+  .insight-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.87rem;
+  }
+
+  .insight-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .insight-key {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--red);
+    letter-spacing: 0.08em;
+    padding-top: 0.15rem;
+    line-height: 1.6;
+  }
+
+  .insight-val {
+    color: rgba(232,232,232,0.8);
+    line-height: 1.8;
+  }
+
+  .insight-val strong { color: var(--ink); font-weight: 500; }
+
+  /* modern */
+  .modern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  .modern-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 0.9rem 1rem;
+    font-size: 0.8rem;
+    color: rgba(232,232,232,0.7);
+    line-height: 1.6;
+  }
+
+  .modern-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.4rem;
+  }
+
+  /* refs */
+  .ref-box {
+    margin-top: 1.5rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 1.2rem 1.5rem;
+  }
+
+  .ref-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+
+  .ref-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .ref-list li {
+    font-size: 0.8rem;
+    color: rgba(232,232,232,0.5);
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .ref-list li::before {
+    font-family: 'Space Mono', monospace;
+    content: '—';
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* closing quote */
+  .closing-quote {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    background: var(--red-dim);
+    border: 1px solid var(--red-border);
+    font-family: 'Space Mono', monospace;
+    font-style: italic;
+    font-size: 0.78rem;
+    color: rgba(224,68,68,0.9);
+    line-height: 1.9;
+    text-align: center;
+  }
+
+  /* ===== FOOTER ===== */
+  .foot-nav {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--red);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .foot-nav a:hover { opacity: 0.6; }
+
+  .foot-center {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2.5rem; }
+    .content { padding: 1.5rem 1.2rem 4rem; }
+    .insight-row { grid-template-columns: 1fr; gap: 0.3rem; }
+    .insight-key { padding-top: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACK -->
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">ソクラテス</span>
+  <span class="ai-pill">GROK</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">PHILOSOPHER · ANCIENT ATHENS · BC 469–399</div>
+    <h1>ソクラテス<br>の講義</h1>
+    <p class="hero-en">Socrates — lecture in 3 levels</p>
+    <div class="hero-quote">
+      「君は本当に正義を知っていると言うのか？<br>ではその定義を聞かせてくれ。」
+    </div>
+    <div class="level-pills">
+      <span class="level-pill">01 · 入門</span>
+      <span class="level-pill">02 · 中級</span>
+      <span class="level-pill">03 · 上級</span>
+      <span class="level-pill">++ 深掘り</span>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- 01 入門 -->
+  <div class="level-block" id="nyumon">
+    <div class="level-num-header">
+      <div class="level-num">01</div>
+      <div class="level-info">
+        <div class="level-badge">BEGINNER</div>
+        <div class="level-title">入門レベル：ソクラテスって誰？</div>
+      </div>
+    </div>
+
+    <div class="fact-block">
+      <div class="block-label">FACT</div>
+      <ul class="mono-list">
+        <li>紀元前469年頃アテナイ生まれ、399年没。享年70歳前後。石工（彫刻家）の息子で、軍人経験もある（ペロポネソス戦争）</li>
+        <li>自身は何も著作を残さず。プラトン、クセノポン、アリストファネスの記録を通じて知られる</li>
+        <li>「若者を腐敗させ、神々を敬わない」という罪で裁判にかけられ、有罪。自ら毒杯（ヘムロック）を飲んで処刑された</li>
+      </ul>
+    </div>
+
+    <div class="interp-block">
+      <div class="block-label">INTERPRETATION</div>
+      <div class="block-text">
+        ソクラテスは「知を愛する者（philosopher）」の象徴。日常の常識を疑い、「無知の自覚」を起点に真実を探求する姿勢が、後の西洋哲学の基礎となった。「私は何も知らない」という言葉は、謙虚さと探究心の両方を表している。
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 中級 -->
+  <div class="level-block" id="chukyu">
+    <div class="level-num-header">
+      <div class="level-num">02</div>
+      <div class="level-info">
+        <div class="level-badge">INTERMEDIATE</div>
+        <div class="level-title">中級レベル：ソクラテスの思想と方法</div>
+      </div>
+    </div>
+
+    <div class="fact-block">
+      <div class="block-label">FACT</div>
+      <ul class="mono-list">
+        <li>ソクラテス的対話法（弁証法 / Elenchus）：相手の意見を引き出し、矛盾を指摘することで定義を精緻化する。プラトンの対話篇（『饗宴』『弁明』『クリトン』『パイドン』）に多数記録されている</li>
+        <li>倫理的探求に集中：「善とは何か」「正義とは何か」「勇気とは何か」——徳（arete）の本質を問い続けた</li>
+        <li>死刑執行時、逃亡を勧められたが「法を守る」ことを選び毒を飲んだ（プラトン『クリトン』）</li>
+      </ul>
+    </div>
+
+    <div class="interp-block">
+      <div class="block-label">INTERPRETATION</div>
+      <ul class="mono-list">
+        <li>ソクラテス的対話法は単なる議論術ではなく、自己反省と倫理的向上のツール。現代の教育（Socratic seminar）・法廷弁論・心理療法にも影響を与えている</li>
+        <li>「悪は無知から生まれる」——知識と道徳を結びつける知的楽観主義として解釈される。一方で相対主義・懐疑主義の危険性も指摘される</li>
+        <li>彼の死は「民主制の多数決の暴走」の象徴として、J.S.ミルやニーチェに繰り返し議論された</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 03 上級 -->
+  <div class="level-block" id="jokyu">
+    <div class="level-num-header">
+      <div class="level-num">03</div>
+      <div class="level-info">
+        <div class="level-badge">ADVANCED</div>
+        <div class="level-title">上級レベル：歴史的位置と影響</div>
+      </div>
+    </div>
+
+    <div class="fact-block">
+      <div class="block-label">FACT</div>
+      <ul class="mono-list">
+        <li>前5世紀のアテナイ黄金期（ペリクレス時代）から衰退期（ペロポネソス戦争敗北後）に生きた。ソフィストたちと同時代で、彼らを批判した</li>
+        <li>プラトンはソクラテスを理想化して描き、クセノポンはより実務的・道徳的なソクラテス像を残した</li>
+        <li>裁判の背景には政治的報復の要素もあったとされる（民主派の敵対者と親交があった）</li>
+      </ul>
+    </div>
+
+    <div class="interp-block">
+      <div class="block-label">INTERPRETATION</div>
+      <ul class="mono-list">
+        <li>「ソクラテスの問題」——本物のソクラテス像と、プラトンによる文学的創作をどう区別するか。プラトン中期以降の対話篇では、ソクラテスはプラトンの思想の代弁者になっている</li>
+        <li>反知性主義への警鐘。知識を軽視する社会が結局は不正や不幸を生むという警告</li>
+        <li>キルケゴール・ハイデッガーらの実存主義者が「生き方としての哲学」に注目。ニーチェは「理性の専制」として批判しつつも影響を受けた</li>
+        <li>現代的意義：ポスト真実時代における「対話の重要性」、AI時代における「人間的な問い直し」のモデルとして再評価されている</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 深掘り -->
+  <div class="deep-section">
+    <div class="deep-head">
+      <span class="deep-head-label">DEEP DIVE</span>
+      <span class="deep-head-title">「無知の知」と現代の意味</span>
+    </div>
+    <div class="deep-body">
+      <div class="deep-theme">THEME // ソクラテスの「無知の知」を現代に接続する</div>
+
+      <div class="insight-row">
+        <div class="insight-key">FACT BASE</div>
+        <div class="insight-val">ソクラテスはデルフォイの神殿の神託で「最も賢い者はソクラテス」と宣告された。「自分が何も知らない」ことを自覚したからこそ賢いのだと解釈した（プラトン『弁明』）。</div>
+      </div>
+
+      <div class="insight-row">
+        <div class="insight-key">DEEP INTERP</div>
+        <div class="insight-val"><strong>認識論的転回</strong>——単なる謙虚さではない。絶対的な知識を装うソフィストに対して、限界を自覚した上での探究を提示した点が革新的。</div>
+      </div>
+
+      <div class="insight-row">
+        <div class="insight-key">MODERN<br>IMPLICATIONS</div>
+        <div class="insight-val">
+          <div class="modern-grid">
+            <div class="modern-card">
+              <div class="modern-card-label">SNS / 情報過多</div>
+              専門家至上主義や「確信の氾濫」に対して、「私は知らない」と言い直す勇気
+            </div>
+            <div class="modern-card">
+              <div class="modern-card-label">認知科学</div>
+              メタ認知（自分の思考を考える能力）の重要性と重なる
+            </div>
+            <div class="modern-card">
+              <div class="modern-card-label">倫理</div>
+              「善い生き方」を知らないまま生きることを拒否した姿勢——意味の喪失への処方箋
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ref-box">
+        <div class="ref-title">REFERENCES // さらに深く知りたい人へ</div>
+        <ul class="ref-list">
+          <li>一次資料：プラトン『ソクラテスの弁明』『クリトン』（短くておすすめ）</li>
+          <li>二次文献：『ソクラテス』（G. Vlastos）</li>
+          <li>『哲学の歴史』（コプルストン）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="closing-quote">
+    「君は本当に正義を知っていると言うのか？<br>
+    ではその定義を聞かせてくれ。」<br>
+    <span style="font-size:0.65rem;opacity:0.6;display:block;margin-top:0.5rem">— ソクラテス風</span>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Grok講義 · Socrates · BC 469–399</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
