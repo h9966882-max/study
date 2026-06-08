@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プラトン — 哲学者講義</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --sepia: #3d2b1f;
+    --warm: #8b6b4a;
+    --gold: #c9a84c;
+    --parchment: #f5f0e8;
+    --cream: #faf7f2;
+    --rule: #d4c4a8;
+    --accent: #6b3a2a;
+    --claude: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  /* ===== BACK ===== */
+  .back-bar {
+    padding: 0.9rem 2rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--parchment);
+  }
+
+  .back-link {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--sepia); }
+  .back-sep { color: var(--rule); font-size: 0.7rem; }
+  .back-current { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--sepia); }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    padding: 5rem 2rem 4rem;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero::before {
+    content: 'ΠΛΑΤΩΝ';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 15vw, 10rem);
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: rgba(201,168,76,0.07);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .hero-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    color: var(--sepia);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-name-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    font-weight: 300;
+    color: var(--warm);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-dates {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--warm);
+    letter-spacing: 0.2em;
+    margin-bottom: 2rem;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--gold);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.5em;
+    margin-bottom: 2rem;
+  }
+  .ornament::before, .ornament::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
+
+  .hero-lead {
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 1rem;
+    color: var(--sepia);
+    opacity: 0.85;
+    line-height: 2;
+  }
+
+  /* ===== TOC ===== */
+  .toc {
+    max-width: 760px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+  }
+
+  .toc-inner {
+    border: 1px solid var(--rule);
+    padding: 1.5rem 2rem;
+    background: var(--parchment);
+  }
+
+  .toc-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { border-top: 1px solid var(--rule); padding: 0.5rem 0; }
+  .toc-list li:first-child { border-top: none; }
+  .toc-list a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--accent); }
+  .toc-level {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    padding: 0.1rem 0.35rem;
+    border: 1px solid rgba(201,168,76,0.3);
+    white-space: nowrap;
+  }
+
+  /* ===== CONTENT ===== */
+  .content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  .section {
+    margin-bottom: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-level {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--sepia);
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--sepia);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--rule);
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+    color: var(--ink);
+    opacity: 0.9;
+  }
+
+  /* pull quote */
+  .pull-quote {
+    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    border-left: 3px solid var(--gold);
+    background: var(--parchment);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--sepia);
+    line-height: 1.8;
+  }
+
+  /* table */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.88rem;
+  }
+  .styled-table th {
+    background: var(--sepia);
+    color: var(--cream);
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+  }
+  .styled-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--sepia);
+    line-height: 1.7;
+  }
+  .styled-table tr:nth-child(even) td { background: var(--parchment); }
+
+  /* allegory box */
+  .allegory-box {
+    margin: 2rem 0;
+    border: 1px solid var(--rule);
+    background: var(--parchment);
+    overflow: hidden;
+  }
+
+  .allegory-head {
+    background: var(--sepia);
+    color: var(--cream);
+    padding: 0.6rem 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .allegory-body { padding: 1.3rem 1.5rem; }
+
+  .allegory-step {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.9rem;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    line-height: 1.75;
+    align-items: flex-start;
+  }
+  .allegory-step:last-child { margin-bottom: 0; }
+
+  .allegory-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  .allegory-map {
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.82rem;
+    color: var(--warm);
+  }
+
+  .allegory-map-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .map-eq {
+    color: var(--gold);
+    font-size: 0.75rem;
+  }
+
+  /* insight box */
+  .insight-box {
+    margin: 2rem 0;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 1.5rem 1.8rem;
+    position: relative;
+    background: rgba(201,168,76,0.03);
+  }
+
+  .insight-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--cream);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .insight-box p { margin-bottom: 0.8rem; }
+  .insight-box p:last-child { margin-bottom: 0; }
+
+  /* critique box */
+  .critique-box {
+    margin: 2rem 0;
+    border: 1px solid rgba(107,58,42,0.3);
+    padding: 1.5rem 1.8rem;
+    position: relative;
+    background: rgba(107,58,42,0.03);
+  }
+
+  .critique-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--cream);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .critique-box p { margin-bottom: 0.8rem; }
+  .critique-box p:last-child { margin-bottom: 0; }
+
+  /* resonance */
+  .resonance-box {
+    margin: 2rem 0;
+    border-left: 3px solid var(--accent);
+    padding: 1.3rem 1.5rem;
+    background: rgba(107,58,42,0.04);
+  }
+
+  .resonance-box p { margin-bottom: 0.8rem; }
+  .resonance-box p:last-child { margin-bottom: 0; }
+
+  /* ===== FOOT NAV ===== */
+  .foot-nav {
+    border-top: 1px solid var(--rule);
+    padding: 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    color: var(--warm);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .foot-nav a:hover { color: var(--sepia); }
+
+  .foot-center {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--rule);
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 3.5rem 1.5rem 3rem; }
+    .content { padding: 0 1.2rem 4rem; }
+    .toc { padding: 0 1.2rem; }
+    .pull-quote { padding: 1.2rem 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACK -->
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">プラトン</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-tag">Philosopher · No.02</p>
+    <h1 class="hero-name">プラトン</h1>
+    <p class="hero-name-en">Plato</p>
+    <p class="hero-dates">紀元前 427 — 347</p>
+    <div class="ornament">✦</div>
+    <p class="hero-lead">
+      師の死が問いの始まりだった。<br>
+      「正しい人間が不正な社会によって殺される。ならば、正しい社会とは何か？」<br>
+      ——その問いが、西洋哲学の土台となった。
+    </p>
+  </div>
+</div>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-inner">
+    <p class="toc-title">Contents</p>
+    <ul class="toc-list">
+      <li><a href="#intro"><span class="toc-level">入門</span>プラトンって何者？</a></li>
+      <li><a href="#idea"><span class="toc-level">中級</span>イデア論——本物と影の世界</a></li>
+      <li><a href="#cave"><span class="toc-level">中級</span>洞窟の比喩</a></li>
+      <li><a href="#soul"><span class="toc-level">中級</span>魂論と想起説</a></li>
+      <li><a href="#politics"><span class="toc-level">上級</span>哲人王という理想</a></li>
+      <li><a href="#selfcritique"><span class="toc-level">上級</span>イデア論の自己批判</a></li>
+      <li><a href="#deep"><span class="toc-level">深掘り</span>書かれざる教説</a></li>
+      <li><a href="#resonance"><span class="toc-level">考察</span>イデアは名詞か、運動か</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- 入門 -->
+  <section class="section" id="intro">
+    <span class="section-level">入門</span>
+    <h2 class="section-title">プラトンって何者？</h2>
+
+    <p>紀元前427〜347年、アテネ生まれ。名前の由来は「広い（プラテュス）」——肩幅が広かったからとも、額が広かったからとも言われる。本名はアリストクレス。貴族の家系で、若い頃は詩人か政治家になるつもりだった。</p>
+
+    <h3>転換点：ソクラテスとの出会い</h3>
+
+    <p>20歳前後でソクラテスに魅了され、弟子になった。そして28歳のとき、師が死刑にされるのを目の当たりにした。</p>
+
+    <div class="pull-quote">
+      「正しい人間が、不正な社会によって殺される。<br>
+      ならば、正しい社会とは何か？正義とは何か？」
+    </div>
+
+    <p>この体験がプラトンの全哲学の出発点だ、と言ってもいい。この問いが彼を生涯突き動かした。</p>
+
+    <p>40歳頃、アテネにアカデメイアを創設。西洋最初の高等教育機関で、約900年続いた。</p>
+  </section>
+
+  <!-- イデア論 -->
+  <section class="section" id="idea">
+    <span class="section-level">中級</span>
+    <h2 class="section-title">イデア論——本物と影の世界</h2>
+
+    <p>プラトン哲学の中心はイデア論。まずここを丁寧に見ていく。</p>
+
+    <h3>出発点：「美しいもの」は変わる。「美しさ」は変わるか？</h3>
+
+    <p>美しい花は枯れる。美しい人は老いる。では「美しさそのもの」は？</p>
+
+    <p>プラトンはこう考えた——私たちが感覚で知覚するものはすべて、生成・変化・消滅する。しかし、それらが「美しい」「丸い」「正義だ」と判断されるとき、その基準となる完全な型（イデア）が別の次元に存在している。</p>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>感覚世界（現象界）</th><th>イデア界</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>変化する・不完全</td><td>永遠・完全</td></tr>
+        <tr><td>影・コピー</td><td>本物・原型</td></tr>
+        <tr><td>目で見える</td><td>理性で把握する</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 洞窟の比喩 -->
+  <section class="section" id="cave">
+    <span class="section-level">中級</span>
+    <h2 class="section-title">洞窟の比喩</h2>
+
+    <p>イデア論を最もわかりやすく説明している比喩。プラトン『国家』第7巻より。</p>
+
+    <div class="allegory-box">
+      <div class="allegory-head">洞窟の比喩 — 物語の構造</div>
+      <div class="allegory-body">
+        <div class="allegory-step">
+          <span class="allegory-icon">🕯️</span>
+          <div>洞窟の中に生まれてから鎖でつながれている人々がいる。壁しか見えない。背後では人形が動かされ、火がその影を壁に映している。囚人たちは「影が現実だ」と思っている。</div>
+        </div>
+        <div class="allegory-step">
+          <span class="allegory-icon">🚶</span>
+          <div>ある囚人が鎖を解かれ、外に出る。最初は太陽の光で何も見えない。やがて目が慣れると——本物の木、山、空、太陽が見える。</div>
+        </div>
+        <div class="allegory-step">
+          <span class="allegory-icon">🔄</span>
+          <div>洞窟に戻り「影は本物じゃない」と伝えると、仲間たちは信じない。笑う。殺そうとする。</div>
+        </div>
+        <div class="allegory-map">
+          <div class="allegory-map-row"><span>洞窟</span><span class="map-eq">＝</span><span>感覚の世界</span></div>
+          <div class="allegory-map-row"><span>太陽</span><span class="map-eq">＝</span><span>善のイデア（最高のイデア）</span></div>
+          <div class="allegory-map-row"><span>外に出た囚人</span><span class="map-eq">＝</span><span>哲学者</span></div>
+          <div class="allegory-map-row"><span>殺されかけた囚人</span><span class="map-eq">＝</span><span>ソクラテス</span></div>
+        </div>
+      </div>
+    </div>
+
+    <p>洞窟に戻り仲間に真実を伝えようとして殺されかけた——その哲学者とはソクラテスのことだ。プラトンはこの比喩に、師の死への応答を刻み込んだ。</p>
+  </section>
+
+  <!-- 魂論 -->
+  <section class="section" id="soul">
+    <span class="section-level">中級</span>
+    <h2 class="section-title">魂論と想起説</h2>
+
+    <p>イデア論には必然的な問いが伴う：「なぜ人間はイデアを知れるのか？」</p>
+
+    <p>プラトンの答え：魂はかつてイデア界にいた。生まれる前に完全な「美しさ」「正義」「数」を知っていた。肉体に宿った瞬間、忘れた。</p>
+
+    <div class="pull-quote">
+      学ぶとは新しく知ることではなく、思い出すこと（アナムネーシス）。
+    </div>
+
+    <div class="insight-box" data-label="重要な含意">
+      <p>「教える」ことはできない——正確には、思い出すきっかけを与えることしかできない。</p>
+      <p>これがソクラテスの問答法を理論的に基礎づけている。なぜソクラテスは「教えない」のか。魂の中にすでに真理があるからだ。</p>
+    </div>
+  </section>
+
+  <!-- 政治哲学 -->
+  <section class="section" id="politics">
+    <span class="section-level">上級</span>
+    <h2 class="section-title">哲人王という理想</h2>
+
+    <p>『国家』でプラトンは問う——「正義とは何か」。そして正義を個人の魂だけでなく、国家の構造として論じる。</p>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>魂の部分</th><th>徳</th><th>国家の階層</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>理性</td><td>知恵</td><td>哲学者（支配者）</td></tr>
+        <tr><td>気概</td><td>勇気</td><td>戦士（守護者）</td></tr>
+        <tr><td>欲望</td><td>節制</td><td>生産者（農工商）</td></tr>
+      </tbody>
+    </table>
+
+    <p>正義＝それぞれが自分の役割を果たし、全体が調和している状態。そして支配者は哲人王でなければならない——善のイデアを知る者だけが、正しく統治できる。</p>
+
+    <div class="critique-box" data-label="歴史的事実">
+      <p>プラトン自身、この理想を実現しようとシケリア（シチリア）に3度渡った。ディオニュシオス2世を哲人王に育てようとした。3度とも失敗し、2度目は奴隷として売られかけた。</p>
+      <p>理念と現実の落差を、彼は自分の人生で体験した。</p>
+    </div>
+  </section>
+
+  <!-- 自己批判 -->
+  <section class="section" id="selfcritique">
+    <span class="section-level">上級</span>
+    <h2 class="section-title">イデア論の自己批判</h2>
+
+    <p>ここが入門・中級では語られない重要な部分だ。『パルメニデス』という対話篇で、プラトンは——自分のイデア論を自分で徹底的に批判する。</p>
+
+    <div class="insight-box" data-label="第三者論法（サード・マン問題）">
+      <p>「美しいもの」が「美のイデア」に似ているとするなら、その「似ている」という関係をつなぐ第三のイデアが必要では？そしてまたそれをつなぐ第四の……無限後退する。</p>
+      <p>これはプラトン自身が提示した批判。彼は答えを出せていない。</p>
+    </div>
+
+    <p>後期の著作（『ティマイオス』『法律』）では、イデアの位置づけが変化し、より複雑な宇宙論・数論に向かっていく。哲人王への楽観的な確信も薄れ、より現実的な「次善の法治国家」へと着地していく。</p>
+
+    <div class="pull-quote">
+      プラトンは完成した体系を持つ哲学者ではなく、<br>
+      自分の思想と格闘し続けた思想家だった。
+    </div>
+  </section>
+
+  <!-- 深掘り -->
+  <section class="section" id="deep">
+    <span class="section-level">深掘り</span>
+    <h2 class="section-title">「書かれざる教説」問題</h2>
+
+    <p>プラトンには著作が大量に残っている——のに、弟子のアリストテレスが「プラトンは口頭でこんなことを言っていた」と記録していることが、著作に出てこない。これが「アグラファ・ドグマタ（書かれざる教説）」問題。</p>
+
+    <p>テュービンゲン学派は「プラトンの本当の哲学は著作ではなく、アカデメイアでの口頭伝授にあった」と主張する。反論も多いが、決着はついていない。</p>
+
+    <div class="pull-quote">
+      「本当に価値ある哲学的真理は、文字には書けない。<br>
+      火花のように魂から魂へと飛び移るものだ」<br>
+      <span style="font-size:0.8rem;opacity:0.7">——プラトン『第七書簡』</span>
+    </div>
+
+    <p>著作だけがプラトンではないかもしれない——というのは、事実として真剣に受け取る必要がある。</p>
+  </section>
+
+  <!-- 考察 -->
+  <section class="section" id="resonance">
+    <span class="section-level">考察</span>
+    <h2 class="section-title">イデアは名詞か、運動か</h2>
+
+    <p>プラトンのイデア論は一見、固定された名詞的存在（完全な型）を想定しているように見える。「美のイデア」は永遠で不変だ、と。</p>
+
+    <div class="resonance-box">
+      <p>でも想起説（アナムネーシス）の構造に注目すると——イデアは「思い出す運動」の中でしか現れない。完成形として与えられるのではなく、問い続けることによってしか近づけない。</p>
+      <p>そうすると「善のイデア」も、到達すべき終点ではなく、近づこうとする運動の方向性として機能している——とも読める。</p>
+      <p>プラトンのイデアは「名詞」に見えて、実は「運動の場」なのかもしれない。後期に体系が揺らいだのも、その証左として読むと面白くなる。</p>
+    </div>
+
+    <div class="insight-box" data-label="価値観との接点">
+      <p>「価値観は固定された名詞ではなく動詞的なプロセスだ」という問いと、プラトンのイデア論は構造的に響き合う。</p>
+      <p>問い続けることそのものが——イデアへの接近であり、自己形成の運動だとしたら。それはソクラテスの問答法とも、プラトンの想起説とも、つながっている。</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOT NAV -->
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Plato · BC 427–347</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
