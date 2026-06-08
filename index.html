@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5つのAIが選んだ哲学者50選 比較</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0f;
+    --surface: #161618;
+    --border: #2a2a2e;
+    --text: #e8e6e0;
+    --muted: #7a7870;
+    --claude:   #c9a84c;
+    --chatgpt:  #10a37f;
+    --gemini:   #4285f4;
+    --copilot:  #0078d4;
+    --grok:     #e04444;
+    --spark:    #9b59b6;
+    --all:      #e8e6e0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* ========== HEADER ========== */
+  header {
+    padding: 3.5rem 2rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '哲学';
+    position: absolute;
+    right: -1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Shippori Mincho', serif;
+    font-size: 12rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.02);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .header-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+  }
+
+  h1 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(1.6rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 span {
+    color: var(--claude);
+  }
+
+  .header-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 1rem;
+  }
+
+  /* ========== AI LEGEND ========== */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1.2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ========== CONTROLS ========== */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(14,14,15,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 2rem;
+  }
+
+  .controls-inner {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .ctrl-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-right: 0.4rem;
+    font-family: 'Bebas Neue', sans-serif;
+  }
+
+  .btn {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .btn:hover { border-color: #555; color: var(--text); }
+  .btn.active { color: var(--bg); border-color: transparent; }
+
+  .btn[data-ai="all"].active    { background: var(--all); color: var(--bg); }
+  .btn[data-ai="claude"].active { background: var(--claude); }
+  .btn[data-ai="chatgpt"].active{ background: var(--chatgpt); }
+  .btn[data-ai="gemini"].active { background: var(--gemini); }
+  .btn[data-ai="copilot"].active{ background: var(--copilot); }
+  .btn[data-ai="grok"].active   { background: var(--grok); }
+  .btn[data-ai="spark"].active  { background: var(--spark); }
+
+  .divider { width: 1px; height: 20px; background: var(--border); margin: 0 0.3rem; }
+
+  /* ========== STATS BAR ========== */
+  .stats {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 1rem 2rem 0;
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-right: 0.2rem;
+  }
+
+  /* ========== TABLE ========== */
+  .table-wrap {
+    max-width: 1300px;
+    margin: 1rem auto 4rem;
+    padding: 0 2rem;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  thead th {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-align: left;
+    padding: 0.7rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    position: sticky;
+    top: 54px;
+    background: var(--bg);
+    z-index: 50;
+  }
+
+  thead th.ai-col {
+    text-align: center;
+    width: 80px;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(42,42,46,0.6);
+    transition: background 0.15s ease;
+  }
+
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody tr.hidden { display: none; }
+
+  td {
+    padding: 0.65rem 0.8rem;
+    vertical-align: middle;
+  }
+
+  .td-num {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--muted);
+    font-size: 0.75rem;
+    width: 36px;
+    text-align: right;
+    padding-right: 1rem;
+  }
+
+  .td-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .td-en {
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .td-era {
+    white-space: nowrap;
+  }
+
+  .era-badge {
+    display: inline-block;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 2px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .era-古代   { color: #d4a757; border-color: rgba(212,167,87,0.3); }
+  .era-中世   { color: #7b9e87; border-color: rgba(123,158,135,0.3); }
+  .era-近世   { color: #7ab3c8; border-color: rgba(122,179,200,0.3); }
+  .era-近代   { color: #b07fc4; border-color: rgba(176,127,196,0.3); }
+  .era-現代   { color: #c87b7b; border-color: rgba(200,123,123,0.3); }
+  .era-東洋   { color: #c4a96e; border-color: rgba(196,169,110,0.3); }
+  .era-中世宗教 { color: #8fbfb0; border-color: rgba(143,191,176,0.3); }
+
+  /* AI presence cells */
+  td.ai-cell {
+    text-align: center;
+    width: 80px;
+  }
+
+  .check {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    line-height: 22px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--bg);
+  }
+
+  .check.claude  { background: var(--claude); }
+  .check.chatgpt { background: var(--chatgpt); }
+  .check.gemini  { background: var(--gemini); }
+  .check.copilot { background: var(--copilot); }
+  .check.grok    { background: var(--grok); }
+  .check.spark   { background: var(--spark); }
+  .check.absent  { background: transparent; color: var(--border); border: 1px solid var(--border); }
+
+  .td-count {
+    text-align: center;
+  }
+
+  .count-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .count-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--claude), var(--chatgpt));
+    min-width: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .count-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    width: 14px;
+    text-align: left;
+  }
+
+  /* unique badge */
+  .unique-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    padding: 0.1rem 0.35rem;
+    border: 1px solid rgba(201,168,76,0.5);
+    color: var(--claude);
+    border-radius: 2px;
+    margin-left: 0.3rem;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  /* section header rows */
+  tr.section-row td {
+    padding: 1.2rem 0.8rem 0.4rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  /* UNIQUE ONLY filter highlight */
+  tbody tr.unique-row { }
+
+  /* ========== INSIGHT PANEL ========== */
+  .insights {
+    max-width: 1300px;
+    margin: 0 auto 4rem;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+  }
+
+  .insight-card {
+    padding: 1.5rem;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .insight-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .insight-value {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .insight-sub {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .insight-list {
+    font-size: 0.78rem;
+    line-height: 2;
+    color: var(--muted);
+  }
+
+  .insight-list span {
+    color: var(--text);
+    font-family: 'Shippori Mincho', serif;
+  }
+
+  /* section title */
+  .section-title {
+    max-width: 1300px;
+    margin: 2.5rem auto 1rem;
+    padding: 0 2rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 700px) {
+    .table-wrap { padding: 0 0.5rem; }
+    header { padding: 2rem 1rem 1.5rem; }
+    .controls { padding: 0.7rem 1rem; }
+    .stats { padding: 0.8rem 1rem 0; }
+    .legend { padding: 0.8rem 1rem; }
+    .section-title { padding: 0 1rem; }
+    .insights { margin: 0 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <p class="eyebrow">AI Philosophers Comparison</p>
+    <h1>5つのAIが選んだ<br><span>哲学者・思想家 50選</span><br>比較表</h1>
+    <p class="header-sub">Claude · ChatGPT · Gemini · Copilot · Grok · Genspark — 同じ質問への回答を横断比較</p>
+  </div>
+</header>
+
+<div class="legend" style="padding-top:1rem;padding-bottom:1rem;">
+  <div class="legend-item"><div class="dot" style="background:var(--claude)"></div>Claude</div>
+  <div class="legend-item"><div class="dot" style="background:var(--chatgpt)"></div>ChatGPT</div>
+  <div class="legend-item"><div class="dot" style="background:var(--gemini)"></div>Gemini</div>
+  <div class="legend-item"><div class="dot" style="background:var(--copilot)"></div>Copilot</div>
+  <div class="legend-item"><div class="dot" style="background:var(--grok)"></div>Grok</div>
+  <div class="legend-item"><div class="dot" style="background:var(--spark)"></div>Genspark</div>
+</div>
+
+<div class="controls">
+  <div class="controls-inner">
+    <span class="ctrl-label">表示</span>
+    <button class="btn active" data-ai="all">全員</button>
+    <button class="btn" data-filter="unique">独自選出のみ</button>
+    <button class="btn" data-filter="consensus">全AI一致のみ</button>
+    <div class="divider"></div>
+    <span class="ctrl-label">AI別</span>
+    <button class="btn" data-ai="claude">Claude</button>
+    <button class="btn" data-ai="chatgpt">ChatGPT</button>
+    <button class="btn" data-ai="gemini">Gemini</button>
+    <button class="btn" data-ai="copilot">Copilot</button>
+    <button class="btn" data-ai="grok">Grok</button>
+    <button class="btn" data-ai="spark">Genspark</button>
+  </div>
+</div>
+
+<div class="stats" id="stats">
+  <div><span class="stat-num" id="stat-shown">—</span>人 表示中</div>
+  <div><span class="stat-num" id="stat-consensus">—</span>人 全AI一致</div>
+  <div><span class="stat-num" id="stat-unique">—</span>人 独自選出あり</div>
+</div>
+
+<div class="table-wrap">
+  <table id="main-table">
+    <thead>
+      <tr>
+        <th style="width:36px"></th>
+        <th>人物</th>
+        <th></th>
+        <th>時代</th>
+        <th class="ai-col">Claude</th>
+        <th class="ai-col">ChatGPT</th>
+        <th class="ai-col">Gemini</th>
+        <th class="ai-col">Copilot</th>
+        <th class="ai-col">Grok</th>
+        <th class="ai-col">Genspark</th>
+        <th style="width:90px;text-align:center">一致数</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<p class="section-title">INSIGHTS</p>
+<div class="insights" id="insights-grid"></div>
+
+<footer>同じ質問に、AIはどう答えるか — 光沙の実験記録より</footer>
+
+<script>
+// ===== DATA =====
+// [名前, 英語名, 時代, claude, chatgpt, gemini, copilot, grok, spark]
+const data = [
+  // 古代
+  ["ソクラテス",        "Socrates",            "古代", 1,1,1,1,1,1],
+  ["プラトン",          "Plato",               "古代", 1,1,1,1,1,1],
+  ["アリストテレス",    "Aristotle",           "古代", 1,1,1,1,1,1],
+  ["ヘラクレイトス",    "Heraclitus",          "古代", 1,1,0,1,1,1],
+  ["エピクロス",        "Epicurus",            "古代", 1,1,1,1,1,0],
+  ["マルクス・アウレリウス","Marcus Aurelius",  "古代", 1,1,1,1,1,1],
+  ["ゼノン（ストア派）","Zeno of Citium",      "古代", 0,1,1,1,1,0],
+  ["セネカ",            "Seneca",              "古代", 0,1,0,1,0,0],
+  ["パルメニデス",      "Parmenides",          "古代", 0,0,0,1,1,1],
+  ["デモクリトス",      "Democritus",          "古代", 0,0,0,1,1,1],
+  ["プロティノス",      "Plotinus",            "古代", 1,0,0,0,1,1],
+  ["エピクテトス",      "Epictetus",           "古代", 0,0,0,0,1,0],
+  ["タレス",            "Thales",              "古代", 0,0,0,0,0,1],
+  // 東洋
+  ["孔子",              "Confucius",           "東洋", 1,1,1,1,1,1],
+  ["老子",              "Laozi",               "東洋", 1,1,1,1,1,1],
+  ["荘子",              "Zhuangzi",            "東洋", 1,1,1,1,1,1],
+  ["孟子",              "Mencius",             "東洋", 0,0,1,0,1,1],
+  ["荀子",              "Xunzi",               "東洋", 0,0,0,0,1,1],
+  ["釈迦",              "Buddha",              "東洋", 0,0,1,1,1,1],
+  ["龍樹",              "Nāgārjuna",           "東洋", 1,0,1,1,1,1],
+  ["道元",              "Dōgen",               "東洋", 1,0,0,0,0,1],
+  ["西田幾多郎",        "Nishida Kitarō",      "東洋", 1,1,0,1,0,1],
+  ["空海",              "Kūkai",               "東洋", 0,0,1,0,0,1],
+  ["孫子",              "Sun Tzu",             "東洋", 0,1,0,0,0,0],
+  ["親鸞",              "Shinran",             "東洋", 0,1,0,0,0,0],
+  ["和辻哲郎",          "Watsuji Tetsurō",     "東洋", 1,0,0,0,0,1],
+  ["九鬼周造",          "Kuki Shūzō",          "東洋", 1,0,0,0,0,0],
+  ["墨子",              "Mozi",                "東洋", 0,0,0,0,0,1],
+  ["韓非子",            "Han Feizi",           "東洋", 0,0,0,0,0,1],
+  ["朱熹",              "Zhu Xi",              "東洋", 0,0,0,0,1,1],
+  // 中世
+  ["アウグスティヌス",  "Augustine",           "中世", 1,1,1,1,1,1],
+  ["トマス・アクィナス","Thomas Aquinas",      "中世", 1,1,1,1,1,1],
+  ["ウィリアム・オッカム","William of Ockham", "中世", 1,0,0,0,0,1],
+  ["アヴィセンナ",      "Avicenna",            "中世", 0,0,1,1,1,1],
+  ["アヴェロエス",      "Averroës",            "中世", 0,0,1,1,1,1],
+  ["マイモニデス",      "Maimonides",          "中世", 0,0,0,1,0,1],
+  ["ボエティウス",      "Boethius",            "中世", 0,0,0,0,1,0],
+  ["エックハルト",      "Meister Eckhart",     "中世", 0,0,0,1,0,0],
+  ["アンセルムス",      "Anselm",              "中世", 0,0,0,0,0,1],
+  ["ヒルデガルト",      "Hildegard von Bingen","中世", 0,0,0,0,0,1],
+  // 近世
+  ["デカルト",          "Descartes",           "近世", 1,1,1,1,1,1],
+  ["スピノザ",          "Spinoza",             "近世", 1,1,1,1,1,1],
+  ["ライプニッツ",      "Leibniz",             "近世", 1,1,1,1,1,1],
+  ["ロック",            "Locke",               "近世", 1,1,1,1,1,1],
+  ["ヒューム",          "Hume",                "近世", 1,1,1,1,1,1],
+  ["ルソー",            "Rousseau",            "近世", 1,1,1,1,1,1],
+  ["ベーコン",          "Francis Bacon",       "近世", 0,1,0,0,1,0],
+  ["ホッブズ",          "Hobbes",              "近世", 0,0,1,0,1,0],
+  ["モンテスキュー",    "Montesquieu",         "近世", 0,0,1,0,0,0],
+  // 近代
+  ["カント",            "Kant",                "近代", 1,1,1,1,1,1],
+  ["ヘーゲル",          "Hegel",               "近代", 1,1,1,1,1,1],
+  ["マルクス",          "Marx",                "近代", 1,1,1,1,1,1],
+  ["ニーチェ",          "Nietzsche",           "近代", 1,1,1,1,1,1],
+  ["ショーペンハウアー","Schopenhauer",        "近代", 1,1,1,1,1,1],
+  ["キルケゴール",      "Kierkegaard",         "近代", 1,1,1,1,1,1],
+  ["ミル",              "J.S. Mill",           "近代", 1,0,1,0,1,0],
+  ["ジェームズ",        "William James",       "近代", 1,0,1,0,1,0],
+  ["フレーゲ",          "Frege",               "近代", 1,0,0,0,0,1],
+  ["ウェーバー",        "Max Weber",           "近代", 0,1,1,0,0,0],
+  ["デュルケーム",      "Durkheim",            "近代", 0,1,1,0,0,0],
+  ["ベンサム",          "Bentham",             "近代", 0,0,1,0,1,0],
+  ["ベルクソン",        "Bergson",             "近代", 0,0,1,0,1,0],
+  ["トクヴィル",        "Tocqueville",         "近代", 0,0,1,0,0,0],
+  ["ガンディー",        "Gandhi",              "近代", 0,0,0,0,1,0],
+  // 現代
+  ["フッサール",        "Husserl",             "現代", 1,1,1,1,1,1],
+  ["ハイデガー",        "Heidegger",           "現代", 1,1,1,1,1,1],
+  ["サルトル",          "Sartre",              "現代", 1,1,1,1,1,1],
+  ["ボーヴォワール",    "Beauvoir",            "現代", 1,1,1,1,1,1],
+  ["ウィトゲンシュタイン","Wittgenstein",      "現代", 1,1,1,1,1,1],
+  ["アーレント",        "Arendt",              "現代", 1,1,1,1,1,1],
+  ["フーコー",          "Foucault",            "現代", 1,1,1,1,1,1],
+  ["デリダ",            "Derrida",             "現代", 1,1,1,1,1,1],
+  ["ロールズ",          "Rawls",               "現代", 1,0,0,1,1,1],
+  ["ラッセル",          "Russell",             "現代", 1,0,0,1,1,1],
+  ["メルロ＝ポンティ", "Merleau-Ponty",       "現代", 1,0,0,0,0,1],
+  ["ポパー",            "Popper",              "現代", 1,1,1,1,1,0],
+  ["クーン",            "Kuhn",                "現代", 1,1,1,1,1,0],
+  ["クワイン",          "Quine",               "現代", 1,0,0,0,1,1],
+  ["ハーバーマス",      "Habermas",            "現代", 0,0,1,1,1,1],
+  ["レヴィナス",        "Levinas",             "現代", 0,0,1,1,0,0],
+  ["チョムスキー",      "Chomsky",             "現代", 1,0,1,1,1,1],
+  ["デネット",          "Dennett",             "現代", 1,0,0,0,0,0],
+  ["パトナム",          "Putnam",              "現代", 1,0,0,0,1,0],
+  ["フロイト",          "Freud",               "現代", 0,1,1,1,1,0],
+  ["ユング",            "Jung",                "現代", 0,1,1,1,1,0],
+  ["カミュ",            "Camus",               "現代", 0,1,0,0,1,0],
+  ["グラムシ",          "Gramsci",             "現代", 0,1,1,0,0,0],
+  ["ボードリヤール",    "Baudrillard",         "現代", 0,1,1,0,0,0],
+  ["ブルデュー",        "Bourdieu",            "現代", 0,1,0,0,0,0],
+  ["ドゥルーズ",        "Deleuze",             "現代", 0,1,0,0,0,0],
+  ["ベンヤミン",        "Benjamin",            "現代", 0,0,1,0,0,0],
+  ["レヴィ＝ストロース","Lévi-Strauss",        "現代", 0,0,1,0,0,0],
+  ["バトラー",          "Judith Butler",       "現代", 0,0,1,0,0,0],
+  ["サイード",          "Edward Said",         "現代", 0,0,1,0,0,0],
+  ["ハーバーマス",      "Habermas",            "現代", 0,0,0,0,0,0],
+  ["ジジェク",          "Žižek",               "現代", 0,0,1,0,0,0],
+  ["サンデル",          "Michael Sandel",      "現代", 0,0,1,0,0,0],
+  ["ローティ",          "Richard Rorty",       "現代", 0,0,0,0,1,0],
+  ["デューイ",          "John Dewey",          "現代", 0,0,0,0,1,0],
+  ["ピーター・シンガー","Peter Singer",        "現代", 0,0,0,1,0,0],
+  ["コーネル・ウェスト","Cornel West",         "現代", 0,0,0,1,0,0],
+  ["フランクル",        "Viktor Frankl",       "現代", 0,1,0,0,0,0],
+  ["カーネマン",        "Daniel Kahneman",     "現代", 0,1,0,0,0,0],
+  ["ファイヤアーベント","Feyerabend",          "現代", 0,0,0,1,0,0],
+  ["田辺元",            "Tanabe Hajime",       "東洋", 0,0,0,0,0,1],
+  ["本居宣長",          "Motoori Norinaga",    "東洋", 0,0,0,0,0,1],
+  ["マハーヴィーラ",    "Mahāvīra",            "東洋", 0,0,0,0,0,1],
+  ["牟宗三",            "Mou Zongsan",         "東洋", 0,0,0,0,0,1],
+  ["黄宗羲",            "Huang Zongxi",        "東洋", 0,0,0,0,0,1],
+  ["世親",              "Vasubandhu",          "東洋", 0,0,0,1,0,0],
+  ["アダム・スミス",    "Adam Smith",          "近代", 0,0,0,1,0,0],
+  ["ダーウィン",        "Charles Darwin",      "近代", 0,0,0,1,0,0],
+];
+
+// deduplicate (ハーバーマスが重複しているので除去)
+const seen = new Set();
+const philosophers = data.filter(p => {
+  if (seen.has(p[0])) return false;
+  seen.add(p[0]);
+  return true;
+});
+
+const AI_KEYS = ['claude','chatgpt','gemini','copilot','grok','spark'];
+const AI_LABELS = ['Claude','ChatGPT','Gemini','Copilot','Grok','Genspark'];
+const AI_COLORS = {
+  claude:'#c9a84c', chatgpt:'#10a37f', gemini:'#4285f4',
+  copilot:'#0078d4', grok:'#e04444', spark:'#9b59b6'
+};
+
+const tbody = document.getElementById('tbody');
+let currentFilter = 'all';
+let currentAI = null;
+
+function countFor(p) {
+  return p[3]+p[4]+p[5]+p[6]+p[7]+p[8];
+}
+
+function isUnique(p) {
+  return countFor(p) === 1;
+}
+
+function isConsensus(p) {
+  return countFor(p) === 6;
+}
+
+function renderTable() {
+  tbody.innerHTML = '';
+
+  const eras = ["古代","中世","近世","近代","現代","東洋"];
+  let rowNum = 0;
+
+  eras.forEach(era => {
+    const rows = philosophers.filter(p => {
+      if (p[2] !== era) return false;
+      if (currentFilter === 'unique') return isUnique(p);
+      if (currentFilter === 'consensus') return isConsensus(p);
+      if (currentAI) {
+        const idx = AI_KEYS.indexOf(currentAI);
+        return p[3 + idx] === 1;
+      }
+      return true;
+    });
+
+    if (rows.length === 0) return;
+
+    // section header
+    const sRow = document.createElement('tr');
+    sRow.className = 'section-row';
+    sRow.innerHTML = `<td colspan="11">${era}</td>`;
+    tbody.appendChild(sRow);
+
+    rows.forEach(p => {
+      rowNum++;
+      const count = countFor(p);
+      const unique = isUnique(p);
+      const tr = document.createElement('tr');
+      if (unique) tr.classList.add('unique-row');
+
+      const aiCells = AI_KEYS.map((key, i) => {
+        const has = p[3 + i];
+        if (has) {
+          return `<td class="ai-cell"><span class="check ${key}">${AI_LABELS[i].slice(0,2)}</span></td>`;
+        } else {
+          return `<td class="ai-cell"><span class="check absent">—</span></td>`;
+        }
+      }).join('');
+
+      const barW = Math.round((count / 6) * 60);
+
+      tr.innerHTML = `
+        <td class="td-num">${rowNum}</td>
+        <td class="td-name">${p[0]}${unique ? '<span class="unique-badge">独自</span>' : ''}</td>
+        <td class="td-en">${p[1]}</td>
+        <td class="td-era"><span class="era-badge era-${p[2]}">${p[2]}</span></td>
+        ${aiCells}
+        <td class="td-count">
+          <div class="count-bar-wrap">
+            <div class="count-bar" style="width:${barW}px"></div>
+            <span class="count-num">${count}</span>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+
+  updateStats();
+}
+
+function updateStats() {
+  const shown = tbody.querySelectorAll('tr:not(.section-row)').length;
+  document.getElementById('stat-shown').textContent = shown;
+  document.getElementById('stat-consensus').textContent =
+    philosophers.filter(isConsensus).length;
+  document.getElementById('stat-unique').textContent =
+    philosophers.filter(isUnique).length;
+}
+
+// filter buttons
+document.querySelectorAll('.btn[data-ai]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.btn[data-ai]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const ai = btn.dataset.ai;
+    currentAI = ai === 'all' ? null : ai;
+    currentFilter = 'all';
+    document.querySelectorAll('.btn[data-filter]').forEach(b => b.classList.remove('active'));
+    renderTable();
+  });
+});
+
+document.querySelectorAll('.btn[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.btn[data-filter]').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.btn[data-ai]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    currentAI = null;
+    renderTable();
+  });
+});
+
+// Insights
+function buildInsights() {
+  const consensus = philosophers.filter(isConsensus);
+  const uniqueRows = philosophers.filter(isUnique);
+
+  // per-AI unique
+  const aiUniques = AI_KEYS.map((key, i) => ({
+    label: AI_LABELS[i],
+    color: AI_COLORS[key],
+    names: philosophers.filter(p => isUnique(p) && p[3+i] === 1).map(p => p[0])
+  }));
+
+  // most picked
+  const sorted = [...philosophers].sort((a,b) => countFor(b) - countFor(a));
+
+  const grid = document.getElementById('insights-grid');
+
+  // card 1: 全AI一致
+  grid.innerHTML += `
+    <div class="insight-card">
+      <div class="insight-label">ALL 6 AI 一致選出</div>
+      <div class="insight-value" style="color:var(--claude)">${consensus.length}<span style="font-size:1rem;color:var(--muted)"> 人</span></div>
+      <div class="insight-list">${consensus.map(p=>`<span>${p[0]}</span>`).join(' · ')}</div>
+    </div>`;
+
+  // card 2: 独自選出数
+  grid.innerHTML += `
+    <div class="insight-card">
+      <div class="insight-label">1つのAIだけが選んだ人物</div>
+      <div class="insight-value" style="color:var(--grok)">${uniqueRows.length}<span style="font-size:1rem;color:var(--muted)"> 人</span></div>
+      <div class="insight-sub">AIごとの個性が最も出る部分</div>
+    </div>`;
+
+  // card 3-8: per AI unique
+  aiUniques.forEach(ai => {
+    grid.innerHTML += `
+      <div class="insight-card">
+        <div class="insight-label">${ai.label} だけが選んだ人物</div>
+        <div class="insight-value" style="color:${ai.color}">${ai.names.length}<span style="font-size:1rem;color:var(--muted)"> 人</span></div>
+        <div class="insight-list">${ai.names.length ? ai.names.map(n=>`<span>${n}</span>`).join('<br>') : '<span style="color:var(--muted)">なし</span>'}</div>
+      </div>`;
+  });
+
+  // card: 西洋 vs 東洋
+  const western = philosophers.filter(p => !['東洋'].includes(p[2]));
+  const eastern = philosophers.filter(p => p[2] === '東洋');
+  grid.innerHTML += `
+    <div class="insight-card">
+      <div class="insight-label">西洋 vs 東洋</div>
+      <div class="insight-value">${western.length} <span style="font-size:0.9rem;color:var(--muted)">vs</span> ${eastern.length}</div>
+      <div class="insight-sub">西洋 ${western.length}人 / 東洋 ${eastern.length}人</div>
+    </div>`;
+}
+
+renderTable();
+buildInsights();
+</script>
+</body>
