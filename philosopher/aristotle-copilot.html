@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アリストテレス講義 — Copilot版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f6fb;
+    --surface: #ffffff;
+    --ink: #111827;
+    --muted: #6b7280;
+    --border: #dde3ee;
+    --blue: #0078d4;
+    --blue-deep: #005a9e;
+    --blue-light: #eff6ff;
+    --blue-pale: #f5f9ff;
+    --fact-bg: #f0f7ff;
+    --fact-border: rgba(0,120,212,0.2);
+    --interp-bg: #faf5ff;
+    --interp-border: rgba(124,58,237,0.2);
+    --interp-color: #7c3aed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  .back-bar {
+    background: var(--blue-deep);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .back-link { font-size: 0.78rem; color: rgba(255,255,255,0.85); text-decoration: none; transition: color 0.2s; }
+  .back-link:hover { color: #fff; }
+  .back-sep { color: rgba(255,255,255,0.3); }
+  .back-current { font-size: 0.78rem; color: rgba(255,255,255,0.6); }
+
+  .ai-pill {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .hero {
+    background: linear-gradient(160deg, var(--blue-deep) 0%, var(--blue) 100%);
+    padding: 3.5rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 40px;
+    background: var(--bg);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  .hero-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
+
+  .hero-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.2rem 0.7rem;
+    border-radius: 4px;
+  }
+
+  h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+
+  .hero-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 1.5rem;
+  }
+
+  .conclusion-box {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 1rem 1.3rem;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.8;
+    max-width: 600px;
+  }
+
+  .conclusion-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 0.4rem;
+  }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  .level-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 2.5rem 0 1.2rem;
+    padding: 0.9rem 1.2rem;
+    background: var(--surface);
+    border-radius: 8px;
+    border-left: 4px solid var(--blue);
+    box-shadow: 0 1px 8px rgba(0,120,212,0.08);
+  }
+
+  .level-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .level-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--blue); margin-bottom: 0.15rem; }
+  .level-title { font-family: 'Noto Serif JP', serif; font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+
+  .fact-block {
+    background: var(--fact-bg);
+    border: 1px solid var(--fact-border);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .interp-block {
+    background: var(--interp-bg);
+    border: 1px solid var(--interp-border);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .fact-block .block-label { color: var(--blue); }
+  .interp-block .block-label { color: var(--interp-color); }
+
+  .label-bar { display: inline-block; width: 20px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+  .fact-block .label-bar { background: var(--blue); }
+  .interp-block .label-bar { background: var(--interp-color); }
+
+  ul.ref-list { list-style: none; margin: 0.3rem 0; }
+  ul.ref-list li {
+    font-size: 0.87rem;
+    color: #374151;
+    padding: 0.4rem 0;
+    border-top: 1px solid rgba(0,120,212,0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    line-height: 1.75;
+  }
+  ul.ref-list li:first-child { border-top: none; }
+  ul.ref-list li::before { content: '•'; color: var(--blue); flex-shrink: 0; font-size: 0.9rem; }
+
+  ul.interp-list { list-style: none; margin: 0.3rem 0; }
+  ul.interp-list li {
+    font-size: 0.87rem;
+    color: #374151;
+    padding: 0.4rem 0;
+    border-top: 1px solid rgba(124,58,237,0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    line-height: 1.75;
+  }
+  ul.interp-list li:first-child { border-top: none; }
+  ul.interp-list li::before { content: '◇'; color: var(--interp-color); flex-shrink: 0; font-size: 0.7rem; margin-top: 0.15rem; }
+
+  .block-text { font-size: 0.88rem; color: #1f2937; line-height: 1.9; }
+  .block-text strong { font-weight: 500; }
+
+  /* deep section */
+  .deep-section {
+    background: var(--surface);
+    border-radius: 12px;
+    margin-top: 2.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 12px rgba(0,120,212,0.07);
+  }
+
+  .deep-header { background: var(--ink); padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.7rem; }
+  .deep-header-icon { font-size: 1.2rem; }
+  .deep-header-title { font-family: 'Noto Serif JP', serif; font-size: 1rem; font-weight: 700; color: #fff; }
+
+  .deep-body { padding: 1.5rem; }
+
+  .deep-item { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .deep-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+  .deep-item-title {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .deep-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    background: var(--blue);
+    color: #fff;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .next-section {
+    background: var(--blue-pale);
+    border: 1px solid var(--fact-border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .next-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.2em; color: var(--blue); margin-bottom: 1rem; }
+
+  .next-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  @media (max-width: 500px) { .next-grid { grid-template-columns: 1fr; } }
+
+  .next-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.82rem;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .next-item:hover { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,120,212,0.1); }
+  .next-arrow { color: var(--blue); font-size: 0.75rem; flex-shrink: 0; }
+
+  .foot-nav {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a { font-size: 0.82rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2.5rem; }
+    .content { padding: 1.5rem 1.2rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アリストテレス</span>
+  <span class="ai-pill">COPILOT</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">🏛️ PHILOSOPHER LECTURE · ANCIENT GREECE</div>
+    <h1>アリストテレス講義</h1>
+    <p class="hero-sub">Aristotle · BC 384–322 · Athens</p>
+    <div class="conclusion-box">
+      <div class="conclusion-label">CONCLUSION</div>
+      「世界を観察し、分類し、因果で説明する」という姿勢で、西洋知の"設計図"をつくった哲学者。事実と解釈を分けることで、科学的側面と形而上学的側面を整理できる。
+    </div>
+  </div>
+</div>
+
+<main class="content">
+
+  <!-- 入門 -->
+  <div class="level-header" id="nyumon">
+    <span class="level-icon">📘</span>
+    <div>
+      <div class="level-tag">LEVEL 01 · BEGINNER</div>
+      <div class="level-title">入門：アリストテレスとは誰か？</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-label"><span class="label-bar"></span>FACT ── 史料に基づく情報</div>
+    <ul class="ref-list">
+      <li>アリストテレス（紀元前384–322）はプラトンの弟子であり、アレクサンドロス大王の家庭教師</li>
+      <li>アテネにリュケイオン（逍遥学派）を創設した</li>
+      <li>著作は「講義ノート」のような形式で残り、『形而上学』『ニコマコス倫理学』『政治学』『詩学』などが現存</li>
+    </ul>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-label"><span class="label-bar"></span>INTERPRETATION ── 後世の理解</div>
+    <ul class="interp-list">
+      <li>リュケイオンは「歩きながら議論する学校」とされるが、実際には自然科学の研究所としての性格が強かったと考えられる</li>
+      <li>「常識の哲学者」と呼ばれるが、これは後世の評価であり、当時は革新的な体系構築者だった</li>
+    </ul>
+  </div>
+
+  <!-- 中級 -->
+  <div class="level-header" id="chukyu">
+    <span class="level-icon">📗</span>
+    <div>
+      <div class="level-tag">LEVEL 02 · INTERMEDIATE</div>
+      <div class="level-title">中級：アリストテレス哲学の核心</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-label"><span class="label-bar"></span>FACT</div>
+    <ul class="ref-list">
+      <li>世界を説明するために四原因説（質料・形相・作用・目的）を提唱</li>
+      <li>倫理学では中庸（メソテース）を徳の本質とした</li>
+      <li>生物学では、動植物を体系的に分類し、観察科学の基礎を築いた</li>
+    </ul>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+    <ul class="interp-list">
+      <li>四原因説は「古代の科学理論」とされるが、現代では説明の多層性を示すモデルとして再評価される</li>
+      <li>中庸は「極端の中間」というより、状況に応じた最適点を探る実践的倫理と解釈される</li>
+      <li>生物分類は誤りも多いが、観察→分類→説明という科学的方法の原型をつくった点が重要</li>
+    </ul>
+  </div>
+
+  <!-- 上級 -->
+  <div class="level-header" id="jokyu">
+    <span class="level-icon">📙</span>
+    <div>
+      <div class="level-tag">LEVEL 03 · ADVANCED</div>
+      <div class="level-title">上級：アリストテレス思想の広がりと影響</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-label"><span class="label-bar"></span>FACT</div>
+    <ul class="ref-list">
+      <li>アリストテレスの論理学（特に三段論法）は、中世スコラ哲学の中心的学問となった</li>
+      <li>イスラーム哲学（アヴィセンナ、アヴェロエス）を通じて、ヨーロッパに再導入された</li>
+    </ul>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+    <ul class="interp-list">
+      <li>中世ではアリストテレスは「理性の権威」とされ、キリスト教神学と結びつけられた（トマス・アクィナス）</li>
+      <li>近代科学の成立後は批判されたが、現代では目的論・倫理学・生物哲学の文脈で再評価が進む</li>
+    </ul>
+  </div>
+
+  <!-- 深掘り -->
+  <div class="deep-section">
+    <div class="deep-header">
+      <span class="deep-header-icon">🔍</span>
+      <span class="deep-header-title">深掘りコーナー：アリストテレスの"奥行き"</span>
+    </div>
+    <div class="deep-body">
+
+      <div class="deep-item">
+        <div class="deep-item-title">
+          <span class="deep-num">01</span>
+          「目的論」は時代遅れなのか？
+        </div>
+        <div class="fact-block" style="margin-bottom:0.7rem">
+          <div class="block-label"><span class="label-bar"></span>FACT</div>
+          <div class="block-text">アリストテレスは自然物に「目的（テロス）」があると考えた。</div>
+        </div>
+        <div class="interp-block" style="margin-bottom:0">
+          <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+          <div class="block-text">現代科学では目的論は否定されがちだが、<strong>生物の機能説明（心臓は血液を送るためにある）</strong>には目的論的言語が不可欠。「弱い目的論」として再評価されている。</div>
+        </div>
+      </div>
+
+      <div class="deep-item">
+        <div class="deep-item-title">
+          <span class="deep-num">02</span>
+          形相（エイドス）はプラトンのイデアとどう違う？
+        </div>
+        <div class="fact-block" style="margin-bottom:0.7rem">
+          <div class="block-label"><span class="label-bar"></span>FACT</div>
+          <div class="block-text">アリストテレスは「形相はこの世界の中にある」と主張した。</div>
+        </div>
+        <div class="interp-block" style="margin-bottom:0">
+          <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+          <div class="block-text">プラトンのイデアが"別世界の本質"なら、アリストテレスの形相は現実世界の構造そのもの——これは<strong>「内在的本質主義」</strong>と呼ばれる。</div>
+        </div>
+      </div>
+
+      <div class="deep-item">
+        <div class="deep-item-title">
+          <span class="deep-num">03</span>
+          中庸は"ただのバランス論"ではない
+        </div>
+        <div class="fact-block" style="margin-bottom:0.7rem">
+          <div class="block-label"><span class="label-bar"></span>FACT</div>
+          <div class="block-text">中庸は「過剰と不足の中間」と説明される。</div>
+        </div>
+        <div class="interp-block" style="margin-bottom:0">
+          <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+          <div class="block-text">アリストテレスは状況・目的・性格を考慮した"実践的判断"を重視しており、<strong>単なる平均値ではなく、文脈依存の最適解</strong>を指している。</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 次のステップ -->
+  <div class="next-section">
+    <div class="next-title">🎓 NEXT STEPS ── 次に深めたいテーマ</div>
+    <div class="next-grid">
+      <div class="next-item"><span class="next-arrow">›</span>四原因説をもっと詳しく知りたい</div>
+      <div class="next-item"><span class="next-arrow">›</span>中庸の徳を深掘りしたい</div>
+      <div class="next-item"><span class="next-arrow">›</span>プラトンとの違いを整理したい</div>
+      <div class="next-item"><span class="next-arrow">›</span>アリストテレスの生物学を学びたい</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Copilot講義 · Aristotle · BC 384–322</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
