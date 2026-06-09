@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アリストテレス — 哲学者講義</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --sepia: #3d2b1f;
+    --warm: #8b6b4a;
+    --gold: #c9a84c;
+    --parchment: #f5f0e8;
+    --cream: #faf7f2;
+    --rule: #d4c4a8;
+    --accent: #6b3a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  .back-bar {
+    padding: 0.9rem 2rem;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--parchment);
+  }
+
+  .back-link {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--sepia); }
+  .back-sep { color: var(--rule); font-size: 0.7rem; }
+  .back-current { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--sepia); }
+
+  .hero {
+    position: relative;
+    padding: 5rem 2rem 4rem;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero::before {
+    content: 'ΑΡΙΣΤΟΤΕΛΗΣ';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 8vw, 6rem);
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: rgba(201,168,76,0.06);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .hero-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 700;
+    color: var(--sepia);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-name-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    color: var(--warm);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-dates {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--warm);
+    letter-spacing: 0.2em;
+    margin-bottom: 2rem;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--gold);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  .ornament::before, .ornament::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .ornament::after { background: linear-gradient(90deg, var(--gold), transparent); }
+
+  .hero-lead {
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 1rem;
+    color: var(--sepia);
+    opacity: 0.85;
+    line-height: 2;
+  }
+
+  .toc {
+    max-width: 760px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+  }
+
+  .toc-inner {
+    border: 1px solid var(--rule);
+    padding: 1.5rem 2rem;
+    background: var(--parchment);
+  }
+
+  .toc-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { border-top: 1px solid var(--rule); padding: 0.5rem 0; }
+  .toc-list li:first-child { border-top: none; }
+  .toc-list a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: color 0.2s;
+  }
+  .toc-list a:hover { color: var(--accent); }
+
+  .toc-level {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    padding: 0.1rem 0.35rem;
+    border: 1px solid rgba(201,168,76,0.3);
+    white-space: nowrap;
+  }
+
+  .content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 2rem 6rem;
+  }
+
+  .section {
+    margin-bottom: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-level {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--sepia);
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--sepia);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--rule);
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+    color: var(--ink);
+    opacity: 0.9;
+  }
+
+  .pull-quote {
+    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    border-left: 3px solid var(--gold);
+    background: var(--parchment);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--sepia);
+    line-height: 1.8;
+  }
+
+  /* comparison box */
+  .compare-box {
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .compare-cell {
+    padding: 1.2rem 1.4rem;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--sepia);
+  }
+
+  .compare-cell:first-child {
+    border-right: 1px solid var(--rule);
+    background: var(--parchment);
+  }
+
+  .compare-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 500px) {
+    .compare-box { grid-template-columns: 1fr; }
+    .compare-cell:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+  }
+
+  /* table */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.87rem;
+  }
+  .styled-table th {
+    background: var(--sepia);
+    color: var(--cream);
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+  }
+  .styled-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--sepia);
+    line-height: 1.7;
+  }
+  .styled-table tr:nth-child(even) td { background: var(--parchment); }
+
+  /* syllogism box */
+  .syllogism {
+    margin: 2rem 0;
+    border: 1px solid var(--rule);
+    background: var(--parchment);
+    overflow: hidden;
+  }
+
+  .syllogism-head {
+    background: var(--sepia);
+    color: var(--cream);
+    padding: 0.5rem 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .syllogism-body { padding: 1.2rem 1.5rem; }
+
+  .syllogism-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.9rem;
+    color: var(--sepia);
+    line-height: 1.7;
+    align-items: baseline;
+  }
+  .syllogism-row:last-child { border-bottom: none; }
+
+  .syllogism-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    min-width: 50px;
+    flex-shrink: 0;
+  }
+
+  /* process diagram */
+  .process-box {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    border: 1px solid var(--rule);
+    background: var(--parchment);
+  }
+
+  .process-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .process-flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .process-step {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--rule);
+    background: var(--cream);
+    letter-spacing: 0.05em;
+  }
+
+  .process-arrow {
+    color: var(--gold);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .process-example {
+    font-size: 0.8rem;
+    color: var(--warm);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  /* insight box */
+  .insight-box {
+    margin: 2rem 0;
+    border: 1px solid rgba(201,168,76,0.4);
+    padding: 1.5rem 1.8rem;
+    position: relative;
+    background: rgba(201,168,76,0.03);
+  }
+
+  .insight-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--cream);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .insight-box p { margin-bottom: 0.8rem; }
+  .insight-box p:last-child { margin-bottom: 0; }
+
+  /* critique box */
+  .critique-box {
+    margin: 2rem 0;
+    border: 1px solid rgba(107,58,42,0.3);
+    padding: 1.5rem 1.8rem;
+    position: relative;
+    background: rgba(107,58,42,0.03);
+  }
+
+  .critique-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.6rem;
+    left: 1rem;
+    background: var(--cream);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .critique-box p { margin-bottom: 0.8rem; }
+  .critique-box p:last-child { margin-bottom: 0; }
+
+  .resonance-box {
+    margin: 2rem 0;
+    border-left: 3px solid var(--accent);
+    padding: 1.3rem 1.5rem;
+    background: rgba(107,58,42,0.04);
+  }
+
+  .resonance-box p { margin-bottom: 0.8rem; }
+  .resonance-box p:last-child { margin-bottom: 0; }
+
+  .foot-nav {
+    border-top: 1px solid var(--rule);
+    padding: 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.15em;
+    color: var(--warm);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .foot-nav a:hover { color: var(--sepia); }
+
+  .foot-center {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--rule);
+  }
+
+  @media (max-width: 600px) {
+    .hero { padding: 3.5rem 1.5rem 3rem; }
+    .content { padding: 0 1.2rem 4rem; }
+    .toc { padding: 0 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アリストテレス</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-tag">Philosopher · No.03</p>
+    <h1 class="hero-name">アリストテレス</h1>
+    <p class="hero-name-en">Aristotle</p>
+    <p class="hero-dates">紀元前 384 — 322</p>
+    <div class="ornament">✦</div>
+    <p class="hero-lead">
+      「プラトンは友人だ。しかし真理はもっと友人だ」<br>
+      イデアを天上から地上へ——観察し、分類し、実践する哲学。
+    </p>
+  </div>
+</div>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <p class="toc-title">Contents</p>
+    <ul class="toc-list">
+      <li><a href="#intro"><span class="toc-level">入門</span>アリストテレスって何者？</a></li>
+      <li><a href="#vs-plato"><span class="toc-level">中級</span>プラトンとの決定的な違い</a></li>
+      <li><a href="#hyle"><span class="toc-level">中級</span>形相と質料——この世界に宿る本質</a></li>
+      <li><a href="#four-causes"><span class="toc-level">中級</span>四原因説</a></li>
+      <li><a href="#entelecheia"><span class="toc-level">中級</span>エンテレケイア——完全現実態</a></li>
+      <li><a href="#ethics"><span class="toc-level">上級</span>ニコマコス倫理学——エウダイモニア</a></li>
+      <li><a href="#politics"><span class="toc-level">上級</span>政治学——人間は政治的動物</a></li>
+      <li><a href="#logic"><span class="toc-level">上級</span>論理学——三段論法</a></li>
+      <li><a href="#deep"><span class="toc-level">深掘り</span>百科事典・目的論の現代的意味</a></li>
+      <li><a href="#resonance"><span class="toc-level">考察</span>やり続けることの哲学</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="content">
+
+  <!-- 入門 -->
+  <section class="section" id="intro">
+    <span class="section-level">入門</span>
+    <h2 class="section-title">アリストテレスって何者？</h2>
+
+    <p>紀元前384〜322年、スタゲイラ（マケドニア近郊）生まれ。父親は医者——マケドニア王の侍医だった。この出自が重要で、アリストテレスの哲学には「解剖する・分類する・観察する」という医学的・生物学的な感覚が染み込んでいる。</p>
+
+    <p>17歳でアテネに出て、プラトンのアカデメイアに入学。20年間在籍した。プラトンが死んだとき、後継者に選ばれなかった——思想的対立か、外国人だったからか。アリストテレスはアテネを去る。</p>
+
+    <div class="insight-box" data-label="転換点">
+      <p>マケドニア王フィリッポス2世に呼ばれ、13歳のアレクサンドロスの家庭教師になった。後のアレクサンドロス大王だ。</p>
+    </div>
+
+    <p>50歳前後でアテネに戻り、リュケイオンを創設。逍遥学派（ペリパトス派）の始まり——歩きながら講義したからそう呼ばれた。アレクサンドロスが死んだ翌年、反マケドニア感情が高まりアテネを追われた。</p>
+
+    <div class="pull-quote">
+      「アテネ市民にソクラテスと同じ罪を犯させたくない」<br>
+      <span style="font-size:0.8rem;opacity:0.7">——アテネを去るときの言葉</span>
+    </div>
+
+    <p>翌年死去。62歳。</p>
+  </section>
+
+  <!-- プラトンとの違い -->
+  <section class="section" id="vs-plato">
+    <span class="section-level">中級</span>
+    <h2 class="section-title">プラトンとの決定的な違い</h2>
+
+    <p>まずここを押さえないと何も始まらない。</p>
+
+    <div class="compare-box">
+      <div class="compare-cell">
+        <div class="compare-label">プラトン</div>
+        本物はイデア界にある。この世界は影だ。
+      </div>
+      <div class="compare-cell">
+        <div class="compare-label">アリストテレス</div>
+        本物はここにある。この世界を観察しろ。
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      「プラトンは友人だ。しかし真理はもっと友人だ」<br>
+      <span style="font-size:0.8rem;opacity:0.7">— Amicus Plato, sed magis amica veritas</span>
+    </div>
+
+    <p>哲学の重心が天上から地上へ降りてきた。この転換がアリストテレス哲学のすべての出発点だ。</p>
+  </section>
+
+  <!-- 形相と質料 -->
+  <section class="section" id="hyle">
+    <span class="section-level">中級</span>
+    <h2 class="section-title">形相と質料——この世界に宿る本質</h2>
+
+    <p>アリストテレスはイデアを「別の世界」に追放しなかった。個物の中に内在させた。</p>
+
+    <div class="insight-box" data-label="例：オークの木">
+      <p><strong>質料（ヒュレー）</strong>＝木材・水分・成分など「何でできているか」</p>
+      <p><strong>形相（エイドス）</strong>＝「オークの木であること」の本質・構造</p>
+      <p>⇒ 二つは切り離せない。どんな木もこの両方を持つ。</p>
+    </div>
+
+    <p>プラトンの「イデア＝別世界の完全な型」に対して、アリストテレスの「形相＝この世界の個物に宿る本質」。存在の本質は、この世界の個物の中に宿っている。</p>
+  </section>
+
+  <!-- 四原因説 -->
+  <section class="section" id="four-causes">
+    <span class="section-level">中級</span>
+    <h2 class="section-title">四原因説</h2>
+
+    <p>「なぜこれが存在するのか」を4つの原因で説明する。</p>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>原因</th><th>意味</th><th>例（銅像）</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>質料因</td><td>何でできているか</td><td>銅</td></tr>
+        <tr><td>形相因</td><td>何であるか・構造</td><td>ヘルメスの像という形</td></tr>
+        <tr><td>作動因</td><td>何が作ったか</td><td>彫刻家</td></tr>
+        <tr><td>目的因</td><td>何のためか</td><td>神殿の奉納のため</td></tr>
+      </tbody>
+    </table>
+
+    <div class="critique-box" data-label="現代科学との対比">
+      <p>現代科学は質料因と作動因しか使わない。「目的のために存在する」という目的因を科学は排除した。</p>
+      <p>でもアリストテレスにとって、目的因こそが最も重要だった——すべての存在は何かに向かっている。</p>
+    </div>
+  </section>
+
+  <!-- エンテレケイア -->
+  <section class="section" id="entelecheia">
+    <span class="section-level">中級</span>
+    <h2 class="section-title">エンテレケイア——完全現実態</h2>
+
+    <p>アリストテレスの独自概念で最も重要なものの一つ。存在は静的なものではなく、プロセスの中にある。</p>
+
+    <div class="process-box">
+      <div class="process-title">可能態 → 現実態 → 完全現実態</div>
+      <div class="process-flow">
+        <div class="process-step">可能態（デュナミス）</div>
+        <div class="process-arrow">→</div>
+        <div class="process-step">現実態（エネルゲイア）</div>
+        <div class="process-arrow">→</div>
+        <div class="process-step">完全現実態（エンテレケイア）</div>
+      </div>
+      <div class="process-example">
+        <span>ドングリ</span><span>→</span><span>育ちつつある木</span><span>→</span><span>完全に実現したオークの木</span>
+      </div>
+      <div class="process-example" style="margin-top:0.4rem">
+        <span>子ども</span><span>→</span><span>学びつつある人</span><span>→</span><span>徳を完全に実現した人間</span>
+      </div>
+    </div>
+
+    <div class="insight-box" data-label="目的論的自然観">
+      <p>存在はすべて、自分の本性を完全に実現しようとするプロセスの中にある。自然界全体が「何かへ向かう運動」として把握されている。</p>
+    </div>
+  </section>
+
+  <!-- ニコマコス倫理学 -->
+  <section class="section" id="ethics">
+    <span class="section-level">上級</span>
+    <h2 class="section-title">ニコマコス倫理学——エウダイモニア</h2>
+
+    <p>「人間の最高善は何か？」——これが倫理学の出発点。アリストテレスの答えはエウダイモニア（幸福・よく生きること）。ただし、これは「気持ちいい状態」ではない。</p>
+
+    <div class="pull-quote">
+      エウダイモニアとは、人間としての卓越性（アレテー）を<br>完全に発揮した活動そのもの。
+    </div>
+
+    <h3>中庸の理論</h3>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>過剰</th><th>中庸（徳）</th><th>不足</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>無謀</td><td>勇気</td><td>臆病</td></tr>
+        <tr><td>放縦</td><td>節制</td><td>無感覚</td></tr>
+        <tr><td>傲慢</td><td>誇り</td><td>卑屈</td></tr>
+        <tr><td>怒りっぽさ</td><td>穏和</td><td>無気力</td></tr>
+      </tbody>
+    </table>
+
+    <p>徳は生まれつきではなく、習慣によって形成される（エトス→エーティカ）。</p>
+
+    <div class="pull-quote">
+      「私たちは正義の行為をすることで正義の人になる。<br>節制の行為をすることで節制の人になる」
+    </div>
+
+    <div class="insight-box" data-label="プラトンとの根本的違い">
+      <p>プラトンにとって徳は「善のイデアを知ること」だった。アリストテレスにとって徳は繰り返しの実践によって身体化されるもの。知識ではなく習慣——これは哲学の方向性の根本的な分岐点だ。</p>
+    </div>
+  </section>
+
+  <!-- 政治学 -->
+  <section class="section" id="politics">
+    <span class="section-level">上級</span>
+    <h2 class="section-title">政治学——人間は政治的動物</h2>
+
+    <div class="pull-quote">
+      「人間はポリス的動物（ゾーオン・ポリティコン）だ」<br>
+      孤立して生きられる存在は、神か野獣だ。
+    </div>
+
+    <p>人間は共同体の中でしか完全に実現できない。158のポリスの政治体制を実際に調査・分析した上での分類——純粋に経験的・実証的な研究だ。</p>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>統治者数</th><th>正しい形態</th><th>堕落した形態</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>一人</td><td>王制</td><td>僭主制</td></tr>
+        <tr><td>少数</td><td>貴族制</td><td>寡頭制</td></tr>
+        <tr><td>多数</td><td>国制（ポリテイア）</td><td>民主制</td></tr>
+      </tbody>
+    </table>
+
+    <div class="critique-box" data-label="注目">
+      <p>アリストテレスにとって民主制は堕落形態。多数者が共通善ではなく自分の利益のために統治するから。プラトン同様、民主制への批判的な視座を持っていた。</p>
+    </div>
+  </section>
+
+  <!-- 論理学 -->
+  <section class="section" id="logic">
+    <span class="section-level">上級</span>
+    <h2 class="section-title">論理学——三段論法</h2>
+
+    <p>アリストテレスは論理学を学問として創設した人物だ。</p>
+
+    <div class="syllogism">
+      <div class="syllogism-head">三段論法（シュロギスモス）</div>
+      <div class="syllogism-body">
+        <div class="syllogism-row">
+          <span class="syllogism-label">大前提</span>
+          すべての人間は死ぬ
+        </div>
+        <div class="syllogism-row">
+          <span class="syllogism-label">小前提</span>
+          ソクラテスは人間だ
+        </div>
+        <div class="syllogism-row">
+          <span class="syllogism-label">結論</span>
+          ∴ ソクラテスは死ぬ
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box" data-label="歴史的事実">
+      <p>カントが『純粋理性批判』を書いた18世紀まで、「アリストテレス以降、論理学には一歩も前進も後退もなかった」と言われていた。約2000年間、論理学＝アリストテレス論理学だった。</p>
+    </div>
+  </section>
+
+  <!-- 深掘り -->
+  <section class="section" id="deep">
+    <span class="section-level">深掘り</span>
+    <h2 class="section-title">「哲学の百科事典」問題と目的論の復権</h2>
+
+    <h3>百科事典問題</h3>
+
+    <p>アリストテレスが扱ったテーマ——論理学・自然学・天文学・気象学・生物学・心理学・形而上学・倫理学・政治学・詩学・修辞学・経済学。現存する著作だけで約50冊。失われた著作も多い。</p>
+
+    <div class="insight-box" data-label="事実と解釈を分ける">
+      <p><strong>事実：</strong>現存著作のほとんどは「講義ノート」的なテキストで、出版用に整えられていない。</p>
+      <p><strong>解釈：</strong>洗練された文体の著作（対話篇）は失われており、現存著作は「荒削りな内部資料」にすぎないという説がある。</p>
+      <p>私たちが読んでいる「アリストテレス」は、彼の思想の完成品ではなく作業メモかもしれない。</p>
+    </div>
+
+    <h3>目的論の現代的意味</h3>
+
+    <p>アリストテレスの目的因は近代科学革命で否定された。デカルト、ガリレオ、ニュートン——「なぜ」ではなく「どのように」を問う科学に目的論の出番はない。</p>
+
+    <p>でも、ここ数十年で状況が変わりつつある。生物学・認知科学・システム理論では「目標指向的な振る舞い」を記述するために、事実上の目的論的言語が復活している。</p>
+
+    <div class="critique-box" data-label="現在進行形の問い">
+      <p>アリストテレスの目的論が完全に否定されたのか、それとも一時的に地下に潜っただけなのか——これは現在進行形の問いだ。</p>
+    </div>
+  </section>
+
+  <!-- 考察 -->
+  <section class="section" id="resonance">
+    <span class="section-level">考察</span>
+    <h2 class="section-title">やり続けることの哲学</h2>
+
+    <p>ソクラテスの「問い続けること」、プラトンの「イデアへの運動」、そしてアリストテレスの「エンテレケイア（自己実現へのプロセス）」——三者を並べると、共通の構造が浮かび上がる。「完成」は状態ではなくプロセスだ、という直観。</p>
+
+    <div class="resonance-box">
+      <p>ただしアリストテレスはここで一歩踏み込む——プロセスは具体的な身体と習慣と共同体の中でしか起きない。</p>
+      <p>プラトンが「思い出すこと」を重視したのに対して、アリストテレスは「やり続けること」を重視した。この違いは、哲学の方向性の根本的な分岐点だ。</p>
+    </div>
+
+    <div class="insight-box" data-label="価値観との接点">
+      <p>「価値観は動詞的プロセス」という問いにアリストテレスはこう答える——そのプロセスは、抽象的な思考だけでは完結しない。日々の選択・行動・繰り返しの中でしか実現しない。</p>
+      <p>徳は知ることではなく、やることで身体に刻まれる。エンテレケイアとは、そのやり続ける運動の到達点だ。</p>
+    </div>
+  </section>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Aristotle · BC 384–322</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
