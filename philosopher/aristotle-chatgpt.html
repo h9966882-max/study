@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アリストテレス講義 — ChatGPT版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #888;
+    --border: #e2e2de;
+    --green: #10a37f;
+    --green-light: #e8f5f1;
+    --green-pale: #f0faf7;
+    --warn: #c47f17;
+    --warn-light: #fef6e4;
+    --fact-bg: #f0faf7;
+    --fact-border: rgba(16,163,127,0.25);
+    --interp-bg: #fff9f0;
+    --interp-border: rgba(196,127,23,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.85;
+  }
+
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .back-link { font-size: 0.78rem; color: var(--green); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--border); }
+  .back-current { font-size: 0.78rem; color: var(--muted); }
+
+  .ai-pill {
+    margin-left: auto;
+    background: var(--green);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 3.5rem 2rem 3rem;
+  }
+
+  .hero-inner { max-width: 760px; margin: 0 auto; }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 0.25rem 0.7rem;
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-sub { font-family: 'DM Mono', monospace; font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+  .hero-lead {
+    font-size: 1rem;
+    color: #444;
+    max-width: 580px;
+    line-height: 1.9;
+    border-left: 3px solid var(--green);
+    padding-left: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  .part-header {
+    margin: 3rem 0 1.5rem;
+    padding: 1.2rem 1.5rem;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .part-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .part-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+  .part-sub { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 0.2rem; font-family: 'DM Mono', monospace; }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 2rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--green);
+  }
+
+  h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--ink); margin: 1.8rem 0 0.8rem; }
+
+  p { font-size: 0.92rem; margin-bottom: 1rem; color: #2a2a2a; }
+
+  .fact-box {
+    margin: 1.2rem 0;
+    background: var(--fact-bg);
+    border: 1px solid var(--fact-border);
+    border-radius: 6px;
+    padding: 1.2rem 1.4rem;
+  }
+
+  .interp-box {
+    margin: 1.2rem 0;
+    background: var(--interp-bg);
+    border: 1px solid var(--interp-border);
+    border-radius: 6px;
+    padding: 1.2rem 1.4rem;
+  }
+
+  .box-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .fact-box .box-label { color: var(--green); }
+  .interp-box .box-label { color: var(--warn); }
+
+  .box-label::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .fact-box .box-label::before { background: var(--green); }
+  .interp-box .box-label::before { background: var(--warn); }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .data-table thead { background: var(--ink); color: #fff; }
+
+  .data-table th {
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .data-table td {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border);
+    color: #333;
+  }
+
+  .data-table tbody tr:nth-child(even) { background: var(--bg); }
+
+  .quote {
+    margin: 1.5rem 0;
+    padding: 1.2rem 1.5rem;
+    background: var(--surface);
+    border-left: 4px solid var(--green);
+    font-size: 0.95rem;
+    color: #222;
+    line-height: 1.8;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .deep-box {
+    margin: 1.5rem 0;
+    padding: 1.4rem;
+    border: 1px dashed var(--green);
+    border-radius: 6px;
+    background: var(--green-pale);
+  }
+
+  .deep-box-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.8rem;
+  }
+
+  ul.clean {
+    list-style: none;
+    margin: 0.8rem 0 1.2rem;
+  }
+
+  ul.clean li {
+    font-size: 0.9rem;
+    color: #333;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    line-height: 1.7;
+  }
+  ul.clean li:last-child { border-bottom: none; }
+  ul.clean li::before { content: '→'; color: var(--green); font-family: 'DM Mono', monospace; font-size: 0.75rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  .warn-box {
+    margin: 1rem 0;
+    background: var(--warn-light);
+    border: 1px solid rgba(196,127,23,0.3);
+    border-radius: 6px;
+    padding: 0.9rem 1.2rem;
+    font-size: 0.84rem;
+    color: #7a5010;
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .next-box {
+    margin: 2rem 0;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 6px;
+    padding: 1.5rem;
+  }
+
+  .next-box-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--green);
+    margin-bottom: 1rem;
+  }
+
+  .next-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .next-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .next-num { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--green); width: 20px; flex-shrink: 0; }
+
+  .foot-nav {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a { font-size: 0.82rem; color: var(--green); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2rem; }
+    .content { padding-left: 1.2rem; padding-right: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アリストテレス</span>
+  <span class="ai-pill">ChatGPT</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">📚 Philosopher · Ancient Athens</div>
+    <h1>アリストテレス</h1>
+    <p class="hero-sub">Aristotle · BC 384–322 · マケドニア→アテナイ</p>
+    <p class="hero-lead">
+      「"理想"だけでは、人は生きられない」<br>
+      現実を観察し、分類し、構造化する——地に足のついた哲学。
+    </p>
+  </div>
+</div>
+
+<main class="content">
+
+  <!-- 0. 整理 -->
+  <div class="part-header">
+    <div class="part-num">00</div>
+    <div>
+      <div class="part-title">まず整理：3人の哲学者の違い</div>
+      <div class="part-sub">ここを押さえると理解が一気に速くなる</div>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>哲学者</th><th>主な方向性</th></tr></thead>
+    <tbody>
+      <tr><td>ソクラテス</td><td>問う</td></tr>
+      <tr><td>プラトン</td><td>理想・本質（別世界のイデア）</td></tr>
+      <tr><td>アリストテレス</td><td>現実・分類・構造（この世界を観察）</td></tr>
+    </tbody>
+  </table>
+
+  <!-- PART 1 -->
+  <div class="part-header" id="part1">
+    <div class="part-num">01</div>
+    <div>
+      <div class="part-title">入門編</div>
+      <div class="part-sub">アリストテレスって誰？ + プラトン批判</div>
+    </div>
+  </div>
+
+  <div class="fact-box">
+    <div class="box-label">FACT</div>
+    <ul class="clean">
+      <li>紀元前384年頃〜322年頃、マケドニア生まれ</li>
+      <li>プラトンのアカデメイアで約20年学ぶ</li>
+      <li>後に独自学派「リュケイオン」を設立</li>
+      <li>アレクサンドロス大王の教育係</li>
+      <li>研究範囲：生物学・倫理学・論理学・政治学・詩学・形而上学など超広範囲</li>
+    </ul>
+  </div>
+
+  <div class="interp-box">
+    <div class="box-label">INTERPRETATION</div>
+    <p>「百科全書型天才」「西洋学問の父」と呼ばれる。中世ヨーロッパでは<strong>「哲学者（The Philosopher）」といえばアリストテレスを指す</strong>ことすらあった。これはかなり妥当な評価。</p>
+  </div>
+
+  <h2>プラトン批判——「イデアは別世界に必要なの？」</h2>
+
+  <div class="fact-box">
+    <div class="box-label">FACT</div>
+    <p>アリストテレスは著作『形而上学』などでイデア論を批判している。</p>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>哲学者</th><th>本質の場所</th><th>例（猫）</th></tr></thead>
+    <tbody>
+      <tr><td>プラトン</td><td>別世界にある</td><td>「"猫そのもの"が別次元にある」</td></tr>
+      <tr><td>アリストテレス</td><td>現実の中にある</td><td>「実際の猫を観察しろ」</td></tr>
+    </tbody>
+  </table>
+
+  <h2>人間の目的——エウダイモニア</h2>
+
+  <p>アリストテレスは「全てのものには目的がある」と考えた。ナイフ→切る、目→見る、種→成長する。では人間の目的は？</p>
+
+  <div class="quote">アリストテレスの答え：「よく生きること」＝ エウダイモニア（eudaimonia）</div>
+
+  <div class="warn-box">
+    <span>⚠️</span>
+    <div>これは単純な「幸福」ではない。最近の研究では<strong>「人間として良く機能している状態」</strong>（flourishing）に近いとされる。</div>
+  </div>
+
+  <!-- Deep 1 -->
+  <div class="deep-box">
+    <div class="deep-box-title">🔍 深掘り①：アリストテレスは"努力主義"なのか？</div>
+    <div class="fact-box" style="margin-bottom:0.7rem">
+      <div class="box-label">FACT</div>
+      <p style="font-size:0.86rem;color:#333;margin:0">アリストテレスは<strong>徳は習慣によって形成される</strong>と述べる（主著：ニコマコス倫理学）。</p>
+    </div>
+    <div class="interp-box" style="margin-bottom:0">
+      <div class="box-label">INTERPRETATION</div>
+      <p style="font-size:0.86rem;color:#333;margin:0">人は生まれつき善人ではなく、行為の反復で人格形成される——思考・行動・判断・習慣の積み重ねが人格になる。<strong>かなり"運用哲学"寄り。</strong></p>
+    </div>
+  </div>
+
+  <!-- PART 2 -->
+  <div class="part-header" id="part2">
+    <div class="part-num">02</div>
+    <div>
+      <div class="part-title">中級編</div>
+      <div class="part-sub">徳倫理学・中庸・ポリス的動物</div>
+    </div>
+  </div>
+
+  <h2>徳倫理学——「何をするか」より「どんな人になるか」</h2>
+
+  <table class="data-table">
+    <thead><tr><th>現代倫理</th><th>アリストテレス</th></tr></thead>
+    <tbody>
+      <tr><td>ルールを守れ / 結果を最大化しろ</td><td>優れた人格を形成せよ</td></tr>
+    </tbody>
+  </table>
+
+  <h2>中庸（ちゅうよう）</h2>
+
+  <div class="fact-box">
+    <div class="box-label">FACT ── 『ニコマコス倫理学』中心概念</div>
+    <p style="font-size:0.86rem;margin:0">徳とは、極端の間の適切さにある。</p>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>不足</th><th>徳（中庸）</th><th>過剰</th></tr></thead>
+    <tbody>
+      <tr><td>臆病</td><td>勇気</td><td>無謀</td></tr>
+      <tr><td>無感覚</td><td>節制</td><td>放縦</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warn-box">
+    <span>⚠️</span>
+    <div>「真ん中ならOK」ではない。状況ごとに変わる。本来は<strong>理性による適切判断</strong>に近い。</div>
+  </div>
+
+  <h2>人間は「ポリス的動物」</h2>
+
+  <div class="fact-box">
+    <div class="box-label">FACT</div>
+    <p style="font-size:0.86rem;margin:0">アリストテレスは『政治学』で「人間はポリス的動物」と述べる。</p>
+  </div>
+
+  <div class="interp-box">
+    <div class="box-label">INTERPRETATION</div>
+    <p style="font-size:0.86rem;margin:0">現代では：社会的存在・関係性の存在・孤立では完成しない、と解釈される。</p>
+  </div>
+
+  <!-- Deep 2 -->
+  <div class="deep-box">
+    <div class="deep-box-title">🔍 深掘り②：アリストテレスは差別的だった？</div>
+    <div class="fact-box" style="margin-bottom:0.7rem">
+      <div class="box-label">FACT</div>
+      <p style="font-size:0.86rem;color:#333;margin:0">アリストテレスには奴隷制を一定認容・男女差を自然視していた記述がある。</p>
+    </div>
+    <div class="interp-box" style="margin-bottom:0">
+      <div class="box-label">INTERPRETATION</div>
+      <p style="font-size:0.86rem;color:#333;margin:0">古代ギリシア社会そのものが奴隷制前提だった。ただし「時代背景がある」と「だから正しい」は別。ここは分ける必要がある。</p>
+    </div>
+  </div>
+
+  <!-- PART 3 -->
+  <div class="part-header" id="part3">
+    <div class="part-num">03</div>
+    <div>
+      <div class="part-title">上級編</div>
+      <div class="part-sub">四原因説・可能態と現実態</div>
+    </div>
+  </div>
+
+  <h2>四原因説</h2>
+
+  <table class="data-table">
+    <thead><tr><th>原因</th><th>内容</th><th>例（椅子）</th></tr></thead>
+    <tbody>
+      <tr><td>質料因</td><td>材料</td><td>木</td></tr>
+      <tr><td>形相因</td><td>形・構造</td><td>椅子の構造</td></tr>
+      <tr><td>作用因</td><td>作ったもの</td><td>職人</td></tr>
+      <tr><td>目的因</td><td>何のためか</td><td>座るため</td></tr>
+    </tbody>
+  </table>
+
+  <div class="interp-box">
+    <div class="box-label">INTERPRETATION</div>
+    <p style="font-size:0.86rem;margin:0">現代科学は主に作用因・物理法則を重視する。でもアリストテレスは<strong>「目的」を超重視</strong>した。</p>
+  </div>
+
+  <h2>可能態と現実態</h2>
+
+  <table class="data-table">
+    <thead><tr><th>状態</th><th>内容</th><th>例（どんぐり）</th></tr></thead>
+    <tbody>
+      <tr><td>可能態（デュナミス）</td><td>なりうる状態</td><td>木になる可能性を持つ</td></tr>
+      <tr><td>現実態（エネルゲイア）</td><td>実現した状態</td><td>実際に木になった</td></tr>
+    </tbody>
+  </table>
+
+  <div class="interp-box">
+    <div class="box-label">INTERPRETATION</div>
+    <p style="font-size:0.86rem;margin:0">能力・成長・教育・潜在性を考える時の土台になる概念。現代でもめちゃくちゃ影響力がある。</p>
+  </div>
+
+  <!-- Deep 3 -->
+  <div class="deep-box">
+    <div class="deep-box-title">🔍 深掘り③：アリストテレスは"科学者"なのか？ → 半分YES、半分NO</div>
+    <table class="data-table" style="margin-top:0.5rem">
+      <thead><tr><th>YES な理由</th><th>NO な理由</th></tr></thead>
+      <tbody>
+        <tr><td>観察・分類・実証重視。生物観察は詳細。</td><td>実験科学ではない。数学化が弱い。目的論が強い。</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.84rem;color:#333;margin-top:0.8rem">重要なのは「世界を構造的に理解しよう」としたこと。ここが巨大。</p>
+  </div>
+
+  <!-- まとめ -->
+  <h2>アリストテレス哲学まとめ</h2>
+
+  <table class="data-table">
+    <thead><tr><th>テーマ</th><th>内容</th></tr></thead>
+    <tbody>
+      <tr><td>イデア批判</td><td>本質は現実の中</td></tr>
+      <tr><td>エウダイモニア</td><td>良く生きる</td></tr>
+      <tr><td>徳倫理学</td><td>人格形成重視</td></tr>
+      <tr><td>中庸</td><td>適切さ（理性的判断）</td></tr>
+      <tr><td>四原因説</td><td>多面的理解</td></tr>
+      <tr><td>可能態 / 現実態</td><td>潜在と実現</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quote">
+    「人は、繰り返した行為になる」——今日の生き方が人格を形成する。かなり実践的。
+  </div>
+
+  <!-- 次 -->
+  <div class="next-box">
+    <div class="next-box-title">📚 次に繋がる流れ</div>
+    <ul class="next-list">
+      <li><span class="next-num">01.</span>ストア哲学——実践倫理へ</li>
+      <li><span class="next-num">02.</span>トマス・アクィナス——キリスト教と統合</li>
+      <li><span class="next-num">03.</span>デカルト——近代哲学への転換</li>
+      <li><span class="next-num">04.</span>ハイデッガー——存在論の再解釈</li>
+    </ul>
+  </div>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">ChatGPT講義 · Aristotle · BC 384–322</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
