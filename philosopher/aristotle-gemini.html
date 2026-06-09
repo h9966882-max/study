@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アリストテレス講義 — Gemini版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&family=Kaisei+Opti:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafbff;
+    --surface: #ffffff;
+    --ink: #1e1e2e;
+    --muted: #8888aa;
+    --border: #e4e6f0;
+    --blue: #4285f4;
+    --blue-light: #e8f0fe;
+    --blue-pale: #f4f7ff;
+    --red: #ea4335;
+    --yellow: #fbbc04;
+    --green: #34a853;
+    --fact: #e8f5e9;
+    --fact-border: rgba(52,168,83,0.3);
+    --interp: #e8f0fe;
+    --interp-border: rgba(66,133,244,0.3);
+    --warm: #fff8e1;
+    --warm-border: rgba(251,188,4,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+
+  .back-link { font-size: 0.78rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--border); }
+  .back-current { font-size: 0.78rem; color: var(--muted); }
+
+  .ai-pill {
+    margin-left: auto;
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .gemini-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .ai-name { font-size: 0.7rem; font-weight: 500; color: var(--muted); margin-left: 4px; }
+
+  .hero {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%);
+    padding: 4rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.08); }
+
+  .hero-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
+
+  .hero-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+  h1 {
+    font-family: 'Kaisei Opti', serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .hero-sub { font-size: 0.88rem; color: rgba(255,255,255,0.85); margin-bottom: 1.2rem; }
+
+  .hero-lead {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.92rem;
+    color: #fff;
+    line-height: 1.8;
+    border: 1px solid rgba(255,255,255,0.3);
+    max-width: 600px;
+  }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  /* STEP CARD */
+  .step-card {
+    background: var(--surface);
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(66,133,244,0.08);
+    border: 1px solid var(--border);
+  }
+
+  .step-header { padding: 1.2rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .step-header.nyumon { background: linear-gradient(90deg, #34a853, #1e8e3e); }
+  .step-header.chukyu { background: linear-gradient(90deg, #fbbc04, #f09300); }
+  .step-header.jokyu  { background: linear-gradient(90deg, #ea4335, #c5221f); }
+
+  .step-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .step-level { font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.8); font-weight: 500; margin-bottom: 0.2rem; }
+  .step-title { font-family: 'Kaisei Opti', serif; font-size: 1.2rem; font-weight: 700; color: #fff; }
+
+  .step-body { padding: 1.5rem; }
+
+  .fact-block {
+    background: var(--fact);
+    border: 1px solid var(--fact-border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .interp-block {
+    background: var(--interp);
+    border: 1px solid var(--interp-border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+  .fact-block .block-label { color: var(--green); }
+  .interp-block .block-label { color: var(--blue); }
+  .block-label span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .fact-block .block-label span { background: var(--green); }
+  .interp-block .block-label span { background: var(--blue); }
+
+  .block-text { font-size: 0.88rem; color: #2a2a3e; line-height: 1.85; }
+  .block-text strong { font-weight: 500; }
+
+  .message-box {
+    background: var(--warm);
+    border: 1px solid var(--warm-border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1rem;
+    font-size: 0.86rem;
+    color: #5a4500;
+    line-height: 1.8;
+  }
+
+  /* DEEP SECTION */
+  .deep-section {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 16px rgba(66,133,244,0.06);
+  }
+
+  .deep-title {
+    font-family: 'Kaisei Opti', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .deep-title::after { content: ''; flex: 1; height: 1px; background: var(--border); margin-left: 0.5rem; }
+
+  p.body-text { font-size: 0.9rem; color: #333; margin-bottom: 1rem; line-height: 1.9; }
+
+  /* four causes table */
+  .cause-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .cause-table thead { background: var(--ink); color: #fff; }
+
+  .cause-table th {
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    font-family: 'Kaisei Opti', serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .cause-table td {
+    padding: 0.65rem 0.9rem;
+    border-top: 1px solid var(--border);
+    color: #2a2a3e;
+    vertical-align: top;
+    line-height: 1.7;
+  }
+
+  .cause-table tr:nth-child(even) td { background: var(--blue-pale); }
+
+  .cause-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-right: 0.3rem;
+  }
+
+  .cause-highlight {
+    background: linear-gradient(135deg, #fff8e1, #fff3cd) !important;
+    border-left: 3px solid var(--yellow);
+  }
+
+  /* highlight box */
+  .highlight-box {
+    margin: 1.2rem 0;
+    background: linear-gradient(135deg, #fff8e1, #fef3c7);
+    border: 1px solid rgba(251,188,4,0.4);
+    border-radius: 12px;
+    padding: 1.3rem 1.5rem;
+    font-size: 0.88rem;
+    color: #5a4500;
+    line-height: 1.85;
+  }
+
+  .highlight-box-title {
+    font-family: 'Kaisei Opti', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #8b6000;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .foot-nav {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a { font-size: 0.82rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-size: 0.72rem; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2rem; }
+    .content { padding: 1.5rem 1.2rem 4rem; }
+    .step-body { padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アリストテレス</span>
+  <div class="ai-pill">
+    <div class="gemini-dot" style="background:#4285f4"></div>
+    <div class="gemini-dot" style="background:#34a853"></div>
+    <div class="gemini-dot" style="background:#fbbc04"></div>
+    <div class="gemini-dot" style="background:#ea4335"></div>
+    <span class="ai-name">Gemini</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-emoji">🏛️</span>
+    <h1>アリストテレス<br>白熱教室</h1>
+    <p class="hero-sub">Aristotle · BC 384–322 · 万学の祖</p>
+    <div class="hero-lead">
+      真理はこの現実世界の中にこそある——植物学、動物学、政治学、論理学まで何でも研究した「万学の祖」。3つのステップで彼の頭の中をのぞいてみよう ☕️🌱
+    </div>
+  </div>
+</div>
+
+<main class="content">
+
+  <!-- 入門 -->
+  <div class="step-card">
+    <div class="step-header nyumon">
+      <span class="step-icon">🟢</span>
+      <div>
+        <div class="step-level">STEP 01 · BEGINNER</div>
+        <div class="step-title">入門：真理は足元にある「形相と質料」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          アリストテレスは、世界にあるすべての「もの」（木、石、人間、服など）を観察し、それらが「素材」と「それが持つ形や性質」の2つの要素で成り立っていることに注目した。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（アリストテレス流の捉え方）</div>
+        <div class="block-text">
+          師匠のプラトンは「完璧な形（イデア）は別世界にある」と言ったけれど、アリストテレスは<strong>「形（形相：エイドス）」は「素材（質料：ヒュレー）」の中に最初から組み込まれている</strong>と考えた。形はあの世にあるのではなく、この手の中の素材と共にある。
+        </div>
+      </div>
+      <div class="message-box">
+        💡 ここにウールの毛糸（質料）があるとするよね。それを編んで「ベストの形（形相）」に仕上げる。毛糸という素材と、ベストという形が合体して初めて、目の前に1着のベストが「存在」する。形（イデア）はあの世にあるんじゃなくて、この手の中の素材と共にあるんだよ 🧶✨
+      </div>
+    </div>
+  </div>
+
+  <!-- 中級 -->
+  <div class="step-card">
+    <div class="step-header chukyu">
+      <span class="step-icon">🟡</span>
+      <div>
+        <div class="step-level">STEP 02 · INTERMEDIATE</div>
+        <div class="step-title">中級：可能性を開花させる「可能態と現実態」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          自然界の生き物や植物は、すべて変化し、成長する。ドングリの種は成長してカシの木になり、子犬は大きくなって成犬になる。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（アリストテレス流の捉え方）</div>
+        <div class="block-text">
+          すべてのものは、未来に変化できる「可能性を秘めた状態（可能態）」から、その目的を果たして「完成された状態（現実態）」へと向かって運動している。ドングリ（可能態）の究極の目的は、立派なカシの木（現実態）になること。<strong>この世のすべては、自分の目的（ゴール）に向かって進んでいる</strong>（目的論）。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 上級 -->
+  <div class="step-card">
+    <div class="step-header jokyu">
+      <span class="step-icon">🔴</span>
+      <div>
+        <div class="step-level">STEP 03 · ADVANCED</div>
+        <div class="step-title">上級：本当の幸せって何だろう？「最高善とエウダイモニア」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          人間のあらゆる行動には目的がある。お金を稼ぐのは物を買うため、勉強するのは知識を得るため。アリストテレスは、人間が「他の何かのためではなく、それ自体を目的として求める究極のゴール（最高善）」を探した。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（アリストテレス流の捉え方）</div>
+        <div class="block-text">
+          人間にとっての最高善——それ自体がゴールになるものは<strong>「幸福（エウダイモニア）」</strong>である。そして本当の幸福とは、ただ快楽を追い求めることではなく、<strong>人間だけに与えられた最高の能力である「理性」を十分に発揮して、徳（アレテー）にかなった生き方をすること</strong>だ。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 深掘り：四因説 -->
+  <div class="deep-section">
+    <h2 class="deep-title">🔍 深掘りコーナー：四因説（しいんせつ）</h2>
+
+    <p class="body-text">アリストテレスは、目の前にある「もの」や「出来事」が、なぜ今そういう状態でそこにあるのかを説明するために、4つの原因を突き止めるアプローチを考え出した。コート1着を例に当てはめてみよう！</p>
+
+    <table class="cause-table">
+      <thead>
+        <tr>
+          <th>原因の種類</th>
+          <th>意味</th>
+          <th>コートで例えると？</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="cause-num">①</span>質料因</td>
+          <td>何の<strong>素材</strong>でできているか？</td>
+          <td>カシミアの毛織物、ボタン、裏地のシルク</td>
+        </tr>
+        <tr>
+          <td><span class="cause-num">②</span>形相因</td>
+          <td>どんな<strong>設計図・形</strong>をしているか？</td>
+          <td>ロング丈、ダブルの襟、チェスターコートのデザイン</td>
+        </tr>
+        <tr>
+          <td><span class="cause-num">③</span>始動因</td>
+          <td>誰が<strong>動かして</strong>それを作ったか？</td>
+          <td>ミシンを動かして縫い上げた仕立て職人の技術</td>
+        </tr>
+        <tr class="cause-highlight">
+          <td><span class="cause-num" style="background:#f09300">④</span>目的因 ⭐</td>
+          <td>そもそも何のために<strong>（目的）</strong>あるのか？</td>
+          <td>着る人を冬の寒さから守り、美しく見せるため</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-box">
+      <div class="highlight-box-title">🎯 アリストテレスが一番大事にしたこと</div>
+      この4つの中でも、アリストテレスは特に<strong>「④ 目的因」</strong>をものすごく重視した。どんな素材を使って、どんな形をしていて、誰が作ろうとも、<strong>「それが何のために存在するのか」という目的（ゴール）がはっきりしていなければ、そのものは本当の意味で存在しているとは言えない</strong>と考えたんだ。<br><br>
+      現代の私たちは「どうやって作られたか（始動因）」ばかりを気にしがちだけど、「何のために生きるのか（目的因）」を見つめ直すことの大切さを、アリストテレスは教えてくれているんだね 🌟
+    </div>
+  </div>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Gemini講義 · Aristotle · BC 384–322</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
