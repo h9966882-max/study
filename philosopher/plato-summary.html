@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>プラトン — 6つのAIが語る総括講義</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fdf8f4;
+    --surface: #fff9f5;
+    --ink: #2a1f1a;
+    --sepia: #4a3728;
+    --warm: #9a7860;
+    --rule: #e8d8cc;
+    --border: #ecddd4;
+    --petal: #f5e8d8;
+    --dahlia: #c4506a;
+    --dahlia-light: #f7e8ec;
+    --sunflower: #e8a020;
+    --ranunculus: #e07090;
+    --leaf: #7a9e6e;
+    --gold: #c9a84c;
+    --claude:   #c9a84c;
+    --chatgpt:  #10a37f;
+    --gemini:   #4285f4;
+    --copilot:  #0078d4;
+    --grok:     #e04444;
+    --spark:    #9b59b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    line-height: 2;
+    overflow-x: hidden;
+  }
+
+  /* ===== BACK ===== */
+  .back-bar {
+    background: rgba(253,248,244,0.97);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    backdrop-filter: blur(8px);
+  }
+
+  .back-link {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    color: var(--dahlia);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: opacity 0.2s;
+  }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--rule); }
+  .back-current { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--warm); }
+
+  .ai-badges { margin-left: auto; display: flex; gap: 4px; }
+  .ai-badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    padding: 4.5rem 1.5rem 3.5rem;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.1;
+  }
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.4em;
+    color: var(--dahlia);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 7vw, 5rem);
+    font-weight: 700;
+    color: var(--sepia);
+    line-height: 1.1;
+    margin-bottom: 0.3rem;
+  }
+
+  .hero-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    color: var(--warm);
+    margin-bottom: 1rem;
+  }
+
+  .hero-dates {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.82rem;
+    color: var(--warm);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 0.8rem auto 1.5rem;
+    color: var(--ranunculus);
+  }
+  .ornament::before, .ornament::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--ranunculus));
+  }
+  .ornament::after { background: linear-gradient(90deg, var(--ranunculus), transparent); }
+
+  .hero-lead {
+    font-size: 0.92rem;
+    color: var(--sepia);
+    max-width: 580px;
+    margin: 0 auto 1.5rem;
+    opacity: 0.85;
+    line-height: 2;
+  }
+
+  .source-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .source-chip.claude  { color: var(--claude);  border-color: rgba(201,168,76,0.3);  background: rgba(201,168,76,0.06); }
+  .source-chip.chatgpt { color: var(--chatgpt); border-color: rgba(16,163,127,0.3); background: rgba(16,163,127,0.06); }
+  .source-chip.gemini  { color: var(--gemini);  border-color: rgba(66,133,244,0.3);  background: rgba(66,133,244,0.06); }
+  .source-chip.copilot { color: var(--copilot); border-color: rgba(0,120,212,0.3);  background: rgba(0,120,212,0.06); }
+  .source-chip.grok    { color: var(--grok);    border-color: rgba(224,68,68,0.3);   background: rgba(224,68,68,0.06); }
+  .source-chip.spark   { color: var(--spark);   border-color: rgba(155,89,182,0.3);  background: rgba(155,89,182,0.06); }
+
+  /* ===== TOC ===== */
+  .toc-wrap { max-width: 680px; margin: 2rem auto; padding: 0 1.5rem; }
+
+  .toc-inner {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .toc-head {
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--dahlia);
+    text-transform: uppercase;
+    background: var(--dahlia-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { border-bottom: 1px solid var(--border); }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    text-decoration: none;
+    transition: background 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .toc-list a:hover { background: var(--dahlia-light); color: var(--dahlia); }
+  .toc-icon { font-size: 0.85rem; flex-shrink: 0; }
+
+  /* ===== CONTENT ===== */
+  .content { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  /* ===== CHAPTER ===== */
+  .chapter {
+    margin-bottom: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .chapter:last-child { border-bottom: none; }
+
+  .chapter-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--ranunculus);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .chapter-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--sepia);
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--sepia);
+    margin: 2rem 0 0.8rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--rule);
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    font-size: 0.92rem;
+    color: var(--ink);
+    margin-bottom: 1.1rem;
+    opacity: 0.9;
+    line-height: 2;
+  }
+
+  /* pull quote */
+  .pull-quote {
+    margin: 1.8rem 0;
+    padding: 1.3rem 1.5rem;
+    border-left: 3px solid var(--dahlia);
+    background: var(--dahlia-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--sepia);
+    line-height: 1.85;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* consensus box */
+  .consensus-box {
+    margin: 1.8rem 0;
+    border: 1px solid rgba(122,158,110,0.3);
+    border-radius: 10px;
+    padding: 1.3rem 1.4rem;
+    background: rgba(122,158,110,0.05);
+    position: relative;
+  }
+
+  .consensus-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--leaf);
+    text-transform: uppercase;
+  }
+
+  .consensus-box p { margin-bottom: 0; }
+
+  /* debate box */
+  .debate-box {
+    margin: 1.8rem 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .debate-head {
+    background: var(--petal);
+    padding: 0.5rem 1.1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .debate-body { padding: 1.1rem 1.2rem; }
+
+  .debate-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--sepia);
+    align-items: flex-start;
+  }
+  .debate-row:last-child { margin-bottom: 0; }
+  .debate-icon { font-size: 0.85rem; flex-shrink: 0; margin-top: 0.2rem; }
+  .debate-text strong { font-weight: 500; color: var(--dahlia); }
+
+  /* table */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+  }
+  .styled-table th {
+    background: var(--sepia);
+    color: var(--bg);
+    padding: 0.5rem 0.9rem;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+  }
+  .styled-table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--sepia);
+    line-height: 1.7;
+  }
+  .styled-table tr:nth-child(even) td { background: var(--petal); }
+
+  /* insight box */
+  .insight-box {
+    margin: 1.8rem 0;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    padding: 1.3rem 1.4rem;
+    background: rgba(201,168,76,0.04);
+    position: relative;
+  }
+
+  .insight-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .insight-box p { margin-bottom: 0.6rem; }
+  .insight-box p:last-child { margin-bottom: 0; }
+
+  /* step box */
+  .step-box {
+    margin: 1.8rem 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .step-head {
+    background: linear-gradient(135deg, var(--dahlia), var(--ranunculus));
+    padding: 0.6rem 1.1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .step-list { padding: 0.5rem 0; }
+
+  .step-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--sepia);
+  }
+  .step-item:last-child { border-bottom: none; }
+
+  .step-sym {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    color: var(--dahlia);
+    font-weight: 600;
+    flex-shrink: 0;
+    min-width: 18px;
+    padding-top: 0.1rem;
+  }
+
+  /* view links */
+  .view-links {
+    margin: 2.5rem 0 0;
+    padding: 1.3rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .view-links-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .view-links-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .view-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    text-decoration: none;
+    color: var(--sepia);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+  }
+
+  .view-link-btn:hover {
+    background: var(--dahlia-light);
+    border-color: var(--dahlia);
+    color: var(--dahlia);
+  }
+
+  .vl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* foot nav */
+  .foot-nav {
+    border-top: 1px solid var(--rule);
+    padding: 1.5rem;
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.82rem;
+    color: var(--dahlia);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: opacity 0.2s;
+  }
+  .foot-nav a:hover { opacity: 0.7; }
+
+  .foot-center {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--rule);
+  }
+
+  @media (max-width: 500px) {
+    .view-links-grid { grid-template-columns: 1fr; }
+    .hero { padding: 3rem 1.2rem 2.5rem; }
+    .content { padding: 0 1.2rem 5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACK -->
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">プラトン 総括</span>
+  <div class="ai-badges">
+    <div class="ai-badge-dot" style="background:var(--claude)"></div>
+    <div class="ai-badge-dot" style="background:var(--chatgpt)"></div>
+    <div class="ai-badge-dot" style="background:var(--gemini)"></div>
+    <div class="ai-badge-dot" style="background:var(--copilot)"></div>
+    <div class="ai-badge-dot" style="background:var(--grok)"></div>
+    <div class="ai-badge-dot" style="background:var(--spark)"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <svg class="hero-bg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(30,40) rotate(-15)">
+      <circle cx="0" cy="0" r="7" fill="#c4506a"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(315)"/>
+    </g>
+    <g transform="translate(565,50) rotate(10)">
+      <circle cx="0" cy="0" r="14" fill="#8b6000"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(30)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(150)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(210)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(300)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(330)"/>
+    </g>
+    <g transform="translate(300,260) rotate(5)">
+      <circle cx="0" cy="0" r="5" fill="#e07090"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(40)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(80)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(160)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(200)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(280)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(320)"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">🌸 6 AI · 総括講義 · Summary</p>
+    <h1>プラトン</h1>
+    <p class="hero-en">Plato</p>
+    <p class="hero-dates">紀元前 427 — 347 · アテナイ</p>
+    <div class="ornament">✦</div>
+    <p class="hero-lead">
+      Claude · ChatGPT · Gemini · Copilot · Grok · Genspark——<br>
+      6つのAIがプラトンについて語ったことを、一つの読み物として統合しました。
+    </p>
+    <div class="source-bar">
+      <span class="source-chip claude">● Claude</span>
+      <span class="source-chip chatgpt">● ChatGPT</span>
+      <span class="source-chip gemini">● Gemini</span>
+      <span class="source-chip copilot">● Copilot</span>
+      <span class="source-chip grok">● Grok</span>
+      <span class="source-chip spark">● Genspark</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<nav class="toc-wrap">
+  <div class="toc-inner">
+    <div class="toc-head">🌼 目次</div>
+    <ul class="toc-list">
+      <li><a href="#profile"><span class="toc-icon">🏛️</span>プラトンとはどんな人物か</a></li>
+      <li><a href="#idea"><span class="toc-icon">💫</span>イデア論——本物と影の世界</a></li>
+      <li><a href="#cave"><span class="toc-icon">🕯️</span>洞窟の比喩——最も有名な寓話</a></li>
+      <li><a href="#soul"><span class="toc-icon">✨</span>魂論と想起説</a></li>
+      <li><a href="#politics"><span class="toc-icon">⚖️</span>政治哲学と哲人王</a></li>
+      <li><a href="#critique"><span class="toc-icon">🔍</span>プラトンへの問い——批判と再評価</a></li>
+      <li><a href="#legacy"><span class="toc-icon">🌍</span>プラトンの遺産と現代</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <!-- 01 プロフィール -->
+  <section class="chapter" id="profile">
+    <div class="chapter-label">🏛️ Profile</div>
+    <h2 class="chapter-title">プラトンとはどんな人物か</h2>
+
+    <p>紀元前427年頃、アテナイの貴族の家に生まれた。本名はアリストクレス。「プラトン（広い）」はニックネームで、肩幅が広かったからとも、額が広かったからとも言われる。若い頃は詩人か政治家になるつもりだったが、20歳前後でソクラテスに出会い、その道を変えた。</p>
+
+    <div class="consensus-box" data-label="6AI共通">
+      <p>28歳のとき、師ソクラテスが死刑にされるのを目の当たりにした。この体験がプラトンの全哲学の出発点だ——「正しい人間が、不正な社会によって殺される。ならば、正しい社会とは何か？」という問いが生涯を貫いた。</p>
+    </div>
+
+    <p>40歳頃にアテネ郊外にアカデメイアを創設。西洋最初の高等教育機関で、哲学・数学・政治・倫理・形而上学を研究し、約900年続いた。著作はすべて対話篇形式で40編以上が現存し、自らは登場せずソクラテスを主役に据えた。</p>
+
+    <div class="insight-box" data-label="大前提">
+      <p>プラトンは対話篇で語るため、「これはプラトン自身の主張だ」と即断するのは難しい。登場人物としてのソクラテスが語ることが、歴史上のソクラテスなのかプラトン自身の思想なのかを区別することがプラトン解釈の基本だ。</p>
+    </div>
+  </section>
+
+  <!-- 02 イデア論 -->
+  <section class="chapter" id="idea">
+    <div class="chapter-label">💫 Core Theory</div>
+    <h2 class="chapter-title">イデア論——本物と影の世界</h2>
+
+    <p>プラトン哲学の中心はイデア論。出発点はシンプルな問いだ——美しい花は枯れる、美しい人は老いる。では「美しさそのもの」は変わるか？</p>
+
+    <p>プラトンの答え：私たちが感覚で知覚するものはすべて生成・変化・消滅する。しかしそれらが「美しい」「丸い」「正義だ」と判断されるとき、その基準となる完全な型（イデア）が別の次元に存在している。</p>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>感覚世界（現象界）</th><th>イデア界</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>変化する・不完全</td><td>永遠・完全</td></tr>
+        <tr><td>影・コピー</td><td>本物・原型</td></tr>
+        <tr><td>目で見える</td><td>理性で把握する</td></tr>
+      </tbody>
+    </table>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ AIによる解釈の広がり</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">🌱</span>
+          <div class="debate-text"><strong>理想形の世界として</strong>——最も広く知られる読み方。完全なものが別世界に存在するという二層構造。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🔬</span>
+          <div class="debate-text"><strong>認識可能性の条件として</strong>——「なぜ人間は普遍概念を理解できるのか」への回答として読む現代哲学的解釈。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">📐</span>
+          <div class="debate-text"><strong>数学的構造のモデルとして</strong>——完全な三角形は現実には存在しないが理性では扱える。イデア論は数学的実在論とも繋がる。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">⚡</span>
+          <div class="debate-text"><strong>「目の前の世界はウソ」ではなく</strong>——現実が不完全だからこそ、より良い基準が必要だという現状超克の思想として読む解釈もある。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 洞窟の比喩 -->
+  <section class="chapter" id="cave">
+    <div class="chapter-label">🕯️ Famous Allegory</div>
+    <h2 class="chapter-title">洞窟の比喩——最も有名な寓話</h2>
+
+    <p>プラトン『国家』第7巻。哲学史上最も有名な比喩のひとつで、6つのAIすべてが詳しく取り上げた。</p>
+
+    <div class="step-box">
+      <div class="step-head">洞窟の比喩 — 物語の構造</div>
+      <div class="step-list">
+        <div class="step-item"><span class="step-sym">①</span><div>洞窟に生まれから鎖でつながれた囚人たち。壁に映る影だけを見て「これが現実だ」と信じている。</div></div>
+        <div class="step-item"><span class="step-sym">②</span><div>一人の囚人が鎖を解かれ、外に出る。眩しい光の中、本物の木・山・空・太陽を見る。</div></div>
+        <div class="step-item"><span class="step-sym">③</span><div>洞窟に戻り「影は本物じゃない」と伝えると、仲間たちは信じない。笑う。殺そうとする。</div></div>
+      </div>
+    </div>
+
+    <div class="consensus-box" data-label="6AI共通の対応">
+      <p>洞窟＝感覚の世界 / 太陽＝善のイデア / 外に出た囚人＝哲学者 / 殺されかけた囚人＝ソクラテス。この比喩にプラトンは師の死への応答を刻み込んだ。</p>
+    </div>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ 多角的な解釈</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">📚</span>
+          <div class="debate-text"><strong>教育論として</strong>——教育とは情報の注入ではなく、魂の「向き直り」。強制ではなく内的な想起を促すもの。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🗳️</span>
+          <div class="debate-text"><strong>政治批判として</strong>——大衆は影を真実と思い込む。宣伝・印象・空気・扇動への警戒として現代でも読まれる。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🤖</span>
+          <div class="debate-text"><strong>現代への接続</strong>——マトリックス、VR、SNSのフィルターバブル、量子論的な「観測される現実は本当か？」という問いと共鳴する。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 魂論 -->
+  <section class="chapter" id="soul">
+    <div class="chapter-label">✨ Soul Theory</div>
+    <h2 class="chapter-title">魂論と想起説</h2>
+
+    <p>イデア論には必然的な問いが伴う——「なぜ人間はイデアを知れるのか？」</p>
+
+    <p>プラトンの答え：魂はかつてイデア界にいた。生まれる前に完全な「美しさ」「正義」「数」を知っていた。肉体に宿った瞬間、忘れた。</p>
+
+    <div class="pull-quote">
+      学ぶとは新しく知ることではなく、思い出すこと（アナムネーシス）。
+    </div>
+
+    <div class="consensus-box" data-label="6AI共通">
+      <p>「教える」ことはできない——正確には、思い出すきっかけを与えることしかできない。これがソクラテスの問答法を理論的に基礎づけている。なぜソクラテスは「教えない」のか。魂の中にすでに真理があるからだ。</p>
+    </div>
+
+    <div class="insight-box" data-label="Copilotの鋭い指摘">
+      <p>プラトンは「理性至上主義者」に見えるが、『饗宴』では愛（エロース）が魂をイデアへ導く力として描かれ、情動の肯定的役割も強調されている。プラトンは単純な理性主義者ではない。</p>
+    </div>
+  </section>
+
+  <!-- 05 政治哲学 -->
+  <section class="chapter" id="politics">
+    <div class="chapter-label">⚖️ Political Philosophy</div>
+    <h2 class="chapter-title">政治哲学と哲人王</h2>
+
+    <p>『国家』でプラトンは問う——「正義とは何か」。魂の構造を国家に対応させ、理想の統治論を描いた。</p>
+
+    <table class="styled-table">
+      <thead>
+        <tr><th>魂の部分</th><th>徳</th><th>国家の階層</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>理性</td><td>知恵</td><td>哲学者（支配者）</td></tr>
+        <tr><td>気概</td><td>勇気</td><td>戦士（守護者）</td></tr>
+        <tr><td>欲望</td><td>節制</td><td>生産者（農工商）</td></tr>
+      </tbody>
+    </table>
+
+    <p>正義＝それぞれが自分の役割を果たし、全体が調和している状態。支配者は哲人王でなければならない——善のイデアを知る者だけが、正しく統治できる。</p>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ 哲人王への評価は真っ二つ</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">✅</span>
+          <div class="debate-text"><strong>肯定的解釈</strong>——短期人気より真理重視、専門知を重視、感情政治を避ける。知性と倫理を兼ね備えたリーダー像。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">⚠️</span>
+          <div class="debate-text"><strong>否定的解釈（ポパー）</strong>——カール・ポパーは「全体主義の祖」と批判。エリート統治・階級固定・国家優先。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box" data-label="歴史的事実">
+      <p>プラトン自身、この理想を実現しようとシケリアに3度渡った。ディオニュシオス2世を哲人王に育てようとした。3度とも失敗し、2度目は奴隷として売られかけた。理念と現実の落差を、彼は自分の人生で体験した。</p>
+      <p>晩年の『法律』では理想国家への楽観的な確信も薄れ、より現実的な「次善の法治国家」へと着地していく——プラトンは単なる理想主義者ではなく、理想が現実で挫折する場面を知った思想家でもある。</p>
+    </div>
+  </section>
+
+  <!-- 06 批判と再評価 -->
+  <section class="chapter" id="critique">
+    <div class="chapter-label">🔍 Critical Perspectives</div>
+    <h2 class="chapter-title">プラトンへの問い——批判と再評価</h2>
+
+    <h3>イデア論の自己批判</h3>
+
+    <p>『パルメニデス』でプラトンは自分のイデア論を自分で徹底的に批判する。</p>
+
+    <div class="insight-box" data-label="第三者論法（サード・マン問題）">
+      <p>「美しいもの」が「美のイデア」に似ているとするなら、その「似ている」という関係をつなぐ第三のイデアが必要では？そしてまたそれをつなぐ第四の……無限後退する。これはプラトン自身が提示した批判で、答えは出ていない。</p>
+    </div>
+
+    <h3>民主主義との関係</h3>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ プラトンは民主主義の敵か？</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">📜</span>
+          <div class="debate-text"><strong>事実</strong>——ソクラテスを処刑した民主政への批判は著作に明確に書かれている。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🔍</span>
+          <div class="debate-text"><strong>文脈</strong>——当時のアテナイ民主政は男性市民限定・奴隷制あり・直接民主制。現代の民主主義との単純比較は危険。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">💭</span>
+          <div class="debate-text"><strong>可能性</strong>——「熟議と教育を重視する民主政」には肯定的だった可能性もある。個人的経験の反映として読む解釈もある。</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>「書かれざる教説」問題</h3>
+
+    <p>弟子のアリストテレスが「プラトンは口頭でこんなことを言っていた」と記録していることが、著作に出てこない。「アグラファ・ドグマタ（書かれざる教説）」問題だ。</p>
+
+    <div class="pull-quote">
+      「本当に価値ある哲学的真理は、文字には書けない。<br>
+      火花のように魂から魂へと飛び移るものだ」<br>
+      <span style="font-size:0.8rem;opacity:0.7">——プラトン『第七書簡』</span>
+    </div>
+  </section>
+
+  <!-- 07 遺産と現代 -->
+  <section class="chapter" id="legacy">
+    <div class="chapter-label">🌍 Legacy</div>
+    <h2 class="chapter-title">プラトンの遺産と現代</h2>
+
+    <p>6つのAIが共通して強調したのは、プラトンの射程の広さだ。</p>
+
+    <div class="consensus-box" data-label="6AI共通の評価">
+      <p>ホワイトヘッドの言葉——「西洋哲学は全部プラトンの注釈だ」。誇張はあるが、倫理学・政治哲学・形而上学・認識論・言語哲学・美学・宇宙論を一体として扱う思考様式を、彼が強いかたちで定着させたのは事実だ。</p>
+    </div>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ 後世への影響の流れ</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">✝️</span>
+          <div class="debate-text"><strong>キリスト教神学</strong>——新プラトン主義（プロティノス）を経てアウグスティヌスに吸収。「善のイデア」は神に近いものとして読まれた。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🔭</span>
+          <div class="debate-text"><strong>近代科学</strong>——ガリレオやニュートンの数学的自然科学にイデア論的思考の影響。「完全な法則が背後にある」という発想。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">⚡</span>
+          <div class="debate-text"><strong>ニーチェ・ハイデッガーによる批判</strong>——「プラトン主義＝形而上学の始まり＝西洋哲学の堕落」として批判。現実を軽視する思想として攻撃された。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🤖</span>
+          <div class="debate-text"><strong>現代——AI・VR時代</strong>——「本物とは何か」「観測される現実は本当か」という問いが、仮想現実や量子論の文脈でプラトンを再び呼び戻す。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box" data-label="6AI比較で際立った視点">
+      <p>Gensparkのみが強調した点——プラトンの遺産をイデア論だけに縮めるのは不十分。言語哲学・美学・宇宙論まで含めた広大な射程が彼の真の大きさだ。</p>
+      <p>Copilotのみが掘り下げた点——『饗宴』のエロース論。プラトンは理性主義者ではなく、愛が魂をイデアへ引き上げる力だと描いた。</p>
+    </div>
+
+    <div class="pull-quote">
+      対話篇の形式は、結論そのものよりも、<br>
+      結論に至る思考の運動を読者に経験させるための装置だ。
+    </div>
+
+    <!-- 個別ページへのリンク -->
+    <div class="view-links">
+      <div class="view-links-label">🌸 各AIの講義を読む</div>
+      <div class="view-links-grid">
+        <a class="view-link-btn" href="plato.html">
+          <div class="vl-dot" style="background:var(--claude)"></div>Claude版
+        </a>
+        <a class="view-link-btn" href="plato-chatgpt.html">
+          <div class="vl-dot" style="background:var(--chatgpt)"></div>ChatGPT版
+        </a>
+        <a class="view-link-btn" href="plato-gemini.html">
+          <div class="vl-dot" style="background:var(--gemini)"></div>Gemini版
+        </a>
+        <a class="view-link-btn" href="plato-copilot.html">
+          <div class="vl-dot" style="background:var(--copilot)"></div>Copilot版
+        </a>
+        <a class="view-link-btn" href="plato-grok.html">
+          <div class="vl-dot" style="background:var(--grok)"></div>Grok版
+        </a>
+        <a class="view-link-btn" href="plato-genspark.html">
+          <div class="vl-dot" style="background:var(--spark)"></div>Genspark版
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOT NAV -->
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Plato · BC 427–347 🌸</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
