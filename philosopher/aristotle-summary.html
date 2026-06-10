@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アリストテレス — 6つのAIが語る総括講義</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fdf8f4;
+    --surface: #fff9f5;
+    --ink: #2a1f1a;
+    --sepia: #4a3728;
+    --warm: #9a7860;
+    --rule: #e8d8cc;
+    --border: #ecddd4;
+    --petal: #f5e8d8;
+    --dahlia: #c4506a;
+    --dahlia-light: #f7e8ec;
+    --sunflower: #e8a020;
+    --ranunculus: #e07090;
+    --leaf: #7a9e6e;
+    --gold: #c9a84c;
+    --claude:   #c9a84c;
+    --chatgpt:  #10a37f;
+    --gemini:   #4285f4;
+    --copilot:  #0078d4;
+    --grok:     #e04444;
+    --spark:    #9b59b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    line-height: 2;
+    overflow-x: hidden;
+  }
+
+  .back-bar {
+    background: rgba(253,248,244,0.97);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    backdrop-filter: blur(8px);
+  }
+
+  .back-link { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--dahlia); text-decoration: none; letter-spacing: 0.1em; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--rule); }
+  .back-current { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--warm); }
+
+  .ai-badges { margin-left: auto; display: flex; gap: 4px; }
+  .ai-badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 4.5rem 1.5rem 3.5rem;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero-bg { position: absolute; inset: 0; pointer-events: none; opacity: 0.1; }
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .hero-eyebrow { font-family: 'Cormorant Garamond', serif; font-size: 0.68rem; letter-spacing: 0.4em; color: var(--dahlia); text-transform: uppercase; margin-bottom: 0.8rem; }
+
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 7vw, 5rem); font-weight: 700; color: var(--sepia); line-height: 1.1; margin-bottom: 0.3rem; }
+
+  .hero-en { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1rem, 2.5vw, 1.5rem); color: var(--warm); margin-bottom: 1rem; }
+
+  .hero-dates { font-family: 'Cormorant Garamond', serif; font-size: 0.82rem; color: var(--warm); letter-spacing: 0.2em; margin-bottom: 1.5rem; }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 0.8rem auto 1.5rem;
+    color: var(--ranunculus);
+  }
+  .ornament::before, .ornament::after { content: ''; display: block; width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--ranunculus)); }
+  .ornament::after { background: linear-gradient(90deg, var(--ranunculus), transparent); }
+
+  .hero-lead { font-size: 0.92rem; color: var(--sepia); max-width: 580px; margin: 0 auto 1.5rem; opacity: 0.85; line-height: 2; }
+
+  .source-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: 0.5rem; }
+
+  .source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .source-chip.claude  { color: var(--claude);  border-color: rgba(201,168,76,0.3);  background: rgba(201,168,76,0.06); }
+  .source-chip.chatgpt { color: var(--chatgpt); border-color: rgba(16,163,127,0.3); background: rgba(16,163,127,0.06); }
+  .source-chip.gemini  { color: var(--gemini);  border-color: rgba(66,133,244,0.3);  background: rgba(66,133,244,0.06); }
+  .source-chip.copilot { color: var(--copilot); border-color: rgba(0,120,212,0.3);  background: rgba(0,120,212,0.06); }
+  .source-chip.grok    { color: var(--grok);    border-color: rgba(224,68,68,0.3);   background: rgba(224,68,68,0.06); }
+  .source-chip.spark   { color: var(--spark);   border-color: rgba(155,89,182,0.3);  background: rgba(155,89,182,0.06); }
+
+  /* TOC */
+  .toc-wrap { max-width: 680px; margin: 2rem auto; padding: 0 1.5rem; }
+
+  .toc-inner { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+
+  .toc-head {
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--dahlia);
+    text-transform: uppercase;
+    background: var(--dahlia-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { border-bottom: 1px solid var(--border); }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    text-decoration: none;
+    transition: background 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .toc-list a:hover { background: var(--dahlia-light); color: var(--dahlia); }
+  .toc-icon { font-size: 0.85rem; flex-shrink: 0; }
+
+  /* CONTENT */
+  .content { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  .chapter { margin-bottom: 4rem; padding-bottom: 4rem; border-bottom: 1px solid var(--rule); }
+  .chapter:last-child { border-bottom: none; }
+
+  .chapter-label { font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--ranunculus); text-transform: uppercase; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+
+  .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 700; color: var(--sepia); line-height: 1.3; margin-bottom: 1.5rem; }
+
+  h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 600; color: var(--sepia); margin: 2rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--rule); letter-spacing: 0.05em; }
+
+  p { font-size: 0.92rem; color: var(--ink); margin-bottom: 1.1rem; opacity: 0.9; line-height: 2; }
+
+  .pull-quote {
+    margin: 1.8rem 0;
+    padding: 1.3rem 1.5rem;
+    border-left: 3px solid var(--dahlia);
+    background: var(--dahlia-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--sepia);
+    line-height: 1.85;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .consensus-box {
+    margin: 1.8rem 0;
+    border: 1px solid rgba(122,158,110,0.3);
+    border-radius: 10px;
+    padding: 1.3rem 1.4rem;
+    background: rgba(122,158,110,0.05);
+    position: relative;
+  }
+
+  .consensus-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--leaf);
+    text-transform: uppercase;
+  }
+
+  .consensus-box p { margin-bottom: 0; }
+
+  .debate-box {
+    margin: 1.8rem 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .debate-head {
+    background: var(--petal);
+    padding: 0.5rem 1.1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .debate-body { padding: 1.1rem 1.2rem; }
+
+  .debate-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--sepia);
+    align-items: flex-start;
+  }
+  .debate-row:last-child { margin-bottom: 0; }
+  .debate-icon { font-size: 0.85rem; flex-shrink: 0; margin-top: 0.2rem; }
+  .debate-text strong { font-weight: 500; color: var(--dahlia); }
+
+  /* compare box */
+  .compare-box {
+    margin: 1.8rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .compare-cell {
+    padding: 1.2rem 1.4rem;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--sepia);
+  }
+
+  .compare-cell:first-child { border-right: 1px solid var(--rule); background: var(--petal); }
+
+  .compare-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    .compare-box { grid-template-columns: 1fr; }
+    .compare-cell:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+  }
+
+  /* table */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+  }
+  .styled-table th {
+    background: var(--sepia);
+    color: var(--bg);
+    padding: 0.5rem 0.9rem;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+  }
+  .styled-table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--sepia);
+    line-height: 1.7;
+  }
+  .styled-table tr:nth-child(even) td { background: var(--petal); }
+
+  /* insight box */
+  .insight-box {
+    margin: 1.8rem 0;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    padding: 1.3rem 1.4rem;
+    background: rgba(201,168,76,0.04);
+    position: relative;
+  }
+
+  .insight-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .insight-box p { margin-bottom: 0.6rem; }
+  .insight-box p:last-child { margin-bottom: 0; }
+
+  /* process flow */
+  .process-box {
+    margin: 1.8rem 0;
+    padding: 1.3rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .process-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .process-flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.8rem;
+  }
+
+  .process-step {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--rule);
+    background: var(--petal);
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+  }
+
+  .process-arrow { color: var(--gold); font-size: 0.9rem; flex-shrink: 0; }
+
+  .process-example {
+    font-size: 0.78rem;
+    color: var(--warm);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+  }
+
+  /* view links */
+  .view-links {
+    margin: 2.5rem 0 0;
+    padding: 1.3rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .view-links-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .view-links-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+
+  .view-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    text-decoration: none;
+    color: var(--sepia);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+  }
+
+  .view-link-btn:hover { background: var(--dahlia-light); border-color: var(--dahlia); color: var(--dahlia); }
+
+  .vl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .foot-nav {
+    border-top: 1px solid var(--rule);
+    padding: 1.5rem;
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a { font-family: 'Cormorant Garamond', serif; font-size: 0.82rem; color: var(--dahlia); text-decoration: none; letter-spacing: 0.1em; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.78rem; color: var(--rule); }
+
+  @media (max-width: 500px) {
+    .view-links-grid { grid-template-columns: 1fr; }
+    .hero { padding: 3rem 1.2rem 2.5rem; }
+    .content { padding: 0 1.2rem 5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アリストテレス 総括</span>
+  <div class="ai-badges">
+    <div class="ai-badge-dot" style="background:var(--claude)"></div>
+    <div class="ai-badge-dot" style="background:var(--chatgpt)"></div>
+    <div class="ai-badge-dot" style="background:var(--gemini)"></div>
+    <div class="ai-badge-dot" style="background:var(--copilot)"></div>
+    <div class="ai-badge-dot" style="background:var(--grok)"></div>
+    <div class="ai-badge-dot" style="background:var(--spark)"></div>
+  </div>
+</div>
+
+<div class="hero">
+  <svg class="hero-bg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(30,40) rotate(-15)">
+      <circle cx="0" cy="0" r="7" fill="#c4506a"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(315)"/>
+    </g>
+    <g transform="translate(565,50) rotate(10)">
+      <circle cx="0" cy="0" r="14" fill="#8b6000"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(30)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(150)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(210)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(300)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(330)"/>
+    </g>
+    <g transform="translate(300,260) rotate(5)">
+      <circle cx="0" cy="0" r="5" fill="#e07090"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(40)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(80)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(160)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(200)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(280)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(320)"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">🌸 6 AI · 総括講義 · Summary</p>
+    <h1>アリストテレス</h1>
+    <p class="hero-en">Aristotle</p>
+    <p class="hero-dates">紀元前 384 — 322 · スタゲイラ→アテナイ</p>
+    <div class="ornament">✦</div>
+    <p class="hero-lead">
+      Claude · ChatGPT · Gemini · Copilot · Grok · Genspark——<br>
+      6つのAIがアリストテレスについて語ったことを、一つの読み物として統合しました。
+    </p>
+    <div class="source-bar">
+      <span class="source-chip claude">● Claude</span>
+      <span class="source-chip chatgpt">● ChatGPT</span>
+      <span class="source-chip gemini">● Gemini</span>
+      <span class="source-chip copilot">● Copilot</span>
+      <span class="source-chip grok">● Grok</span>
+      <span class="source-chip spark">● Genspark</span>
+    </div>
+  </div>
+</div>
+
+<nav class="toc-wrap">
+  <div class="toc-inner">
+    <div class="toc-head">🌼 目次</div>
+    <ul class="toc-list">
+      <li><a href="#profile"><span class="toc-icon">🏛️</span>アリストテレスとはどんな人物か</a></li>
+      <li><a href="#vs-plato"><span class="toc-icon">⚖️</span>プラトンとの決定的な違い</a></li>
+      <li><a href="#hyle"><span class="toc-icon">🌿</span>形相と質料——この世界に宿る本質</a></li>
+      <li><a href="#four-causes"><span class="toc-icon">🔍</span>四原因説——存在を多角的に説明する</a></li>
+      <li><a href="#entelecheia"><span class="toc-icon">🌱</span>エンテレケイア——自己実現のプロセス</a></li>
+      <li><a href="#ethics"><span class="toc-icon">✨</span>倫理学——エウダイモニアと中庸</a></li>
+      <li><a href="#politics"><span class="toc-icon">🏙️</span>政治学——人間は政治的動物</a></li>
+      <li><a href="#legacy"><span class="toc-icon">🌍</span>遺産と現代への問い</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="content">
+
+  <!-- 01 プロフィール -->
+  <section class="chapter" id="profile">
+    <div class="chapter-label">🏛️ Profile</div>
+    <h2 class="chapter-title">アリストテレスとはどんな人物か</h2>
+
+    <p>紀元前384年、マケドニア近郊のスタゲイラ生まれ。父親はマケドニア王の侍医だった医者——この出自が重要で、アリストテレスの哲学には「解剖する・分類する・観察する」という医学的・生物学的な感覚が染み込んでいる。</p>
+
+    <p>17歳でアテネに出て、プラトンのアカデメイアに入学し20年間在籍した。プラトンが死んだとき後継者に選ばれず、アテネを去った。その後マケドニア王フィリッポス2世に呼ばれ、13歳のアレクサンドロスの家庭教師になった。後のアレクサンドロス大王だ。</p>
+
+    <div class="consensus-box" data-label="6AI共通">
+      <p>50歳前後でアテネに戻りリュケイオンを創設。逍遥学派（ペリパトス派）の始まり——歩きながら講義したからそう呼ばれた。著作は論理学・自然学・形而上学・倫理学・政治学・詩学・生物学など約30編以上が現存する。</p>
+    </div>
+
+    <div class="insight-box" data-label="Gensparkの注意点">
+      <p>現存著作のほとんどは「講義ノート」的なテキストで、出版用に整えられていない。私たちが読んでいる「アリストテレス」は、彼の思想の完成品ではなく作業メモかもしれない。</p>
+    </div>
+  </section>
+
+  <!-- 02 プラトンとの違い -->
+  <section class="chapter" id="vs-plato">
+    <div class="chapter-label">⚖️ Key Contrast</div>
+    <h2 class="chapter-title">プラトンとの決定的な違い</h2>
+
+    <div class="compare-box">
+      <div class="compare-cell">
+        <div class="compare-label">プラトン</div>
+        本物はイデア界にある。この世界は影だ。
+      </div>
+      <div class="compare-cell">
+        <div class="compare-label">アリストテレス</div>
+        本物はここにある。この世界を観察しろ。
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      「プラトンは友人だ。しかし真理はもっと友人だ」<br>
+      <span style="font-size:0.8rem;opacity:0.7">— Amicus Plato, sed magis amica veritas</span>
+    </div>
+
+    <div class="consensus-box" data-label="6AI共通の見解">
+      <p>ただし「反プラトン」と単純化するのは不正確。アリストテレスはプラトンの立てた大問題——本質とは何か、知とは何か、善い生とは何か——を引き継ぎつつ、答え方を変えた哲学者だ。プラトンとの関係は否定ではなく修正として理解すべきだ。</p>
+    </div>
+
+    <p>哲学の重心が天上から地上へ降りてきた。この転換がアリストテレス哲学のすべての出発点だ。</p>
+  </section>
+
+  <!-- 03 形相と質料 -->
+  <section class="chapter" id="hyle">
+    <div class="chapter-label">🌿 Core Theory</div>
+    <h2 class="chapter-title">形相と質料——この世界に宿る本質</h2>
+
+    <p>アリストテレスはイデアを「別の世界」に追放しなかった。個物の中に内在させた——これが「内在的本質主義」と呼ばれる考え方だ。</p>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ 例：ウールの毛糸からベストへ（Geminiの比喩）</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">🧶</span>
+          <div class="debate-text">ウールの毛糸（<strong>質料：ヒュレー</strong>）と、ベストの形（<strong>形相：エイドス</strong>）が合体して初めて1着のベストが「存在」する。形はあの世にあるのではなく、この手の中の素材と共にある。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🌳</span>
+          <div class="debate-text">種子は単なる物体ではなく、木になる方向性をはらんでいる。アリストテレスはそのような"なりゆき"を偶然ではなく自然の内的秩序として捉えた。</div>
+        </div>
+      </div>
+    </div>
+
+    <table class="styled-table">
+      <thead><tr><th>質料（ヒュレー）</th><th>形相（エイドス）</th></tr></thead>
+      <tbody>
+        <tr><td>何でできているか</td><td>何であるか・本質・構造</td></tr>
+        <tr><td>素材・材料</td><td>その物を「その物」たらしめるもの</td></tr>
+        <tr><td>変化しうる</td><td>その物の内にある</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 04 四原因説 -->
+  <section class="chapter" id="four-causes">
+    <div class="chapter-label">🔍 Four Causes</div>
+    <h2 class="chapter-title">四原因説——存在を多角的に説明する</h2>
+
+    <p>「なぜこれが存在するのか」を4つの原因で説明する。すべてのAIが取り上げた、アリストテレス哲学の核心。</p>
+
+    <table class="styled-table">
+      <thead><tr><th>原因</th><th>意味</th><th>例（コート）</th></tr></thead>
+      <tbody>
+        <tr><td>質料因</td><td>何でできているか</td><td>カシミアの毛織物・ボタン</td></tr>
+        <tr><td>形相因</td><td>何であるか・構造</td><td>チェスターコートのデザイン</td></tr>
+        <tr><td>作用因（運動因）</td><td>何が作ったか</td><td>仕立て職人の技術</td></tr>
+        <tr><td>目的因 ⭐</td><td>何のためか</td><td>着る人を守り美しく見せるため</td></tr>
+      </tbody>
+    </table>
+
+    <div class="consensus-box" data-label="6AI共通の指摘">
+      <p>現代科学は質料因と作用因しか使わない。「目的のために存在する」という目的因を科学は排除した。しかしアリストテレスにとって目的因こそが最も重要だった——すべての存在は何かに向かっている。</p>
+    </div>
+
+    <div class="insight-box" data-label="現代での復権">
+      <p>近代科学革命で否定された目的因だが、生物の機能説明（「心臓は血液を送るためにある」）には目的論的言語が不可欠。進化生物学・認知科学・システム理論・AIの倫理設計でも事実上の目的論的言語が復活している。「弱い目的論」として再評価が進む。</p>
+    </div>
+  </section>
+
+  <!-- 05 エンテレケイア -->
+  <section class="chapter" id="entelecheia">
+    <div class="chapter-label">🌱 Entelecheia</div>
+    <h2 class="chapter-title">エンテレケイア——自己実現のプロセス</h2>
+
+    <p>アリストテレスの独自概念で最も重要なものの一つ。存在は静的なものではなく、プロセスの中にある。</p>
+
+    <div class="process-box">
+      <div class="process-title">可能態 → 現実態 → 完全現実態</div>
+      <div class="process-flow">
+        <div class="process-step">可能態（デュナミス）</div>
+        <div class="process-arrow">→</div>
+        <div class="process-step">現実態（エネルゲイア）</div>
+        <div class="process-arrow">→</div>
+        <div class="process-step">完全現実態（エンテレケイア）</div>
+      </div>
+      <div class="process-example">
+        <span>ドングリ</span><span>→</span><span>育ちつつある木</span><span>→</span><span>完全に実現したオークの木</span>
+      </div>
+      <div class="process-example" style="margin-top:0.3rem">
+        <span>子ども</span><span>→</span><span>学びつつある人</span><span>→</span><span>徳を完全に実現した人間</span>
+      </div>
+    </div>
+
+    <p>存在はすべて、自分の本性を完全に実現しようとするプロセスの中にある——これが目的論的自然観だ。</p>
+  </section>
+
+  <!-- 06 倫理学 -->
+  <section class="chapter" id="ethics">
+    <div class="chapter-label">✨ Ethics</div>
+    <h2 class="chapter-title">倫理学——エウダイモニアと中庸</h2>
+
+    <p>「人間の最高善は何か？」——アリストテレスの答えはエウダイモニア（幸福・よく生きること）。ただしこれは「気持ちいい状態」ではない。</p>
+
+    <div class="pull-quote">
+      エウダイモニアとは、人間としての卓越性（アレテー）を<br>完全に発揮した活動そのもの。<br>「幸せ」を感情の一時的状態ではなく、人生全体の出来栄えとして考えた。
+    </div>
+
+    <h3>中庸の理論</h3>
+
+    <table class="styled-table">
+      <thead><tr><th>過剰</th><th>中庸（徳）</th><th>不足</th></tr></thead>
+      <tbody>
+        <tr><td>無謀</td><td>勇気</td><td>臆病</td></tr>
+        <tr><td>放縦</td><td>節制</td><td>無感覚</td></tr>
+        <tr><td>傲慢</td><td>誇り</td><td>卑屈</td></tr>
+        <tr><td>怒りっぽさ</td><td>穏和</td><td>無気力</td></tr>
+      </tbody>
+    </table>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ AIによる解釈の広がり</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">⚠️</span>
+          <div class="debate-text"><strong>「真ん中ならOK」ではない</strong>——状況・目的・性格を考慮した実践的判断。文脈依存の最適解を指す「賢慮（phronesis）」が鍵。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🔄</span>
+          <div class="debate-text"><strong>プラトンとの根本的違い</strong>——プラトンにとって徳は「善のイデアを知ること」。アリストテレスにとって徳は繰り返しの実践によって身体化されるもの。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      「私たちは正義の行為をすることで正義の人になる。<br>
+      節制の行為をすることで節制の人になる」
+    </div>
+  </section>
+
+  <!-- 07 政治学 -->
+  <section class="chapter" id="politics">
+    <div class="chapter-label">🏙️ Politics</div>
+    <h2 class="chapter-title">政治学——人間は政治的動物</h2>
+
+    <div class="pull-quote">
+      「人間はポリス的動物（ゾーオン・ポリティコン）だ」<br>
+      孤立して生きられる存在は、神か野獣だ。
+    </div>
+
+    <p>158のポリスの政治体制を実際に調査・分析した上での分類——純粋に経験的・実証的な研究だ。</p>
+
+    <table class="styled-table">
+      <thead><tr><th>統治者数</th><th>正しい形態</th><th>堕落した形態</th></tr></thead>
+      <tbody>
+        <tr><td>一人</td><td>王制</td><td>僭主制</td></tr>
+        <tr><td>少数</td><td>貴族制</td><td>寡頭制</td></tr>
+        <tr><td>多数</td><td>国制（ポリテイア）</td><td>民主制</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box" data-label="ChatGPTが指摘した視点">
+      <p>アリストテレスには奴隷制を一定認容・男女差を自然視していた記述がある。これは現代基準では問題視される。ただし「時代背景がある」と「だから正しい」は別——ここは分けて考える必要がある。</p>
+    </div>
+  </section>
+
+  <!-- 08 遺産と現代 -->
+  <section class="chapter" id="legacy">
+    <div class="chapter-label">🌍 Legacy</div>
+    <h2 class="chapter-title">遺産と現代への問い</h2>
+
+    <div class="consensus-box" data-label="6AI共通の評価">
+      <p>「万学の祖」——論理学・自然学・形而上学・倫理学・政治学・詩学・生物学を一人で体系化した。中世スコラ哲学の中心となり、イスラーム哲学（アヴィセンナ、アヴェロエス）を経由してヨーロッパに再導入された。</p>
+    </div>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ 後世からの批判と再評価</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">⚡</span>
+          <div class="debate-text"><strong>近代科学による批判</strong>——ガリレオ・ニュートンが目的因を排除。ベーコン・デカルトは「無用の言葉の遊戯」と批判。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🔁</span>
+          <div class="debate-text"><strong>現代での復活</strong>——ハイデッガーが実存的側面を再発見。徳倫理学・コミュニタリアニズム・生物哲学・AIの倫理設計で再評価が進む。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🏗️</span>
+          <div class="debate-text"><strong>Gensparkの視点</strong>——アリストテレスの強さは個々の結論だけでなく、「世界を整理する道具立て」を与えたことにある。原因・本質・目的・徳・共同体という概念が後代の共通言語になった。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      ソクラテスの「問い続けること」、プラトンの「イデアへの運動」、<br>
+      そしてアリストテレスの「やり続けること」——<br>
+      三者に共通するのは、「完成」は状態ではなくプロセスだという直観だ。
+    </div>
+
+    <!-- 個別ページへのリンク -->
+    <div class="view-links">
+      <div class="view-links-label">🌸 各AIの講義を読む</div>
+      <div class="view-links-grid">
+        <a class="view-link-btn" href="aristotle.html">
+          <div class="vl-dot" style="background:var(--claude)"></div>Claude版
+        </a>
+        <a class="view-link-btn" href="aristotle-chatgpt.html">
+          <div class="vl-dot" style="background:var(--chatgpt)"></div>ChatGPT版
+        </a>
+        <a class="view-link-btn" href="aristotle-gemini.html">
+          <div class="vl-dot" style="background:var(--gemini)"></div>Gemini版
+        </a>
+        <a class="view-link-btn" href="aristotle-copilot.html">
+          <div class="vl-dot" style="background:var(--copilot)"></div>Copilot版
+        </a>
+        <a class="view-link-btn" href="aristotle-grok.html">
+          <div class="vl-dot" style="background:var(--grok)"></div>Grok版
+        </a>
+        <a class="view-link-btn" href="aristotle-genspark.html">
+          <div class="vl-dot" style="background:var(--spark)"></div>Genspark版
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Aristotle · BC 384–322 🌸</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
