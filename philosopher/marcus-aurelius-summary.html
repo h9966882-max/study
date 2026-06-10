@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マルクス・アウレリウス — 6つのAIが語る総括講義</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Serif+JP:wght@200;300;400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fdf8f4;
+    --surface: #fff9f5;
+    --ink: #2a1f1a;
+    --sepia: #4a3728;
+    --warm: #9a7860;
+    --rule: #e8d8cc;
+    --border: #ecddd4;
+    --petal: #f5e8d8;
+    --dahlia: #c4506a;
+    --dahlia-light: #f7e8ec;
+    --sunflower: #e8a020;
+    --ranunculus: #e07090;
+    --leaf: #7a9e6e;
+    --gold: #c9a84c;
+    --claude:   #c9a84c;
+    --chatgpt:  #10a37f;
+    --gemini:   #4285f4;
+    --copilot:  #0078d4;
+    --grok:     #e04444;
+    --spark:    #9b59b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    line-height: 2;
+    overflow-x: hidden;
+  }
+
+  .back-bar {
+    background: rgba(253,248,244,0.97);
+    border-bottom: 1px solid var(--rule);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    backdrop-filter: blur(8px);
+  }
+
+  .back-link { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--dahlia); text-decoration: none; letter-spacing: 0.1em; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--rule); }
+  .back-current { font-family: 'Cormorant Garamond', serif; font-size: 0.78rem; color: var(--warm); }
+
+  .ai-badges { margin-left: auto; display: flex; gap: 4px; }
+  .ai-badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 4.5rem 1.5rem 3.5rem;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero-bg { position: absolute; inset: 0; pointer-events: none; opacity: 0.1; }
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .hero-eyebrow { font-family: 'Cormorant Garamond', serif; font-size: 0.68rem; letter-spacing: 0.4em; color: var(--dahlia); text-transform: uppercase; margin-bottom: 0.8rem; }
+
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 4.5rem); font-weight: 700; color: var(--sepia); line-height: 1.1; margin-bottom: 0.3rem; }
+
+  .hero-en { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1rem, 2.5vw, 1.5rem); color: var(--warm); margin-bottom: 1rem; }
+
+  .hero-dates { font-family: 'Cormorant Garamond', serif; font-size: 0.82rem; color: var(--warm); letter-spacing: 0.2em; margin-bottom: 1.5rem; }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 0.8rem auto 1.5rem;
+    color: var(--ranunculus);
+  }
+  .ornament::before, .ornament::after { content: ''; display: block; width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--ranunculus)); }
+  .ornament::after { background: linear-gradient(90deg, var(--ranunculus), transparent); }
+
+  .hero-lead { font-size: 0.92rem; color: var(--sepia); max-width: 580px; margin: 0 auto 1.5rem; opacity: 0.85; line-height: 2; }
+
+  .source-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: 0.5rem; }
+
+  .source-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .source-chip.claude  { color: var(--claude);  border-color: rgba(201,168,76,0.3);  background: rgba(201,168,76,0.06); }
+  .source-chip.chatgpt { color: var(--chatgpt); border-color: rgba(16,163,127,0.3); background: rgba(16,163,127,0.06); }
+  .source-chip.gemini  { color: var(--gemini);  border-color: rgba(66,133,244,0.3);  background: rgba(66,133,244,0.06); }
+  .source-chip.copilot { color: var(--copilot); border-color: rgba(0,120,212,0.3);  background: rgba(0,120,212,0.06); }
+  .source-chip.grok    { color: var(--grok);    border-color: rgba(224,68,68,0.3);   background: rgba(224,68,68,0.06); }
+  .source-chip.spark   { color: var(--spark);   border-color: rgba(155,89,182,0.3);  background: rgba(155,89,182,0.06); }
+
+  /* TOC */
+  .toc-wrap { max-width: 680px; margin: 2rem auto; padding: 0 1.5rem; }
+
+  .toc-inner { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+
+  .toc-head {
+    padding: 0.7rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--dahlia);
+    text-transform: uppercase;
+    background: var(--dahlia-light);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { border-bottom: 1px solid var(--border); }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    color: var(--sepia);
+    text-decoration: none;
+    transition: background 0.15s;
+    letter-spacing: 0.03em;
+  }
+  .toc-list a:hover { background: var(--dahlia-light); color: var(--dahlia); }
+  .toc-icon { font-size: 0.85rem; flex-shrink: 0; }
+
+  /* CONTENT */
+  .content { max-width: 680px; margin: 0 auto; padding: 0 1.5rem 6rem; }
+
+  .chapter { margin-bottom: 4rem; padding-bottom: 4rem; border-bottom: 1px solid var(--rule); }
+  .chapter:last-child { border-bottom: none; }
+
+  .chapter-label { font-family: 'Cormorant Garamond', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--ranunculus); text-transform: uppercase; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+
+  .chapter-title { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 700; color: var(--sepia); line-height: 1.3; margin-bottom: 1.5rem; }
+
+  h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 600; color: var(--sepia); margin: 2rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--rule); letter-spacing: 0.05em; }
+
+  p { font-size: 0.92rem; color: var(--ink); margin-bottom: 1.1rem; opacity: 0.9; line-height: 2; }
+
+  .pull-quote {
+    margin: 1.8rem 0;
+    padding: 1.3rem 1.5rem;
+    border-left: 3px solid var(--dahlia);
+    background: var(--dahlia-light);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--sepia);
+    line-height: 1.85;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .consensus-box {
+    margin: 1.8rem 0;
+    border: 1px solid rgba(122,158,110,0.3);
+    border-radius: 10px;
+    padding: 1.3rem 1.4rem;
+    background: rgba(122,158,110,0.05);
+    position: relative;
+  }
+
+  .consensus-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--leaf);
+    text-transform: uppercase;
+  }
+
+  .consensus-box p { margin-bottom: 0; }
+
+  .debate-box {
+    margin: 1.8rem 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .debate-head {
+    background: var(--petal);
+    padding: 0.5rem 1.1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .debate-body { padding: 1.1rem 1.2rem; }
+
+  .debate-row {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--sepia);
+    align-items: flex-start;
+  }
+  .debate-row:last-child { margin-bottom: 0; }
+  .debate-icon { font-size: 0.85rem; flex-shrink: 0; margin-top: 0.2rem; }
+  .debate-text strong { font-weight: 500; color: var(--dahlia); }
+
+  /* compare box */
+  .compare-box {
+    margin: 1.8rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .compare-cell {
+    padding: 1.2rem 1.4rem;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--sepia);
+  }
+
+  .compare-cell:first-child { border-right: 1px solid var(--rule); background: var(--petal); }
+
+  .compare-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 480px) {
+    .compare-box { grid-template-columns: 1fr; }
+    .compare-cell:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+  }
+
+  /* table */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+  }
+  .styled-table th {
+    background: var(--sepia);
+    color: var(--bg);
+    padding: 0.5rem 0.9rem;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+  }
+  .styled-table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    color: var(--sepia);
+    line-height: 1.7;
+    vertical-align: top;
+  }
+  .styled-table tr:nth-child(even) td { background: var(--petal); }
+
+  /* insight box */
+  .insight-box {
+    margin: 1.8rem 0;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    padding: 1.3rem 1.4rem;
+    background: rgba(201,168,76,0.04);
+    position: relative;
+  }
+
+  .insight-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -0.55rem;
+    left: 1rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .insight-box p { margin-bottom: 0.6rem; }
+  .insight-box p:last-child { margin-bottom: 0; }
+
+  /* view links */
+  .view-links {
+    margin: 2.5rem 0 0;
+    padding: 1.3rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+
+  .view-links-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    color: var(--warm);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .view-links-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+
+  .view-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    text-decoration: none;
+    color: var(--sepia);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+  }
+
+  .view-link-btn:hover { background: var(--dahlia-light); border-color: var(--dahlia); color: var(--dahlia); }
+
+  .vl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .foot-nav {
+    border-top: 1px solid var(--rule);
+    padding: 1.5rem;
+    max-width: 680px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a { font-family: 'Cormorant Garamond', serif; font-size: 0.82rem; color: var(--dahlia); text-decoration: none; letter-spacing: 0.1em; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.78rem; color: var(--rule); }
+
+  @media (max-width: 500px) {
+    .view-links-grid { grid-template-columns: 1fr; }
+    .hero { padding: 3rem 1.2rem 2.5rem; }
+    .content { padding: 0 1.2rem 5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">マルクス・アウレリウス 総括</span>
+  <div class="ai-badges">
+    <div class="ai-badge-dot" style="background:var(--claude)"></div>
+    <div class="ai-badge-dot" style="background:var(--chatgpt)"></div>
+    <div class="ai-badge-dot" style="background:var(--gemini)"></div>
+    <div class="ai-badge-dot" style="background:var(--copilot)"></div>
+    <div class="ai-badge-dot" style="background:var(--grok)"></div>
+    <div class="ai-badge-dot" style="background:var(--spark)"></div>
+  </div>
+</div>
+
+<div class="hero">
+  <svg class="hero-bg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(30,40) rotate(-15)">
+      <circle cx="0" cy="0" r="7" fill="#c4506a"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-18" rx="6" ry="12" fill="#c4506a" opacity="0.8" transform="rotate(315)"/>
+    </g>
+    <g transform="translate(565,50) rotate(10)">
+      <circle cx="0" cy="0" r="14" fill="#8b6000"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(30)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(150)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(210)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(300)"/>
+      <ellipse cx="0" cy="-26" rx="8" ry="16" fill="#e8a020" opacity="0.9" transform="rotate(330)"/>
+    </g>
+    <g transform="translate(300,260) rotate(5)">
+      <circle cx="0" cy="0" r="5" fill="#e07090"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(40)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(80)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(160)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(200)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(240)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(280)"/>
+      <ellipse cx="0" cy="-14" rx="5" ry="10" fill="#e07090" opacity="0.8" transform="rotate(320)"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">🌸 6 AI · 総括講義 · Summary</p>
+    <h1>マルクス・アウレリウス</h1>
+    <p class="hero-en">Marcus Aurelius</p>
+    <p class="hero-dates">121 — 180 · ローマ</p>
+    <div class="ornament">✦</div>
+    <p class="hero-lead">
+      Claude · ChatGPT · Gemini · Copilot · Grok · Genspark——<br>
+      6つのAIがマルクス・アウレリウスについて語ったことを、一つの読み物として統合しました。
+    </p>
+    <div class="source-bar">
+      <span class="source-chip claude">● Claude</span>
+      <span class="source-chip chatgpt">● ChatGPT</span>
+      <span class="source-chip gemini">● Gemini</span>
+      <span class="source-chip copilot">● Copilot</span>
+      <span class="source-chip grok">● Grok</span>
+      <span class="source-chip spark">● Genspark</span>
+    </div>
+  </div>
+</div>
+
+<nav class="toc-wrap">
+  <div class="toc-inner">
+    <div class="toc-head">🌼 目次</div>
+    <ul class="toc-list">
+      <li><a href="#profile"><span class="toc-icon">🏛️</span>マルクス・アウレリウスとはどんな人物か</a></li>
+      <li><a href="#meditations"><span class="toc-icon">📖</span>『自省録』——誰にも見せるつもりのなかった日記</a></li>
+      <li><a href="#stoic"><span class="toc-icon">⚖️</span>ストア哲学の核心——制御できるものに集中せよ</a></li>
+      <li><a href="#themes"><span class="toc-icon">🌿</span>『自省録』の4つの主要テーマ</a></li>
+      <li><a href="#cosmos"><span class="toc-icon">🌍</span>コスモポリタニズムとロゴス</a></li>
+      <li><a href="#stoic-vs-christian"><span class="toc-icon">✝️</span>ストア哲学とキリスト教——似て非なるもの</a></li>
+      <li><a href="#deep"><span class="toc-icon">🔍</span>深掘り——「実践できていたのか」問題と現代への接続</a></li>
+      <li><a href="#legacy"><span class="toc-icon">🌸</span>遺産と現代への問い</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="content">
+
+  <!-- 01 プロフィール -->
+  <section class="chapter" id="profile">
+    <div class="chapter-label">🏛️ Profile</div>
+    <h2 class="chapter-title">マルクス・アウレリウスとはどんな人物か</h2>
+
+    <p>121年4月26日、ローマ生まれ。スペイン系貴族の家に生まれ、父を早くに亡くした。祖父と皇帝ハドリアヌスに目をかけられ、17歳で皇位継承者に指名された。本人は政治より哲学がやりたかった、という記録が残っている。</p>
+
+    <div class="consensus-box" data-label="6AI共通">
+      <p>161年、40歳で即位。ネルウァ＝アントニヌス朝の出身で、即位当初はルキウス・ウェルスとの共同統治、169年以降は単独皇帝。「五賢帝」最後の一人とされる。在位中ずっと戦争だった——北方ゲルマン民族（マルコマンニ戦争）との戦い、東方パルティアとの戦い、アントニヌスの疫病の大流行。ローマ帝国の「黄金時代」の末期で、すでにひびが入り始めていた時代。</p>
+    </div>
+
+    <p>ローマ皇帝でありながら哲学者——この組み合わせは歴史上ほぼ唯一だ。プラトンが夢想した「哲人王」を、最も過酷な形で体現した人物として後世に記憶されている。</p>
+
+    <div class="insight-box" data-label="Grokの視点">
+      <p>マキャベリは彼の時代を「黄金時代」と称賛した。一方で彼の死後、息子コンモドゥスが後継者となり、パクス・ロマーナ（ローマの平和）の終わりを象徴することになった。偉大さと脆さが同居する皇帝だった。</p>
+    </div>
+  </section>
+
+  <!-- 02 自省録 -->
+  <section class="chapter" id="meditations">
+    <div class="chapter-label">📖 Meditations</div>
+    <h2 class="chapter-title">『自省録』——誰にも見せるつもりのなかった日記</h2>
+
+    <div class="consensus-box" data-label="6AI共通の前提">
+      <p>『自省録（タ・エイス・ヘアウトン）』——「自分自身へ」という意味のギリシャ語。全12巻、断片的なメモの集積。ギリシャ語で書かれた（ローマ皇帝なのにラテン語ではない）。出版を意図したものではなく、個人的な覚書・自己修練のノート。生前は非公開——写本が偶然残った。</p>
+    </div>
+
+    <div class="compare-box">
+      <div class="compare-cell">
+        <div class="compare-label">誤った読み方</div>
+        「人格完成した聖人の言葉集」として読む。刺さる名言を拾って終わり。
+      </div>
+      <div class="compare-cell">
+        <div class="compare-label">正しい読み方</div>
+        「揺れる人間の訓練記録」として読む。自分を立て直すための内的ドリル。
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      「朝、起きるのが辛いときには、こう考えよ。<br>
+      私は人間の務めを果たすために起きるのだ。自分がそのために生まれ、そのために世に送り出された仕事をこれからしに行くというのに、まだぶつぶつ言っているのか？」<br>
+      <span style="font-size:0.8rem;opacity:0.7">——『自省録』より</span>
+    </div>
+
+    <p>皇帝だって、朝はベッドから出たくなかった。権力の頂点にいる人間が、毎日「自分はまだできていない」と書き続けた——これが2000年後も読まれている理由だ。</p>
+
+    <div class="insight-box" data-label="Gensparkの指摘">
+      <p>『自省録』の同じテーマが何度も繰り返されるのは矛盾や甘さではなく、そのときそのときの自分の弱さに合わせて別の薬を飲んでいるようなものだ。また、なぜギリシャ語で書いたのか——当時の哲学はギリシャ語が主流であり、哲学者としての自己を優先した結果、かつ内省的・精神的な表現に適していたからとされる。</p>
+    </div>
+  </section>
+
+  <!-- 03 ストア哲学 -->
+  <section class="chapter" id="stoic">
+    <div class="chapter-label">⚖️ Stoic Philosophy</div>
+    <h2 class="chapter-title">ストア哲学の核心——制御できるものに集中せよ</h2>
+
+    <p>マルクスを理解するにはストア哲学の基礎が必要だ。紀元前300年頃、ゼノンがアテネの「ストア・ポイキレ（彩色柱廊）」で創始した哲学。</p>
+
+    <table class="styled-table">
+      <thead><tr><th>制御できるもの</th><th>制御できないもの</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>判断・意志・欲求・忌避・行動・態度<br><strong>——ここに集中せよ</strong></td>
+          <td>身体・財産・評判・権力・天気・他人・過去<br><strong>——気にするな</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="consensus-box" data-label="6AI共通の注意点">
+      <p>ストア派は「感情を消せ」と言っているのではない。感情を「パトス（情念）」と「エウパテイア（良い感情）」に分け、前者を制御することを求める——「感情がない人」ではなく、「感情を扱おうと努力する人」がストアの理想だ。</p>
+    </div>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ AIによる解釈の広がり</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">⚠️</span>
+          <div class="debate-text"><strong>「諦め」とは違う</strong>——投げるのではなく行動はする。無力感ではなく最善を尽くす。受動ではなく能動性を維持する。これがストア派の姿勢だ（ChatGPT）。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🔍</span>
+          <div class="debate-text"><strong>「我慢哲学」でもない</strong>——ストア派は「認識訓練」に近い。「何が事実か」「何が解釈か」「何が制御可能か」を整理する、かなり構造的なアプローチだ（ChatGPT・Genspark）。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">🌐</span>
+          <div class="debate-text"><strong>「自然に従う」の意味</strong>——「野生に帰れ」ではない。人間の自然＝理性。だから理性に従って生きることが「自然に従う」こと（Claude）。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 自省録の主要テーマ -->
+  <section class="chapter" id="themes">
+    <div class="chapter-label">🌿 Four Themes</div>
+    <h2 class="chapter-title">『自省録』の4つの主要テーマ</h2>
+
+    <h3>① 判断が苦しみを作る</h3>
+
+    <p>出来事そのものではなく、出来事への「解釈」が苦しみを増幅する——これはストア派全体に共通するが、マルクスが繰り返し書いた核心だ。</p>
+
+    <div class="pull-quote">
+      「私を傷つけるのは、起きた出来事そのものではない。<br>その出来事に対する、自分の『解釈（評価）』である」
+    </div>
+
+    <h3>② メメント・モリ（死を想え）</h3>
+
+    <div class="pull-quote">
+      「アレクサンドロスも、彼の馬丁も、死ねば同じところへ行った」
+    </div>
+
+    <p>マルクスは死の平等性を繰り返し書く。これは虚無主義ではなく、今やるべきことに集中するための「優先順位整理の装置」として機能している。時間は有限だからこそ、無駄な怒り・欲望・名誉欲を捨てられる。</p>
+
+    <h3>③ 他者への怒りを手放す</h3>
+
+    <div class="pull-quote">
+      「朝起きたら、今日も厄介な人間に会うだろうと覚悟せよ。<br>彼らも自分の本性に従って行動しているにすぎない」
+    </div>
+
+    <p>権力で誰でも処罰できる立場で、怒りを理性で制御しようとしていた。</p>
+
+    <h3>④ 役割の倫理（カテーコン）</h3>
+
+    <div class="pull-quote">
+      「哲学者として生きるとはどういうことか。それは宮廷の衣をまとった奴隷にならないことだ」
+    </div>
+
+    <div class="insight-box" data-label="重要な視点">
+      <p>マルクスの哲学は心の平静だけを求めるのではなく、他者に対して正しくふるまうことを要求する。つまり彼のストア主義は、自己防衛の技法であると同時に、公的責任の倫理でもある——これがマルクスを「ただの内省家」にしない重要点だ（Genspark）。</p>
+    </div>
+  </section>
+
+  <!-- 05 コスモポリタニズム -->
+  <section class="chapter" id="cosmos">
+    <div class="chapter-label">🌍 Cosmopolitanism</div>
+    <h2 class="chapter-title">コスモポリタニズムとロゴス</h2>
+
+    <h3>コスモポリス——宇宙都市国家</h3>
+
+    <div class="pull-quote">
+      「私の本性は理性的・社会的動物だ。私の都市と国は、皇帝アントニヌスとしてはローマだ。しかし人間としては世界だ」<br>
+      <span style="font-size:0.8rem;opacity:0.7">——マルクス・アウレリウス『自省録』</span>
+    </div>
+
+    <p>人間は宇宙全体の一部であり、人類は一つの共同体だ——これが現代のコスモポリタニズム・普遍倫理・世界市民思想の源流として読まれている。</p>
+
+    <h3>ロゴス——宇宙の理性的秩序</h3>
+
+    <p>ストア派は宇宙を理性（ロゴス）によって秩序づけられた統一体とみなした。マルクスはだから「世界は混沌ではない」と考える。</p>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ 摂理か、原子か——Gensparkが指摘した上級テーマ</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">🌀</span>
+          <div class="debate-text">『自省録』では「世界は摂理・理性・自然に導かれる」という立場と「原子によって成る」という立場が対置される。マルクスはどちらも「愚痴を言う理由にはならない」という結論に使っている。<strong>宇宙論の勝負をしているのではなく、どんな世界観のもとでも品位を保てる心を作ろうとしている</strong>のだ。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box" data-label="宇宙的視点の実践">
+      <p>「自分の悩みを、宇宙サイズに引いて見る」——悩みが消えるわけではない。しかし、自分の損得・怒り・見栄が全体の秩序の中ではどれほど小さいかを見れば、心の圧力は変わる。マルクスはそのスケール変更によって自己を整えようとした。</p>
+    </div>
+  </section>
+
+  <!-- 06 ストアとキリスト教 -->
+  <section class="chapter" id="stoic-vs-christian">
+    <div class="chapter-label">✝️ Stoic vs. Christian</div>
+    <h2 class="chapter-title">ストア哲学とキリスト教——似て非なるもの</h2>
+
+    <div class="consensus-box" data-label="史実上の注意">
+      <p>マルクスの治世中、キリスト教徒の迫害が行われた。マルクス自身が命令したかどうかは史料上明確でない。</p>
+    </div>
+
+    <p>ストア哲学とキリスト教は表面的に似ている——禁欲、義務、魂の平静、コスモポリタニズム。しかし根本が違う。</p>
+
+    <table class="styled-table">
+      <thead><tr><th>ストア</th><th>キリスト教</th></tr></thead>
+      <tbody>
+        <tr><td>人間の理性が善の根拠</td><td>神の意志が善の根拠</td></tr>
+        <tr><td>魂の不死は不確か</td><td>復活・永遠の命</td></tr>
+        <tr><td>義務は理性から来る</td><td>義務は神から来る</td></tr>
+        <tr><td>感情を制御する</td><td>神の愛に従う</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box" data-label="自力の哲学">
+      <p>ストアは自力の哲学だ。神を必要としない。これが後のキリスト教世界で危険視された理由でもある。</p>
+    </div>
+  </section>
+
+  <!-- 07 深掘り -->
+  <section class="chapter" id="deep">
+    <div class="chapter-label">🔍 Deep Dive</div>
+    <h2 class="chapter-title">深掘り——「実践できていたのか」問題と現代への接続</h2>
+
+    <h3>「実践できていたのか」問題</h3>
+
+    <p>『自省録』を読むと奇妙なことに気づく——マルクスは同じ教えを何度も何度も自分に言い聞かせている。「怒るな」「今に集中せよ」「死を恐れるな」——これを10年以上繰り返し書いた。</p>
+
+    <div class="compare-box">
+      <div class="compare-cell">
+        <div class="compare-label">解釈①</div>
+        ストア哲学は完全には実践できないほど難しい。マルクスほどの人間でも、毎日自分に言い聞かせなければならなかった。
+      </div>
+      <div class="compare-cell">
+        <div class="compare-label">解釈②</div>
+        繰り返すこと自体が実践だ。一度悟れば終わりではなく、毎日更新し続けることが哲学だ、とマルクスは知っていた。
+      </div>
+    </div>
+
+    <div class="insight-box" data-label="両立の可能性">
+      <p>どちらが正しいかではなく——両方が正しい可能性が高い（Claude）。</p>
+    </div>
+
+    <h3>認知行動療法（CBT）との接続</h3>
+
+    <p>マルクスの死から1800年以上経って、20世紀後半に「認知行動療法（CBT）」が登場した。</p>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ ストアとCBTの核心的一致</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">🔗</span>
+          <div class="debate-text"><strong>CBTの核心：</strong>出来事ではなく、出来事への解釈が感情を生む。解釈は変えられる。——これはストアの核心とほぼ同じだ。エピクテトスは言っていた——「人を苦しめるのは出来事ではなく、出来事についての判断だ」と。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">📚</span>
+          <div class="debate-text">CBTの創始者アルバート・エリスは、ストア哲学を直接の先祖として認めている。2000年前の戦場の日記が、現代の心理療法の祖先だった（Claude・ChatGPT・Grok 共通の指摘）。</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>現代的意義——Gensparkのまとめ</h3>
+
+    <div class="insight-box" data-label="Gensparkの視点">
+      <p>マルクスの思想が現代でも機能するのは、彼が「どう考えるか」ではなく「どう考えるクセをつけるか」というメタ認知の訓練を2000年前に提示していたからだ。情報過多・不安・他人の評価・死の恐れ——こうしたものに対し、マルクスは「まず判断を整えよ」と返してくる。そこに時代を超える強さがある。</p>
+    </div>
+  </section>
+
+  <!-- 08 遺産と現代 -->
+  <section class="chapter" id="legacy">
+    <div class="chapter-label">🌸 Legacy</div>
+    <h2 class="chapter-title">遺産と現代への問い</h2>
+
+    <div class="consensus-box" data-label="6AI共通の評価">
+      <p>啓蒙思想家（フレデリック大王など）・実存主義・現代ストア派（Ryan Holidayなど）に大きな影響を与えた。ビジネス・自己啓発・リーダーシップ論でも再発見されている。ニーチェはストア派の「受容」を「弱者の哲学」と批判したが、ハイデッガーや現代のマインドフルネスでは「現在に生きる」姿勢が評価される。</p>
+    </div>
+
+    <div class="debate-box">
+      <div class="debate-head">✦ 「哲学者皇帝」か「苦悩する実務家」か</div>
+      <div class="debate-body">
+        <div class="debate-row">
+          <span class="debate-icon">🏛️</span>
+          <div class="debate-text"><strong>理想化への警戒</strong>——彼は熱心に政務を担ったが、偉大な立法者というほどではなく、刑法には下層民に厳しい側面もあった。「理想の聖人」として持ち上げすぎるより、矛盾と責務の中でなお自分を律しようとした人として見るほうが本質に近い（Genspark）。</div>
+        </div>
+        <div class="debate-row">
+          <span class="debate-icon">💡</span>
+          <div class="debate-text"><strong>哲学を必要とした皇帝</strong>——彼は哲学者というより、哲学を必要とした皇帝だった。ストア哲学は彼にとって「思想」ではなく、生き延びるための精神技術だったと言える（Copilot）。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      ソクラテスの「問い続けること」、プラトンの「イデアへの運動」、アリストテレスの「習慣による自己実現」——<br>
+      マルクスはここに一つの答えを加える。<br>
+      「完成しなくていい。毎日やり直せ。」
+    </div>
+
+    <!-- 個別ページへのリンク -->
+    <div class="view-links">
+      <div class="view-links-label">🌸 各AIの講義を読む</div>
+      <div class="view-links-grid">
+        <a class="view-link-btn" href="marcus-aurelius.html">
+          <div class="vl-dot" style="background:var(--claude)"></div>Claude版
+        </a>
+        <a class="view-link-btn" href="marcus-aurelius-chatgpt.html">
+          <div class="vl-dot" style="background:var(--chatgpt)"></div>ChatGPT版
+        </a>
+        <a class="view-link-btn" href="marcus-aurelius-gemini.html">
+          <div class="vl-dot" style="background:var(--gemini)"></div>Gemini版
+        </a>
+        <a class="view-link-btn" href="marcus-aurelius-copilot.html">
+          <div class="vl-dot" style="background:var(--copilot)"></div>Copilot版
+        </a>
+        <a class="view-link-btn" href="marcus-aurelius-grok.html">
+          <div class="vl-dot" style="background:var(--grok)"></div>Grok版
+        </a>
+        <a class="view-link-btn" href="marcus-aurelius-genspark.html">
+          <div class="vl-dot" style="background:var(--spark)"></div>Genspark版
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Marcus Aurelius · 121–180 🌸</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
