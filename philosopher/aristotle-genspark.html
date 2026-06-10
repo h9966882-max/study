@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アリストテレス講義 — Genspark版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --ink: #1c1b18;
+    --sepia: #3a3528;
+    --muted: #8a8070;
+    --border: #ddd9d0;
+    --spark: #9b59b6;
+    --spark-dim: rgba(155,89,182,0.08);
+    --spark-border: rgba(155,89,182,0.2);
+    --fact-bg: #f3f6fa;
+    --fact-border: rgba(80,120,180,0.2);
+    --fact-color: #3a6099;
+    --interp-bg: rgba(155,89,182,0.05);
+    --interp-border: rgba(155,89,182,0.18);
+    --interp-color: #7b3fa8;
+    --rule: #ccc8be;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', serif;
+    font-weight: 300;
+    line-height: 2;
+  }
+
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+
+  .back-link { font-family: 'Noto Sans JP', sans-serif; font-size: 0.76rem; color: var(--spark); text-decoration: none; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--rule); }
+  .back-current { font-family: 'Noto Sans JP', sans-serif; font-size: 0.76rem; color: var(--muted); }
+
+  .ai-pill {
+    margin-left: auto;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    color: var(--spark);
+    border: 1px solid var(--spark-border);
+    padding: 0.18rem 0.6rem;
+    border-radius: 2px;
+    background: var(--spark-dim);
+  }
+
+  .hero {
+    border-bottom: 2px solid var(--ink);
+    padding: 4rem 2rem 3rem;
+    background: var(--surface);
+  }
+
+  .hero-inner { max-width: 820px; margin: 0 auto; }
+
+  .hero-kicker {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+
+  .hero-subtitle {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  .premise-box {
+    border: 1px solid var(--border);
+    padding: 1.3rem 1.5rem;
+    background: var(--bg);
+    max-width: 680px;
+  }
+
+  .premise-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .premise-text { font-size: 0.88rem; color: var(--sepia); line-height: 1.9; }
+  .premise-text strong { font-weight: 500; }
+
+  .toc-wrap { max-width: 820px; margin: 2rem auto; padding: 0 2rem; }
+
+  .toc-inner { border: 1px solid var(--border); background: var(--surface); }
+
+  .toc-head {
+    padding: 0.6rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    background: var(--bg);
+  }
+
+  .toc-list { list-style: none; }
+  .toc-list li { border-bottom: 1px solid var(--border); }
+  .toc-list li:last-child { border-bottom: none; }
+  .toc-list a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    padding: 0.55rem 1.2rem;
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.85rem;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .toc-list a:hover { background: var(--bg); color: var(--spark); }
+
+  .toc-num { font-family: 'Noto Sans JP', sans-serif; font-size: 0.62rem; color: var(--spark); min-width: 30px; }
+  .toc-badge {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.58rem;
+    color: var(--muted);
+    border: 1px solid var(--rule);
+    padding: 0.05rem 0.35rem;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .content { max-width: 820px; margin: 0 auto; padding: 0 2rem 6rem; }
+
+  .sec-header {
+    margin: 3rem 0 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .sec-num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--spark);
+    opacity: 0.35;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .sec-level { font-family: 'Noto Sans JP', sans-serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--muted); margin-bottom: 0.2rem; text-transform: uppercase; }
+  .sec-title { font-family: 'Libre Baskerville', serif; font-size: 1.15rem; font-weight: 700; color: var(--ink); }
+
+  .subsec { margin: 2rem 0; padding-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+  .subsec:last-child { border-bottom: none; }
+
+  .subsec-title {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--sepia);
+    margin-bottom: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .subsec-num {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.65rem;
+    color: var(--spark);
+    background: var(--spark-dim);
+    border: 1px solid var(--spark-border);
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+  }
+
+  .fact-block {
+    border: 1px solid var(--fact-border);
+    background: var(--fact-bg);
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .interp-block {
+    border: 1px solid var(--interp-border);
+    background: var(--interp-bg);
+    padding: 1.3rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-head { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; }
+
+  .block-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .fact-block .block-label { color: var(--fact-color); }
+  .interp-block .block-label { color: var(--interp-color); }
+
+  .block-rule { flex: 1; height: 1px; }
+  .fact-block .block-rule { background: var(--fact-border); }
+  .interp-block .block-rule { background: var(--interp-border); }
+
+  .block-text { font-size: 0.88rem; color: var(--sepia); line-height: 1.95; }
+  .block-text strong { font-weight: 500; color: var(--ink); }
+
+  /* 学問分類box */
+  .classification-box {
+    border: 1px solid var(--border);
+    margin: 1.5rem 0;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .classification-head {
+    background: var(--ink);
+    color: #fff;
+    padding: 0.4rem 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .classification-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 560px) { .classification-grid { grid-template-columns: 1fr; } }
+
+  .classification-col {
+    padding: 1rem;
+    border-right: 1px solid var(--border);
+  }
+  .classification-col:last-child { border-right: none; }
+
+  .classification-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--spark);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+
+  .classification-col ul { list-style: none; }
+  .classification-col ul li {
+    font-size: 0.8rem;
+    color: var(--sepia);
+    padding: 0.2rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    line-height: 1.6;
+  }
+  .classification-col ul li:last-child { border-bottom: none; }
+
+  /* summary box */
+  .summary-box { border: 1px solid var(--border); margin: 1.5rem 0; background: var(--surface); }
+
+  .summary-head {
+    background: var(--ink);
+    color: #fff;
+    padding: 0.4rem 1rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .summary-body { display: grid; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 560px) { .summary-body { grid-template-columns: 1fr; } }
+
+  .summary-col { padding: 1rem 1.2rem; }
+  .summary-col:first-child { border-right: 1px solid var(--border); }
+
+  .summary-col-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+    text-transform: uppercase;
+  }
+
+  .summary-col ul { list-style: none; }
+  .summary-col ul li {
+    font-size: 0.82rem;
+    color: var(--sepia);
+    padding: 0.25rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    gap: 0.5rem;
+    line-height: 1.7;
+  }
+  .summary-col ul li:last-child { border-bottom: none; }
+  .summary-col ul li::before { content: '—'; color: var(--muted); flex-shrink: 0; }
+
+  /* deep section */
+  .deep-section { margin-top: 3rem; border: 1px solid var(--border); background: var(--surface); }
+
+  .deep-header {
+    border-bottom: 2px solid var(--ink);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+  }
+
+  .deep-header-num { font-family: 'Libre Baskerville', serif; font-size: 0.75rem; color: var(--spark); letter-spacing: 0.1em; }
+  .deep-header-title { font-family: 'Libre Baskerville', serif; font-size: 1rem; font-weight: 700; color: var(--ink); }
+
+  .deep-body { padding: 1.5rem; }
+
+  /* scholarly note */
+  .scholarly-note {
+    background: var(--spark-dim);
+    border-left: 3px solid var(--spark);
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    font-size: 0.85rem;
+    color: var(--sepia);
+    line-height: 1.9;
+  }
+  .scholarly-note strong { color: var(--ink); font-weight: 500; }
+
+  /* next box */
+  .next-box {
+    margin-top: 2rem;
+    border: 1px solid var(--spark-border);
+    padding: 1.3rem 1.5rem;
+    background: var(--spark-dim);
+  }
+
+  .next-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--spark);
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+
+  .next-items { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .next-item {
+    font-size: 0.85rem;
+    color: var(--sepia);
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    line-height: 1.7;
+  }
+
+  .next-n {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.65rem;
+    color: var(--spark);
+    flex-shrink: 0;
+    padding-top: 0.1rem;
+    font-weight: 500;
+  }
+
+  .foot-nav {
+    border-top: 2px solid var(--ink);
+    padding: 1.5rem 2rem;
+    max-width: 820px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a { font-family: 'Noto Sans JP', sans-serif; font-size: 0.8rem; color: var(--spark); text-decoration: none; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-family: 'Noto Sans JP', sans-serif; font-size: 0.7rem; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2rem; }
+    .content { padding: 0 1.2rem 4rem; }
+    .toc-wrap { padding: 0 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アリストテレス</span>
+  <span class="ai-pill">GENSPARK</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-kicker">Philosopher Lecture · Fact & Interpretation</p>
+    <h1>アリストテレス講義</h1>
+    <p class="hero-subtitle">— 事実と解釈を分けて学ぶ、3段階レッスン —</p>
+    <div class="premise-box">
+      <div class="premise-label">大前提</div>
+      <div class="premise-text">
+        アリストテレスの現存著作は、しばしば<strong>講義ノートや草稿・内部向け記録のような性格</strong>をもつため、読みやすい完成原稿とは限らない。したがって、思想内容だけでなく、残されたテキストの性格にも注意が必要。
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="toc-wrap">
+  <div class="toc-inner">
+    <div class="toc-head">Contents</div>
+    <ul class="toc-list">
+      <li><a href="#intro"><span class="toc-num">0.</span>導入：アリストテレスとは誰か<span class="toc-badge">概要</span></a></li>
+      <li><a href="#nyumon"><span class="toc-num">1.</span>入門レベル：輪郭をつかむ<span class="toc-badge">Beginner</span></a></li>
+      <li><a href="#chukyu"><span class="toc-num">2.</span>中級レベル：主要テーマ<span class="toc-badge">Intermediate</span></a></li>
+      <li><a href="#jokyu"><span class="toc-num">3.</span>上級レベル：どう読むか<span class="toc-badge">Advanced</span></a></li>
+      <li><a href="#deep1"><span class="toc-num">深①</span>なぜ「西洋論理学の父」か<span class="toc-badge">Deep Dive</span></a></li>
+      <li><a href="#deep2"><span class="toc-num">深②</span>科学者か哲学者か<span class="toc-badge">Deep Dive</span></a></li>
+      <li><a href="#deep3"><span class="toc-num">深③</span>なぜ中世以降も影響したか<span class="toc-badge">Deep Dive</span></a></li>
+      <li><a href="#review"><span class="toc-num">—</span>90秒で総復習<span class="toc-badge">Summary</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="content">
+
+  <!-- 0. 導入 -->
+  <div class="sec-header" id="intro">
+    <div class="sec-num">0</div>
+    <div>
+      <div class="sec-level">Introduction</div>
+      <div class="sec-title">導入：アリストテレスとは誰か</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+    <div class="block-text">紀元前384年ギリシア北東部スタゲイラ生まれ、322年カルキスで没。17歳ごろアテナイへ行きプラトンのアカデメイアで約20年を過ごした。レスボス島などで研究後、アレクサンドロス大王の家庭教師を務め（BC343年頃）、のちアテナイでリュケイオン（Lyceum）を創設。</div>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+    <div class="block-text">アリストテレスは「プラトンの弟子」でありながら単なる継承者ではない。プラトンが重視した普遍的真理の探究を引き継ぎつつ、<strong>観察・分類・因果説明を重視することで哲学をより経験世界に接続した</strong>人物といえる。</div>
+  </div>
+
+  <!-- 1. 入門 -->
+  <div class="sec-header" id="nyumon">
+    <div class="sec-num">1</div>
+    <div>
+      <div class="sec-level">Beginner</div>
+      <div class="sec-title">入門レベル：アリストテレスの輪郭をつかむ</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+    <div class="block-text">西洋論理学の父とされ、推論の形式を体系的に扱った。プラトンのイデア論を退けたことで有名。倫理学では人間の究極目的をエウダイモニア（よく生きること）に置き、それは卓越性（徳）を身につけることで達成されると考えた。</div>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+    <div class="block-text">アリストテレスの特徴は次の一言でつかめる——<strong>「ものごとは何でできていて、なぜそうなっていて、何のためにあるのか」を問う哲学者</strong>。プラトンが本当にあるものを感覚世界の外側へ求めたのに対し、アリストテレスはこの世界の具体的なものの内側にその本性や目的を見ようとした。</div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-head"><span class="block-label">事実（学問の分類）</span><span class="block-rule"></span></div>
+    <div class="block-text" style="margin-bottom:0.8rem">アリストテレスは学問を大きく3つに分けた：</div>
+    <div class="classification-box">
+      <div class="classification-head">学問の三分類</div>
+      <div class="classification-grid">
+        <div class="classification-col">
+          <div class="classification-label">理論的学</div>
+          <ul>
+            <li>形而上学</li>
+            <li>自然学</li>
+            <li>数学</li>
+          </ul>
+        </div>
+        <div class="classification-col">
+          <div class="classification-label">実践的学</div>
+          <ul>
+            <li>倫理学</li>
+            <li>政治学</li>
+          </ul>
+        </div>
+        <div class="classification-col">
+          <div class="classification-label">制作的学</div>
+          <ul>
+            <li>修辞学</li>
+            <li>詩学</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+    <div class="block-text">この分類から分かるのは、アリストテレスが哲学を「知る」「行う」「作る」という<strong>人間活動全体にまたがる体系として捉えていた</strong>ことだ。彼は哲学を人生と世界の総合的な地図として組み立てようとした。</div>
+  </div>
+
+  <!-- 2. 中級 -->
+  <div class="sec-header" id="chukyu">
+    <div class="sec-num">2</div>
+    <div>
+      <div class="sec-level">Intermediate</div>
+      <div class="sec-title">中級レベル：主要テーマ</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">2-1</span>論理学</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">最初の体系的な論理学を築いた。とくに三段論法により推論の正しさが内容ではなく構造に依存することを明確にした。論理学は哲学のための道具（instrument）として機能する。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスは「何を考えるべきか」より前に、<strong>どう考えれば筋が通るのかを問うた</strong>。哲学の中身だけでなく、思考の形式そのものを吟味した哲学者だった。</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">2-2</span>四原因説</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">あるものを十分に説明するには四つの原因が必要：質料因（何からできているか）・形相因（それが何であるか）・作用因（何がそれを生じさせたか）・目的因（何のためにあるか）。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">四原因説は「説明」とは単にメカニズムを述べることではなく、<strong>構造・成立・目的を含めて全体像を示すこと</strong>だという考えから来ている。自然や人工物を「ただ起こったもの」としてではなく、なぜそのような形をとるのかまで問う姿勢だ。</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">2-3</span>形相と質料・目的論</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">ヒュロモルフィズム（質料形相論）——通常の事物が質料（matter）と形相（form）の複合体であるという考え。また自然に目的（telos）を認める目的論（teleology）を重視。生物学や自然学において、自然物は内部的原理と目的をもつ存在として扱われる。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスはプラトンと異なり、「本質」はこの世界の外にあるのではなく、<strong>個々のもののあり方の中に現れる</strong>と考えた。種子は単なる物体ではなく、木になる方向性をはらんでいる——そのような"なりゆき"を偶然ではなく自然の内的秩序として捉えた。</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">2-4</span>倫理学：よく生きるとは</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレス倫理学の中心はエウダイモニア。単なる快楽ではなく、人間に固有のあり方に即して卓越して生きること。徳（excellence, virtue）と理性的活動によって実現される。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスは「幸せ」を感情の一時的状態としてではなく、<strong>人生全体の出来栄えとして考えた</strong>。だから彼にとって倫理は「どう感じるか」よりも「どんな人になるか」の問題だ。</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">2-5</span>政治学：人間は政治的動物</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">人間は本性上政治的動物（zoon politikon）であると考えた。人間は共同体の中でこそその能力を十分に発揮でき、政治共同体は人間のflourishingに必要な環境だ。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスの政治学は国家権力の話だけではなく、<strong>人間がよく生きるための社会条件を考える学問</strong>だ。人間を孤立した個人としてではなく、共同体の中で完成される存在と見ていた。</div>
+    </div>
+  </div>
+
+  <!-- 3. 上級 -->
+  <div class="sec-header" id="jokyu">
+    <div class="sec-num">3</div>
+    <div>
+      <div class="sec-level">Advanced</div>
+      <div class="sec-title">上級レベル：アリストテレスをどう読むか</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">3-1</span>アリストテレスはプラトンを「否定」したのか</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスはプラトンのイデア論を退けた。一方で彼はプラトンに大きな知的負債を認めており、その教えはしばしば全面否定ではなく修正として理解されるべきだとされる。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスを「反プラトン」と単純化するのは不正確だ。むしろ彼は、<strong>プラトンの立てた大問題——本質とは何か、知とは何か、善い生とは何か——を引き継ぎつつ、答え方を変えた</strong>哲学者だ。</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">3-2</span>形而上学と「不動の動者」</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスの形而上学は存在者としての存在者を研究し、究極的には他の存在の源となる分離された不変の存在（不動の動者）を認める。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">アリストテレスは経験世界を重視する一方で、最終的には<strong>変化するものを支える変化しない原理</strong>を必要とした。彼は単なる経験主義者ではなく、経験世界を成立させる最終的根拠を探る形而上学者でもあった。</div>
+    </div>
+  </div>
+
+  <div class="subsec">
+    <div class="subsec-title"><span class="subsec-num">3-3</span>テキストの性格と解釈の難しさ</div>
+    <div class="fact-block">
+      <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+      <div class="block-text">現存するアリストテレスの著作は、しばしば講義ノート・草稿・継続的研究の記録のように読める。現在一つの書物として読まれているものが、実際には後代の編集による寄せ集めの可能性もある。</div>
+    </div>
+    <div class="interp-block">
+      <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+      <div class="block-text">「一語一句が最終結論だ」と思い込むのは危険。アリストテレスのテキストには、<strong>完成された教義というより、考えながら書き進める研究者の痕跡</strong>が残っている。体系性だけでなく、思考の生成過程として読む必要がある。</div>
+    </div>
+  </div>
+
+  <!-- 深掘り① -->
+  <div class="deep-section" id="deep1">
+    <div class="deep-header">
+      <span class="deep-header-num">深掘り①</span>
+      <span class="deep-header-title">なぜアリストテレスは「西洋論理学の父」と呼ばれるのか</span>
+    </div>
+    <div class="deep-body">
+      <div class="fact-block">
+        <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+        <div class="block-text">最初の体系的な形式論理を築いた。三段論法の分析により、推論の正しさが内容ではなく構造に依存することを明確にした（SEP・IEP・Britannica いずれも評価）。</div>
+      </div>
+      <div class="interp-block">
+        <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+        <div class="block-text">人は昔から議論していたが、アリストテレスはその議論を一段抽象化し、<strong>正しい推論の型を取り出した</strong>。「何を主張するか」だけでなく、主張がどう結びつけば必然的結論になるのかを可視化したのだ。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 深掘り② -->
+  <div class="deep-section" id="deep2" style="margin-top:1.5rem">
+    <div class="deep-header">
+      <span class="deep-header-num">深掘り②</span>
+      <span class="deep-header-title">アリストテレスは科学者だったのか、哲学者だったのか</span>
+    </div>
+    <div class="deep-body">
+      <div class="fact-block">
+        <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+        <div class="block-text">哲学者かつ科学者と位置づけられ、特に動物学研究の先駆者でもあった。自然研究は観察と因果説明を結びつけるものとして紹介される。</div>
+      </div>
+      <div class="interp-block">
+        <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+        <div class="block-text">現代の区分で「哲学」と「科学」を分けると、アリストテレスは分類しにくい。なぜなら彼にとっては<strong>世界を正しく説明することが哲学でもあり自然研究でもあった</strong>から。専門分化以前の知の巨人、哲学と科学がまだ強くつながっていた時代の典型だ。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 深掘り③ -->
+  <div class="deep-section" id="deep3" style="margin-top:1.5rem">
+    <div class="deep-header">
+      <span class="deep-header-num">深掘り③</span>
+      <span class="deep-header-title">なぜアリストテレスは中世以降にも強く影響したのか</span>
+    </div>
+    <div class="deep-body">
+      <div class="fact-block">
+        <div class="block-head"><span class="block-label">事実</span><span class="block-rule"></span></div>
+        <div class="block-text">アリストテレスの思想体系は中世イスラーム哲学とキリスト教スコラ学の枠組みとなり、ルネサンス・宗教改革・啓蒙期以後もその概念は西洋思想に深く残った。</div>
+      </div>
+      <div class="interp-block">
+        <div class="block-head"><span class="block-label">解釈</span><span class="block-rule"></span></div>
+        <div class="block-text">アリストテレスの強さは個々の結論だけでなく、<strong>世界を整理する道具立てを与えた</strong>ことにある。原因・本質・目的・徳・共同体——こうした概念は後代の思想家たちが議論を組み立てるための共通言語になった。彼は「思考のインフラを作った哲学者」だ。</div>
+      </div>
+
+      <div class="scholarly-note">
+        Gensparkの視点：この深掘り③こそが6AI比較で最も際立つポイント。「個々の結論ではなく道具立てを与えた」という評価は他のAIにない視点で、アリストテレスの影響の根本的な理由を的確に指摘している。
+      </div>
+    </div>
+  </div>
+
+  <!-- 総復習 -->
+  <div class="summary-box" id="review" style="margin-top:2.5rem">
+    <div class="summary-head">90秒で総復習</div>
+    <div class="summary-body">
+      <div class="summary-col">
+        <div class="summary-col-label">事実</div>
+        <ul>
+          <li>紀元前384–322年の哲学者</li>
+          <li>プラトンのアカデメイアで学んだ</li>
+          <li>アレクサンドロス大王の家庭教師</li>
+          <li>アテナイでリュケイオンを創設</li>
+          <li>論理学・形而上学・倫理学・政治学・生物学に大きな業績</li>
+        </ul>
+      </div>
+      <div class="summary-col">
+        <div class="summary-col-label">解釈の核心</div>
+        <ul>
+          <li>プラトンの問いを引き継ぎ、経験世界の内部に本質や目的を見た</li>
+          <li>観察・分類・原因・目的による説明が核</li>
+          <li>「幸福」を感情ではなく人生全体の出来栄えとして捉えた</li>
+          <li>哲学者であると同時に知の体系化者として後世に巨大な影響</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 次のステップ -->
+  <div class="next-box">
+    <div class="next-label">Next Steps — 次に続けられるテーマ</div>
+    <div class="next-items">
+      <div class="next-item"><span class="next-n">1.</span>アリストテレス倫理学（ニコマコス倫理学）講義</div>
+      <div class="next-item"><span class="next-n">2.</span>四原因説だけを徹底解説</div>
+      <div class="next-item"><span class="next-n">3.</span>プラトンとアリストテレスの違い講義</div>
+      <div class="next-item"><span class="next-n">4.</span>ソクラテス→プラトン→アリストテレスの流れを一気に整理</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Genspark講義 · Aristotle · BC 384–322</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
