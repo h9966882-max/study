@@ -825,6 +825,14 @@ const AI_FILES_MAP = {
     spark:   './philosopher/plato-genspark.html',
   },
 };
+'アリストテレス': {
+  claude:  './philosopher/aristotle.html',
+  chatgpt: './philosopher/aristotle-chatgpt.html',
+  gemini:  './philosopher/aristotle-gemini.html',
+  copilot: './philosopher/aristotle-copilot.html',
+  grok:    './philosopher/aristotle-grok.html',
+  spark:   './philosopher/aristotle-genspark.html',
+},
 
 
 const ERA_FLOWERS = {
@@ -836,7 +844,7 @@ const philosophers = [
   // 古代
   ["ソクラテス","Socrates","古代",1,1,1,1,1,1,true],
   ["プラトン","Plato","古代",1,1,1,1,1,1,true],
-  ["アリストテレス","Aristotle","古代",1,1,1,1,1,1,false],
+  ["アリストテレス","Aristotle","古代",1,1,1,1,1,1,true],
   ["ヘラクレイトス","Heraclitus","古代",1,1,0,1,1,1,false],
   ["エピクロス","Epicurus","古代",1,1,1,1,1,0,false],
   ["マルクス・アウレリウス","Marcus Aurelius","古代",1,1,1,1,1,1,false],
@@ -1016,6 +1024,7 @@ function render(){
 const SUMMARY_FILES = {
   'ソクラテス': './philosopher/socrates-summary.html',
   'プラトン':  './philosopher/plato-summary.html',
+  'アリストテレス': './philosopher/aristotle-summary.html',
 };
 
 
