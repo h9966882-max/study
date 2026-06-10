@@ -523,6 +523,44 @@
     letter-spacing: 0.05em;
   }
 
+/* 集中講義ボタン */
+.intensive-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--ink);
+  transition: all 0.2s ease;
+  margin-bottom: 0.5rem;
+}
+
+.intensive-btn:hover {
+  background: var(--petal);
+  border-color: var(--sunflower);
+  transform: translateX(3px);
+}
+
+.intensive-btn-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.intensive-btn-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  flex: 1;
+}
+
+.intensive-btn-sub {
+  font-size: 0.68rem;
+  color: var(--sunflower);
+  display: block;
+  letter-spacing: 0.05em;
+}
+
   .popup-divider {
     display: flex;
     align-items: center;
@@ -1053,6 +1091,28 @@ function openPopup(p){
       <span class="ai-btn-arrow">→</span>
     `;
     btns.appendChild(summary);
+
+// 集中講義があれば表示
+const INTENSIVE_FILES = {
+  'アリストテレス': './aristotle/index.html',
+};
+
+const intensiveFile = INTENSIVE_FILES[p[0]];
+if(intensiveFile){
+  const intensive = document.createElement('a');
+  intensive.className = 'intensive-btn';
+  intensive.href = intensiveFile;
+  intensive.innerHTML = `
+    <span class="intensive-btn-icon">🏛️</span>
+    <span class="intensive-btn-name">
+      集中講義（全15講）
+      <span class="intensive-btn-sub">シラバス比較・各AI講義</span>
+    </span>
+    <span class="ai-btn-arrow">→</span>
+  `;
+  btns.appendChild(intensive);
+}
+
 
     const divider = document.createElement('div');
     divider.className = 'popup-divider';
