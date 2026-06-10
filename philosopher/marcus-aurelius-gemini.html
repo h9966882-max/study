@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マルクス・アウレリウス講義 — Gemini版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&family=Kaisei+Opti:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafbff;
+    --surface: #ffffff;
+    --ink: #1e1e2e;
+    --muted: #8888aa;
+    --border: #e4e6f0;
+    --blue: #4285f4;
+    --blue-light: #e8f0fe;
+    --blue-pale: #f4f7ff;
+    --red: #ea4335;
+    --yellow: #fbbc04;
+    --green: #34a853;
+    --fact: #e8f5e9;
+    --fact-border: rgba(52,168,83,0.3);
+    --interp: #e8f0fe;
+    --interp-border: rgba(66,133,244,0.3);
+    --warm: #fff8e1;
+    --warm-border: rgba(251,188,4,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+
+  .back-link { font-size: 0.78rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--border); }
+  .back-current { font-size: 0.78rem; color: var(--muted); }
+
+  .ai-pill {
+    margin-left: auto;
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .gemini-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .ai-name { font-size: 0.7rem; font-weight: 500; color: var(--muted); margin-left: 4px; }
+
+  .hero {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%);
+    padding: 4rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.08); }
+
+  .hero-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
+
+  .hero-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+  h1 {
+    font-family: 'Kaisei Opti', serif;
+    font-size: clamp(2rem, 5.5vw, 3.8rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  .hero-sub { font-size: 0.88rem; color: rgba(255,255,255,0.85); margin-bottom: 1.2rem; }
+
+  .hero-lead {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.92rem;
+    color: #fff;
+    line-height: 1.8;
+    border: 1px solid rgba(255,255,255,0.3);
+    max-width: 600px;
+  }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  /* STEP CARD */
+  .step-card {
+    background: var(--surface);
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(66,133,244,0.08);
+    border: 1px solid var(--border);
+  }
+
+  .step-header { padding: 1.2rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .step-header.nyumon { background: linear-gradient(90deg, #34a853, #1e8e3e); }
+  .step-header.chukyu { background: linear-gradient(90deg, #fbbc04, #f09300); }
+  .step-header.jokyu  { background: linear-gradient(90deg, #ea4335, #c5221f); }
+
+  .step-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .step-level { font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.8); font-weight: 500; margin-bottom: 0.2rem; }
+  .step-title { font-family: 'Kaisei Opti', serif; font-size: 1.15rem; font-weight: 700; color: #fff; line-height: 1.4; }
+
+  .step-body { padding: 1.5rem; }
+
+  .fact-block {
+    background: var(--fact);
+    border: 1px solid var(--fact-border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .interp-block {
+    background: var(--interp);
+    border: 1px solid var(--interp-border);
+    border-radius: 10px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .block-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+  .fact-block .block-label { color: var(--green); }
+  .interp-block .block-label { color: var(--blue); }
+  .block-label span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .fact-block .block-label span { background: var(--green); }
+  .interp-block .block-label span { background: var(--blue); }
+
+  .block-text { font-size: 0.88rem; color: #2a2a3e; line-height: 1.85; }
+  .block-text strong { font-weight: 500; }
+
+  .message-box {
+    background: var(--warm);
+    border: 1px solid var(--warm-border);
+    border-radius: 10px;
+    padding: 1.2rem 1.4rem;
+    margin-top: 1rem;
+    font-size: 0.86rem;
+    color: #5a4500;
+    line-height: 1.8;
+  }
+
+  .message-box-title {
+    font-family: 'Kaisei Opti', serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #8b6000;
+    margin-bottom: 0.5rem;
+  }
+
+  /* DEEP SECTION */
+  .deep-section {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 2rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 16px rgba(66,133,244,0.06);
+  }
+
+  .deep-title {
+    font-family: 'Kaisei Opti', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .deep-title::after { content: ''; flex: 1; height: 1px; background: var(--border); margin-left: 0.5rem; }
+
+  p.body-text { font-size: 0.9rem; color: #333; margin-bottom: 1rem; line-height: 1.9; }
+
+  .highlight-box {
+    margin: 1.2rem 0;
+    background: linear-gradient(135deg, #fff8e1, #fef3c7);
+    border: 1px solid rgba(251,188,4,0.4);
+    border-radius: 12px;
+    padding: 1.3rem 1.5rem;
+    font-size: 0.88rem;
+    color: #5a4500;
+    line-height: 1.85;
+  }
+
+  .highlight-box-title {
+    font-family: 'Kaisei Opti', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #8b6000;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .quote-block {
+    background: var(--blue-pale);
+    border-left: 4px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 1.2rem 1.4rem;
+    margin: 1.2rem 0;
+    font-size: 0.9rem;
+    color: #1a1a2e;
+    line-height: 1.9;
+    font-style: italic;
+  }
+
+  .foot-nav {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .foot-nav a { font-size: 0.82rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-size: 0.72rem; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2.5rem 1.2rem 2rem; }
+    .content { padding: 1.5rem 1.2rem 4rem; }
+    .step-body { padding: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">マルクス・アウレリウス</span>
+  <div class="ai-pill">
+    <div class="gemini-dot" style="background:#4285f4"></div>
+    <div class="gemini-dot" style="background:#34a853"></div>
+    <div class="gemini-dot" style="background:#fbbc04"></div>
+    <div class="gemini-dot" style="background:#ea4335"></div>
+    <span class="ai-name">Gemini</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-emoji">🏛️</span>
+    <h1>マルクス・アウレリウス<br>白熱教室</h1>
+    <p class="hero-sub">Marcus Aurelius · 121–180 · 哲人皇帝</p>
+    <div class="hero-lead">
+      皇帝という世界一プレッシャーのかかるポジションで、激務・裏切り・疫病に苦しみながら心の平和を保った男。戦場のテントで書き続けた『自省録』の言葉は、今もじんわりと響く 🌿
+    </div>
+  </div>
+</div>
+
+<main class="content">
+
+  <!-- 入門 -->
+  <div class="step-card">
+    <div class="step-header nyumon">
+      <span class="step-icon">🟢</span>
+      <div>
+        <div class="step-level">STEP 01 · BEGINNER</div>
+        <div class="step-title">入門：変えられないことに悩まない「コントロールの二分法」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          マルクス・アウレリウスが皇帝だった時代、ローマ帝国は毎年のように蛮族の侵入に遭い、大火災や恐ろしい疫病（アントニヌスの疫病）が流行した。彼はこれらを自分の力で「なかったこと」にはできなかった。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（マルクス流の捉え方）</div>
+        <div class="block-text">
+          世の中には、<strong>「自分がコントロールできること（自分の考えや行動）」</strong>と、<strong>「コントロールできないこと（他人の行動、病気、天災、過去）」</strong>の2つしかない。できないことにエネルギーを使うのをやめ、できることだけに集中すれば、心は決して乱されない。
+        </div>
+      </div>
+      <div class="message-box">
+        <div class="message-box-title">💡 具体例で理解する</div>
+        楽しみにしていたお出かけの日に雨が降っても、天気（コントロールできないこと）を恨んでも雨は止まない。でも、「じゃあ今日はお気に入りのカフェでのんびり読書をしよう（コントロールできること）」と自分の行動を選ぶことはできる。マルクスは、いつでもその切り替えを大切にしていたんだ ☔️☕️
+      </div>
+    </div>
+  </div>
+
+  <!-- 中級 -->
+  <div class="step-card">
+    <div class="step-header chukyu">
+      <span class="step-icon">🟡</span>
+      <div>
+        <div class="step-level">STEP 02 · INTERMEDIATE</div>
+        <div class="step-title">中級：苦しみの正体は自分の頭の中にある「評価の消去」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          マルクスは日々、裏切り者や無礼な人、わがままな政治家たちに囲まれて仕事をしていた。また、愛する子供たちを何人も若くして亡くすという個人の悲劇にも見舞われた。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（マルクス流の捉え方）</div>
+        <div class="block-text">
+          <strong>「私を傷つけるのは、起きた出来事そのものではない。その出来事に対する、自分の『解釈（評価）』である」</strong>。他人が無礼なことを言ってきたとしても、自分が「傷つけられた」と思わなければ、傷ついたことにはならない。外からの刺激と、自分の心の反応の間に、一歩スペースを空けるんだ。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 上級 -->
+  <div class="step-card">
+    <div class="step-header jokyu">
+      <span class="step-icon">🔴</span>
+      <div>
+        <div class="step-level">STEP 03 · ADVANCED</div>
+        <div class="step-title">上級：運命をまるごと愛する「運命愛（アモール・ファティ）」と「メメント・モリ」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          マルクスは体が弱く、胃や胸の持病に苦しみながら、最前線の戦場で人生の最期（58歳）を迎えた。彼は自分がいつ死ぬか分からない存在であることを常に意識していた。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（マルクス流の捉え方）</div>
+        <div class="block-text">
+          宇宙の大きな流れ（自然）が自分に与えた運命は、どんなに過酷に見えても、すべて自分を成長させるために「必要な栄養」である。だから愚痴を言わずに受け入れ、むしろ愛そう（<strong>アモール・ファティ＝運命愛</strong>）。そして<strong>「今この瞬間が、人生最後の行動かもしれない」と考えて、一瞬一瞬を誠実に善く生きる（メメント・モリ＝死を想え）</strong>。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 深掘り -->
+  <div class="deep-section">
+    <h2 class="deep-title">🔍 深掘りコーナー：『自省録』は「自分を叱り、励ます」秘密のノート</h2>
+
+    <p class="body-text">マルクス・アウレリウスが書いた『自省録』——実はこれ、最初から誰かに読ませるために書いた本じゃないんだ。</p>
+
+    <p class="body-text">戦場のテントの中で、1日の終わりに、疲れ果てた自分自身に向かって「おいマルクス、お前は今日も皇帝として、人間としてちゃんと生きられたか？」と語りかけるために書いた、超プライベートな「日記（覚書）」だった。</p>
+
+    <p class="body-text">だから中身を見ると、まるで自分に言い聞かせるような、ちょっと不器用で、でもものすごくリアルな言葉が並んでいる。例えばこんな一節がある：</p>
+
+    <div class="quote-block">
+      「朝、起きるのが辛いときには、こう考えよ。<br>
+      『私は人間の務めを果たすために起きるのだ。自分がそのために生まれ、そのために世に送り出された仕事をこれからしに行くというのに、まだぶつぶつ言っているのか？ それとも私は、ベッドの中でぬくぬくと自分を温めるために作られたのか？』」
+    </div>
+
+    <div class="highlight-box">
+      <div class="highlight-box-title">🧘‍♂️ 皇帝だって、朝はベッドから出たくなかった！</div>
+      世界のトップに君臨する皇帝が、毎朝「あ〜、まだ布団の中にいたいな…」って悩んで、日記で自分に発破をかけていた。なんだか急に親近感が湧いてくるよね 🤭<br><br>
+      彼は自分の弱さを全部知っていた。知っていたからこそ、哲学という道具を使って、毎晩毎晩、歪みそうになる自分の心を「真っ直ぐに修正」していたんだ。
+    </div>
+
+    <p class="body-text">洋裁でアイロンを当てて布地のゆがみをピシッと整えるように、マルクスにとって日記を書くことは、自分の魂のゆがみを整える時間だったんだ 🧵✨</p>
+
+    <p class="body-text">彼は「感情が消えた冷たい人」ではない——感情に揺れながら、それでも崩れないよう毎日訓練し続けた人。しかもそれを、皇帝をやりながらやっている。これが2000年後も読まれ続けている理由だ。</p>
+  </div>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Gemini講義 · Marcus Aurelius · 121–180</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
