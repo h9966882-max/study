@@ -1018,45 +1018,6 @@ meta = {
 
 all_names = sorted(claude | chatgpt | gemini | copilot | grok | genspark)
 
-# JS出力生成
-output = []
-output.append("const philosophers = [")
-
-era_order = {"古代":1,"中世":2,"近世":3,"近代":4,"現代":5,"東洋":6}
-
-# 時代別に並べる
-by_era = {}
-for name in all_names:
-    if name not in meta:
-        continue
-    en, era, theme = meta[name]
-    if era not in by_era:
-        by_era[era] = []
-    by_era[era].append(name)
-
-for era in ["古代","中世","近世","近代","現代","東洋"]:
-    if era not in by_era:
-        continue
-    output.append(f"  // {era}")
-    for name in sorted(by_era[era], key=lambda x: meta[x][0]):
-        en, er, theme = meta[name]
-        c  = 1 if name in claude   else 0
-        cg = 1 if name in chatgpt  else 0
-        ge = 1 if name in gemini   else 0
-        co = 1 if name in copilot  else 0
-        gr = 1 if name in grok     else 0
-        sp = 1 if name in genspark else 0
-        # hasLecture
-        has = "true" if name in {"ソクラテス","プラトン","アリストテレス"} else "false"
-        output.append(f'  ["{name}","{en}","{er}",{c},{cg},{ge},{co},{gr},{sp},{has}],')
-    output.append("")
-
-output.append("];")
-
-print("\n".join(output))
-print(f"\n// 総人数: {len(all_names)}")
-print(f"// Claude:{len(claude)}, ChatGPT:{len(chatgpt)}, Gemini:{len(gemini)}, Copilot:{len(copilot)}, Grok:{len(grok)}, Genspark:{len(genspark)}")
-
 ];
 
 function countFor(p){ return p[3]+p[4]+p[5]+p[6]+p[7]+p[8]; }
