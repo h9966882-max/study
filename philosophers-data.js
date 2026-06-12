@@ -5,7 +5,7 @@ const philosophers = [
   ["エピクテトス","Epictetus","古代",0,0,0,0,1,0,false],
   ["エピクロス","Epicurus","古代",1,1,1,1,1,0,false],
   ["ヘラクレイトス","Heraclitus","古代",1,0,0,1,1,1,false],
-  ["マルクス・アウレリウス","Marcus Aurelius","古代",1,1,0,1,1,0,false],
+  ["マルクス・アウレリウス","Marcus Aurelius","古代",1,1,0,1,1,0,true],
   ["パルメニデス","Parmenides","古代",0,0,0,1,1,1,false],
   ["プラトン","Plato","古代",1,1,1,1,1,1,true],
   ["プロティノス","Plotinus","古代",0,0,0,0,1,1,false],
