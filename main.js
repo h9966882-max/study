@@ -31,17 +31,44 @@ const AI_FILES_MAP = {
     grok:    './philosopher/aristotle-grok.html',
     spark:   './philosopher/aristotle-genspark.html',
   },
+  'マルクス・アウレリウス': {
+    claude:  './philosopher/marcus-aurelius.html',
+    chatgpt: './philosopher/marcus-aurelius-chatgpt.html',
+    gemini:  './philosopher/marcus-aurelius-gemini.html',
+    copilot: './philosopher/marcus-aurelius-copilot.html',
+    grok:    './philosopher/marcus-aurelius-grok.html',
+    spark:   './philosopher/marcus-aurelius-genspark.html',
+  },
+
+  
+  
+  
 };
+
+
+
+
 
 const SUMMARY_FILES = {
   'ソクラテス':    './philosopher/socrates-summary.html',
   'プラトン':      './philosopher/plato-summary.html',
   'アリストテレス': './philosopher/aristotle-summary.html',
+  'マルクス・アウレリウス': './philosopher/marcus-aurelius-summary.html',
+
+  
+  
 };
+
+
+
+
 
 const INTENSIVE_FILES = {
   'アリストテレス': 'https://h9966882-max.github.io/intensive/aristotle/index.html',
 };
+
+
+
 
 const ERA_FLOWERS = {
   '古代':'🌻', '中世':'🌼', '近世':'🌸', '近代':'💐', '現代':'🌺', '東洋':'🌷'
