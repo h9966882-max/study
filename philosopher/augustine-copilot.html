@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アウグスティヌス講義 — Copilot版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f6fb;
+    --surface: #ffffff;
+    --ink: #111827;
+    --muted: #6b7280;
+    --border: #dde3ee;
+    --blue: #0078d4;
+    --blue-deep: #005a9e;
+    --blue-light: #eff6ff;
+    --blue-pale: #f5f9ff;
+    --fact-bg: #f0f7ff;
+    --fact-border: rgba(0,120,212,0.2);
+    --interp-bg: #faf5ff;
+    --interp-border: rgba(124,58,237,0.2);
+    --interp-color: #7c3aed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  .back-bar { background: var(--blue-deep); padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 0.5rem; position: sticky; top: 0; z-index: 200; }
+  .back-link { font-size: 0.78rem; color: rgba(255,255,255,0.85); text-decoration: none; transition: color 0.2s; }
+  .back-link:hover { color: #fff; }
+  .back-sep { color: rgba(255,255,255,0.3); }
+  .back-current { font-size: 0.78rem; color: rgba(255,255,255,0.6); }
+  .ai-pill { margin-left: auto; background: rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; padding: 0.2rem 0.7rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); font-family: 'IBM Plex Mono', monospace; }
+
+  .hero { background: linear-gradient(160deg, var(--blue-deep) 0%, var(--blue) 100%); padding: 3.5rem 2rem 3rem; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 40px; background: var(--bg); clip-path: ellipse(55% 100% at 50% 100%); }
+  .hero-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: rgba(255,255,255,0.7); letter-spacing: 0.15em; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.2); padding: 0.2rem 0.7rem; border-radius: 4px; }
+  h1 { font-family: 'Noto Serif JP', serif; font-size: clamp(1.8rem, 4.5vw, 3rem); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 0.4rem; }
+  .hero-sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: rgba(255,255,255,0.65); margin-bottom: 1.5rem; }
+  .conclusion-box { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 1rem 1.3rem; font-size: 0.88rem; color: rgba(255,255,255,0.92); line-height: 1.8; max-width: 600px; }
+  .conclusion-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.5); margin-bottom: 0.4rem; }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  .level-header { display: flex; align-items: center; gap: 1rem; margin: 2.5rem 0 1.2rem; padding: 0.9rem 1.2rem; background: var(--surface); border-radius: 8px; border-left: 4px solid var(--blue); box-shadow: 0 1px 8px rgba(0,120,212,0.08); }
+  .level-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .level-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--blue); margin-bottom: 0.15rem; }
+  .level-title { font-family: 'Noto Serif JP', serif; font-size: 1.05rem; font-weight: 700; color: var(--ink); }
+
+  .fact-block { background: var(--fact-bg); border: 1px solid var(--fact-border); border-radius: 8px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+  .interp-block { background: var(--interp-bg); border: 1px solid var(--interp-border); border-radius: 8px; padding: 1.2rem 1.4rem; margin-bottom: 1rem; }
+  .block-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em; margin-bottom: 0.7rem; display: flex; align-items: center; gap: 0.5rem; }
+  .fact-block .block-label { color: var(--blue); }
+  .interp-block .block-label { color: var(--interp-color); }
+  .label-bar { display: inline-block; width: 20px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+  .fact-block .label-bar { background: var(--blue); }
+  .interp-block .label-bar { background: var(--interp-color); }
+
+  ul.ref-list { list-style: none; margin: 0.3rem 0; }
+  ul.ref-list li { font-size: 0.87rem; color: #374151; padding: 0.4rem 0; border-top: 1px solid rgba(0,120,212,0.1); display: flex; align-items: flex-start; gap: 0.6rem; line-height: 1.75; }
+  ul.ref-list li:first-child { border-top: none; }
+  ul.ref-list li::before { content: '•'; color: var(--blue); flex-shrink: 0; font-size: 0.9rem; }
+
+  ul.interp-list { list-style: none; margin: 0.3rem 0; }
+  ul.interp-list li { font-size: 0.87rem; color: #374151; padding: 0.4rem 0; border-top: 1px solid rgba(124,58,237,0.1); display: flex; align-items: flex-start; gap: 0.6rem; line-height: 1.75; }
+  ul.interp-list li:first-child { border-top: none; }
+  ul.interp-list li::before { content: '◇'; color: var(--interp-color); flex-shrink: 0; font-size: 0.7rem; margin-top: 0.15rem; }
+
+  .block-text { font-size: 0.88rem; color: #1f2937; line-height: 1.9; }
+  .block-text strong { font-weight: 500; }
+
+  .deep-section { background: var(--surface); border-radius: 12px; margin-top: 2.5rem; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,120,212,0.07); }
+  .deep-header { background: var(--ink); padding: 1rem 1.5rem; display: flex; align-items: center; gap: 0.7rem; }
+  .deep-header-icon { font-size: 1.2rem; }
+  .deep-header-title { font-family: 'Noto Serif JP', serif; font-size: 1rem; font-weight: 700; color: #fff; }
+  .deep-body { padding: 1.5rem; }
+  .deep-item { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); }
+  .deep-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .deep-item-title { font-family: 'Noto Serif JP', serif; font-size: 0.95rem; font-weight: 700; color: var(--blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .deep-num { font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; background: var(--blue); color: #fff; padding: 0.1rem 0.4rem; border-radius: 3px; }
+
+  .next-section { background: var(--blue-pale); border: 1px solid var(--fact-border); border-radius: 10px; padding: 1.5rem; margin-top: 2rem; }
+  .next-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; letter-spacing: 0.2em; color: var(--blue); margin-bottom: 1rem; }
+  .next-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+  @media (max-width: 500px) { .next-grid { grid-template-columns: 1fr; } }
+  .next-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.7rem 0.9rem; font-size: 0.82rem; color: var(--ink); display: flex; align-items: center; gap: 0.5rem; transition: border-color 0.2s, box-shadow 0.2s; }
+  .next-item:hover { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(0,120,212,0.1); }
+  .next-arrow { color: var(--blue); font-size: 0.75rem; flex-shrink: 0; }
+
+  .foot-nav { border-top: 1px solid var(--border); padding: 1.5rem 2rem; max-width: 760px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .foot-nav a { font-size: 0.82rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+
+  @media (max-width: 600px) { .hero { padding: 2.5rem 1.2rem 2.5rem; } .content { padding: 1.5rem 1.2rem 4rem; } }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アウグスティヌス</span>
+  <span class="ai-pill">COPILOT</span>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">✝️ PHILOSOPHER LECTURE · EARLY CHRISTIANITY</div>
+    <h1>アウグスティヌス講義</h1>
+    <p class="hero-sub">Augustine of Hippo · 354–430 · North Africa</p>
+    <div class="conclusion-box">
+      <div class="conclusion-label">CONCLUSION</div>
+      「哲学」と「キリスト教」を融合させ、西洋精神史の"骨格"をつくった人物。事実（歴史的アウグスティヌス）と解釈（神学的・哲学的アウグスティヌス）を丁寧に分けることで、その射程が見えてくる。
+    </div>
+  </div>
+</div>
+
+<main class="content">
+
+  <!-- 入門 -->
+  <div class="level-header" id="nyumon">
+    <span class="level-icon">📘</span>
+    <div>
+      <div class="level-tag">LEVEL 01 · BEGINNER</div>
+      <div class="level-title">入門：アウグスティヌスとは誰か？</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-label"><span class="label-bar"></span>FACT ── 史料に基づく情報</div>
+    <ul class="ref-list">
+      <li>アウグスティヌス（354–430）は北アフリカ出身のキリスト教思想家・司教</li>
+      <li>代表作は『告白』『神の国』『三位一体論』など</li>
+      <li>若い頃はマニ教徒であり、後に懐疑主義を経てキリスト教に改宗した</li>
+      <li>430年、ヴァンダル族の侵攻中にヒッポで死去</li>
+    </ul>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-label"><span class="label-bar"></span>INTERPRETATION ── 後世の理解</div>
+    <ul class="interp-list">
+      <li>「西洋最大の教父」と呼ばれるが、これは後世の神学的評価</li>
+      <li>『告白』は自伝というより、神との対話形式の哲学書と解釈される</li>
+      <li>彼の思想は「プラトン主義のキリスト教化」と評されることが多い</li>
+    </ul>
+  </div>
+
+  <!-- 中級 -->
+  <div class="level-header" id="chukyu">
+    <span class="level-icon">📗</span>
+    <div>
+      <div class="level-tag">LEVEL 02 · INTERMEDIATE</div>
+      <div class="level-title">中級：アウグスティヌス思想の核心</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-label"><span class="label-bar"></span>FACT</div>
+    <ul class="ref-list">
+      <li><strong>内面性の哲学：</strong>真理は外ではなく「魂の内奥」にあるとした</li>
+      <li><strong>原罪論：</strong>人間はアダムの罪を共有し、救いには神の恩寵が必要</li>
+      <li><strong>神の国と地の国：</strong>歴史を「神への愛」と「自己愛」の二原理で説明</li>
+      <li><strong>時間論：</strong>時間は「魂の伸び（distensio animi）」であり、過去・未来は心の働きとして存在する</li>
+      <li><strong>悪の欠如説：</strong>悪は実体ではなく善の欠如（privatio boni）という形而上学的立場</li>
+    </ul>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+    <ul class="interp-list">
+      <li>内面性の強調は、後のデカルトや近代自我論の源流とされる</li>
+      <li>原罪論は「人間の根源的弱さの認識」とも、「悲観的な人間観」とも読める</li>
+      <li>神の国と地の国は、宗教的二元論ではなく、倫理的・精神的二原理の対立として解釈されることもある</li>
+      <li>時間論は現代哲学（ベルクソン、ハイデガー）からも高く評価される</li>
+    </ul>
+  </div>
+
+  <!-- 上級 -->
+  <div class="level-header" id="jokyu">
+    <span class="level-icon">📙</span>
+    <div>
+      <div class="level-tag">LEVEL 03 · ADVANCED</div>
+      <div class="level-title">上級：アウグスティヌス思想の射程と影響</div>
+    </div>
+  </div>
+
+  <div class="fact-block">
+    <div class="block-label"><span class="label-bar"></span>FACT</div>
+    <ul class="ref-list">
+      <li>プラトン主義（特にプロティノス）から強い影響を受けた</li>
+      <li>自由意志と恩寵の関係をめぐり、ペラギウス派と論争し勝利した</li>
+      <li>彼の思想はトマス・アクィナスを経て中世神学の中心となった</li>
+      <li>宗教改革（ルター・カルヴァン）にも決定的な影響を与えた</li>
+    </ul>
+  </div>
+
+  <div class="interp-block">
+    <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+    <ul class="interp-list">
+      <li>悪の欠如説は、神の全能性と世界の不完全さを両立させるための哲学的工夫と読める</li>
+      <li>恩寵の強調は「人間の自由を弱める」と批判される一方、人間の限界を直視するリアリズムとして評価される</li>
+      <li>「悲観的な人間観」ではなく、"限界を自覚したうえでの希望"という独特の楽観とも読める</li>
+    </ul>
+  </div>
+
+  <!-- 深掘り -->
+  <div class="deep-section">
+    <div class="deep-header">
+      <span class="deep-header-icon">🔍</span>
+      <span class="deep-header-title">深掘りコーナー：アウグスティヌスの"内面世界"を覗く</span>
+    </div>
+    <div class="deep-body">
+
+      <div class="deep-item">
+        <div class="deep-item-title">
+          <span class="deep-num">01</span>
+          なぜアウグスティヌスは「内面」にこだわったのか？
+        </div>
+        <div class="fact-block" style="margin-bottom:0.7rem">
+          <div class="block-label"><span class="label-bar"></span>FACT</div>
+          <div class="block-text">『告白』は徹底した内省の書であり、外的事実より心の動きを重視する。</div>
+        </div>
+        <div class="interp-block" style="margin-bottom:0">
+          <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+          <div class="block-text">これは単なる宗教的内省ではなく、<strong>「真理は心の働きの中で発見される」</strong>という哲学的立場だ。彼の内面性は、近代哲学の「自我の発見」の先駆けとされる。</div>
+        </div>
+      </div>
+
+      <div class="deep-item">
+        <div class="deep-item-title">
+          <span class="deep-num">02</span>
+          時間論はなぜ現代哲学からも評価されるのか？
+        </div>
+        <div class="fact-block" style="margin-bottom:0.7rem">
+          <div class="block-label"><span class="label-bar"></span>FACT</div>
+          <div class="block-text">アウグスティヌスは「過去は記憶、未来は期待、現在は注意」と述べた。</div>
+        </div>
+        <div class="interp-block" style="margin-bottom:0">
+          <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+          <div class="block-text">時間を"心の働き"として捉えるこの視点は、ベルクソンの持続論やハイデガーの存在論に通じる。<strong>「時間とは何か？」という問いを主観的経験の構造として分析した最初期の思想家</strong>と言える。</div>
+        </div>
+      </div>
+
+      <div class="deep-item">
+        <div class="deep-item-title">
+          <span class="deep-num">03</span>
+          アウグスティヌスは悲観主義者なのか？
+        </div>
+        <div class="fact-block" style="margin-bottom:0.7rem">
+          <div class="block-label"><span class="label-bar"></span>FACT</div>
+          <div class="block-text">原罪論や恩寵論は、人間の弱さを強調する。</div>
+        </div>
+        <div class="interp-block" style="margin-bottom:0">
+          <div class="block-label"><span class="label-bar"></span>INTERPRETATION</div>
+          <div class="block-text">しかし彼は人間を否定しているのではなく、<strong>人間の限界を認めた上で希望を神に置くという構造</strong>を描いている。「悲観的な人間観」ではなく、"限界を自覚したうえでの希望"という独特の楽観とも読める。</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 次のステップ -->
+  <div class="next-section">
+    <div class="next-title">🎓 NEXT STEPS ── 次に深めたいテーマ</div>
+    <div class="next-grid">
+      <div class="next-item"><span class="next-arrow">›</span>『告白』の核心をもっと知りたい</div>
+      <div class="next-item"><span class="next-arrow">›</span>時間論を詳しく学びたい</div>
+      <div class="next-item"><span class="next-arrow">›</span>神の国と地の国の違いを知りたい</div>
+      <div class="next-item"><span class="next-arrow">›</span>原罪と恩寵の問題を深掘りしたい</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Copilot講義 · Augustine · 354–430</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
