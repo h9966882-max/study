@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アウグスティヌス講義 — Gemini版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@400;700&family=Kaisei+Opti:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafbff;
+    --surface: #ffffff;
+    --ink: #1e1e2e;
+    --muted: #8888aa;
+    --border: #e4e6f0;
+    --blue: #4285f4;
+    --blue-light: #e8f0fe;
+    --blue-pale: #f4f7ff;
+    --red: #ea4335;
+    --yellow: #fbbc04;
+    --green: #34a853;
+    --fact: #e8f5e9;
+    --fact-border: rgba(52,168,83,0.3);
+    --interp: #e8f0fe;
+    --interp-border: rgba(66,133,244,0.3);
+    --warm: #fff8e1;
+    --warm-border: rgba(251,188,4,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    line-height: 1.9;
+  }
+
+  .back-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  }
+  .back-link { font-size: 0.78rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .back-link:hover { opacity: 0.7; }
+  .back-sep { color: var(--border); }
+  .back-current { font-size: 0.78rem; color: var(--muted); }
+  .ai-pill { margin-left: auto; display: flex; gap: 3px; align-items: center; }
+  .gemini-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .ai-name { font-size: 0.7rem; font-weight: 500; color: var(--muted); margin-left: 4px; }
+
+  .hero {
+    background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc04 100%);
+    padding: 4rem 2rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.08); }
+  .hero-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-emoji { font-size: 3rem; margin-bottom: 1rem; display: block; }
+  h1 { font-family: 'Kaisei Opti', serif; font-size: clamp(2rem, 5.5vw, 3.8rem); font-weight: 700; color: #fff; line-height: 1.2; margin-bottom: 0.4rem; text-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+  .hero-sub { font-size: 0.88rem; color: rgba(255,255,255,0.85); margin-bottom: 1.2rem; }
+  .hero-lead { background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); border-radius: 12px; padding: 1.2rem 1.5rem; font-size: 0.92rem; color: #fff; line-height: 1.8; border: 1px solid rgba(255,255,255,0.3); max-width: 600px; }
+
+  .content { max-width: 760px; margin: 0 auto; padding: 2rem 2rem 6rem; }
+
+  .step-card { background: var(--surface); border-radius: 16px; margin-bottom: 2rem; overflow: hidden; box-shadow: 0 2px 16px rgba(66,133,244,0.08); border: 1px solid var(--border); }
+  .step-header { padding: 1.2rem 1.5rem; display: flex; align-items: center; gap: 1rem; }
+  .step-header.nyumon { background: linear-gradient(90deg, #34a853, #1e8e3e); }
+  .step-header.chukyu { background: linear-gradient(90deg, #fbbc04, #f09300); }
+  .step-header.jokyu  { background: linear-gradient(90deg, #ea4335, #c5221f); }
+  .step-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .step-level { font-size: 0.65rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.8); font-weight: 500; margin-bottom: 0.2rem; }
+  .step-title { font-family: 'Kaisei Opti', serif; font-size: 1.1rem; font-weight: 700; color: #fff; line-height: 1.4; }
+  .step-body { padding: 1.5rem; }
+
+  .fact-block { background: var(--fact); border: 1px solid var(--fact-border); border-radius: 10px; padding: 1.2rem; margin-bottom: 1rem; }
+  .interp-block { background: var(--interp); border: 1px solid var(--interp-border); border-radius: 10px; padding: 1.2rem; margin-bottom: 1rem; }
+  .block-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+  .fact-block .block-label { color: var(--green); }
+  .interp-block .block-label { color: var(--blue); }
+  .block-label span { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .fact-block .block-label span { background: var(--green); }
+  .interp-block .block-label span { background: var(--blue); }
+  .block-text { font-size: 0.88rem; color: #2a2a3e; line-height: 1.85; }
+  .block-text strong { font-weight: 500; }
+
+  .message-box { background: var(--warm); border: 1px solid var(--warm-border); border-radius: 10px; padding: 1.2rem 1.4rem; margin-top: 1rem; font-size: 0.86rem; color: #5a4500; line-height: 1.8; }
+  .message-box-title { font-family: 'Kaisei Opti', serif; font-size: 0.82rem; font-weight: 700; color: #8b6000; margin-bottom: 0.5rem; }
+
+  .deep-section { background: var(--surface); border-radius: 16px; padding: 2rem; margin-top: 2rem; border: 1px solid var(--border); box-shadow: 0 2px 16px rgba(66,133,244,0.06); }
+  .deep-title { font-family: 'Kaisei Opti', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .deep-title::after { content: ''; flex: 1; height: 1px; background: var(--border); margin-left: 0.5rem; }
+
+  p.body-text { font-size: 0.9rem; color: #333; margin-bottom: 1rem; line-height: 1.9; }
+
+  .highlight-box { margin: 1.2rem 0; background: linear-gradient(135deg, #fff8e1, #fef3c7); border: 1px solid rgba(251,188,4,0.4); border-radius: 12px; padding: 1.3rem 1.5rem; font-size: 0.88rem; color: #5a4500; line-height: 1.85; }
+  .highlight-box-title { font-family: 'Kaisei Opti', serif; font-size: 0.9rem; font-weight: 700; color: #8b6000; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem; }
+
+  .quote-block { background: var(--blue-pale); border-left: 4px solid var(--blue); border-radius: 0 10px 10px 0; padding: 1.2rem 1.4rem; margin: 1.2rem 0; font-size: 0.9rem; color: #1a1a2e; line-height: 1.9; font-style: italic; }
+
+  .foot-nav { border-top: 1px solid var(--border); padding: 1.5rem 2rem; max-width: 760px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+  .foot-nav a { font-size: 0.82rem; color: var(--blue); text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+  .foot-nav a:hover { opacity: 0.7; }
+  .foot-center { font-size: 0.72rem; color: var(--muted); }
+
+  @media (max-width: 600px) { .hero { padding: 2.5rem 1.2rem 2rem; } .content { padding: 1.5rem 1.2rem 4rem; } .step-body { padding: 1.2rem; } }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a class="back-link" href="https://h9966882-max.github.io/study/">← 一覧に戻る</a>
+  <span class="back-sep">/</span>
+  <span class="back-current">アウグスティヌス</span>
+  <div class="ai-pill">
+    <div class="gemini-dot" style="background:#4285f4"></div>
+    <div class="gemini-dot" style="background:#34a853"></div>
+    <div class="gemini-dot" style="background:#fbbc04"></div>
+    <div class="gemini-dot" style="background:#ea4335"></div>
+    <span class="ai-name">Gemini</span>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="hero-emoji">✝️</span>
+    <h1>アウグスティヌス<br>白熱教室</h1>
+    <p class="hero-sub">Augustine · 354–430 · 心の闇と光</p>
+    <div class="hero-lead">
+      最初から清らかな聖人だったわけじゃない——プレイボーイ、マニ教信者、泥棒。そんな「こじらせ青春時代」を全力で駆け抜けた人だからこそ、人間の弱さへの驚くほどの優しさと深い洞察が詰まっている 🌿
+    </div>
+  </div>
+</div>
+
+<main class="content">
+
+  <!-- 入門 -->
+  <div class="step-card">
+    <div class="step-header nyumon">
+      <span class="step-icon">🟢</span>
+      <div>
+        <div class="step-level">STEP 01 · BEGINNER</div>
+        <div class="step-title">入門：あまりに人間らしい回心のドラマ</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          北アフリカ（現在のアルジェリア）に生まれた彼は、若き日に弁論術を学び、愛人との間に子供をもうけ、キリスト教とは別の宗教（マニ教）を信仰するなど放蕩の限りを尽くした。しかし32歳の時、ミラノの庭で子供の「手に取って読め（トッレ・レゲ）」という歌声を聴き、聖書を開いたことをきっかけにキリスト教に回心し、後に『告白録』という自伝を書いた。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（アウグスティヌス流の捉え方）</div>
+        <div class="block-text">
+          彼は自分の「意志の弱さ」に誰よりも絶望していた。「正しい生き方をしたい」と頭では分かっているのに、どうしても目先の誘惑（快楽や名声）に負けてしまう。その人間の「心の弱さ」の正体を、<strong>神の愛から離れて自分勝手に生きようとする「罪（迷い）」</strong>だと捉えた。でも、そんなドロドロの弱さを持ったままでいい——それを取り繕わずに全て神に差し出す（告白する）ことから本当の救いが始まる、と教えてくれている。
+        </div>
+      </div>
+      <div class="message-box">
+        <div class="message-box-title">💡 人間の葛藤を哲学へ</div>
+        「明日からダイエットする！でもこのケーキは今日食べちゃおう」みたいな葛藤って、誰にでもあるよね。アウグスティヌスは「主よ、私を純潔にしてください。しかし、今すぐにではなく！」という有名な言葉でこの葛藤を表現した。人間の意志の弱さを、1600年前に最もリアルに言語化した哲学者だ 🤲
+      </div>
+    </div>
+  </div>
+
+  <!-- 中級 -->
+  <div class="step-card">
+    <div class="step-header chukyu">
+      <span class="step-icon">🟡</span>
+      <div>
+        <div class="step-level">STEP 02 · INTERMEDIATE</div>
+        <div class="step-title">中級：悪の正体は存在しない？「善の欠如としての悪」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          当時の世界には、「光の神（善）」と「闇の神（悪）」がいつも激しく戦っているとするマニ教の思想があったが、アウグスティヌスはこの考えを捨て、唯一絶対の神を信じるプラトン哲学の視点を取り入れた。彼は悪とは<strong>善の欠如（privatio boni）</strong>だという考えを示した。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（アウグスティヌス流の捉え方）</div>
+        <div class="block-text">
+          もし世界を創った神が「完璧に善い存在」なら、なんで世の中に悪が存在するのか？彼が出した答えは、<strong>「この世に『悪』という独立した物質やパワーは存在しない。それは単に『善が足りていない状態』にすぎない」</strong>というものだった。
+        </div>
+      </div>
+      <div class="message-box">
+        <div class="message-box-title">💡 光と影で理解する</div>
+        部屋の「影（暗闇）」をイメージしてみよう。部屋のなかに「影」という物体が転がっているわけじゃない。ただ「光が届いていない」から暗くなっているだけ。人間の心に宿る悪も同じ——意地悪な心があるんじゃなくて、注がれるはずの「愛や善」が一時的にシャットアウトされちゃっている状態。だから悪を退治しようと躍起になるんじゃなく、<strong>光を呼び込めば影は自然と消えていく</strong> 🕯️
+      </div>
+    </div>
+  </div>
+
+  <!-- 上級 -->
+  <div class="step-card">
+    <div class="step-header jokyu">
+      <span class="step-icon">🔴</span>
+      <div>
+        <div class="step-level">STEP 03 · ADVANCED</div>
+        <div class="step-title">上級：時間はどこにあるのか？「記憶・直観・期待としての時間」</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="fact-block">
+        <div class="block-label"><span></span>事実（客観的な事実）</div>
+        <div class="block-text">
+          彼は『告白録』第11巻で、「時間とは何か？誰も私に尋ねなければ知っているが、説明しようとすると分からない」と問い、時間の哲学について深く考察した。
+        </div>
+      </div>
+      <div class="interp-block">
+        <div class="block-label"><span></span>解釈（アウグスティヌス流の捉え方）</div>
+        <div class="block-text">
+          「過去」はもう過ぎ去って存在しない。「未来」はまだ来ていないから存在しない。「現在」は一瞬で通り過ぎるから幅がない。じゃあ、どうして時間を計ったり過去を懐かしんだりできるのか？アウグスティヌスの答えは——<strong>「時間はすべて、人間の『心（魂）のなか』にしか存在しない」</strong>。
+          <br><br>
+          過去は心の中の「記憶」として今ここにある。現在は心の中の「直観（注目）」として今ここにある。未来は心の中の「期待（予測）」として今ここにある。過去・現在・未来という3つの時間は、すべてあなたの心が「今この瞬間」に描き出している壮大なスクリーンなんだ！
+        </div>
+      </div>
+      <div class="message-box">
+        <div class="message-box-title">💡 現代哲学への影響</div>
+        この時間論は後にフッサール（現象学）やハイデガーにも影響を与えた。「時間は単なる時計ではなく意識の構造でもある」という発見は、哲学史上きわめて先進的だった。
+      </div>
+    </div>
+  </div>
+
+  <!-- 深掘り -->
+  <div class="deep-section">
+    <h2 class="deep-title">🔍 深掘りコーナー：お母さん（モニカ）の涙と「内面」の発見</h2>
+
+    <p class="body-text">アウグスティヌスがこれほど深い哲学を遺せたのは、一人の熱烈な女性の存在があったからだ。それが彼のお母さん——<strong>聖モニカ</strong>。</p>
+
+    <p class="body-text">彼女は、息子がグレて愛人を作ったり怪しい宗教にハマったりするたびに、文字通り「涙で枕を濡らしながら」毎日毎日、息子が正しい道に戻るように祈り続けた。ある司教は「これほど涙を流して祈った母親の子供が、滅びるわけがありません」と慰めたほどだ。32歳の時、ついにアウグスティヌスはキリスト教に出会って涙ながらに改心し、お母さんを大喜びさせた。そのすぐ後にモニカは安心してこの世を去ることになる。</p>
+
+    <div class="quote-block">
+      「彼は自分のダメな過去を隠すどころか、すべてを世界にさらけ出す『告白録』を書いた。これは文学の世界では『人類が初めて個人の内面（プライベートな心の葛藤）をリアルに文字にした瞬間』と言われている。」
+    </div>
+
+    <p class="body-text">それまでの古代ギリシャ・ローマの文学や哲学は、「いかに立派に生きるか」「市民としてどうあるべきか」という外向けのカッコいい姿ばかりを語っていた。だけどアウグスティヌスは「私は自分自身にとって大きな謎（問題）になってしまった」「私の心のなかは激しく引き裂かれている」と、ドロドロした内面をありのままに書いたんだ。</p>
+
+    <div class="highlight-box">
+      <div class="highlight-box-title">🧵 洋裁の比喩で理解する</div>
+      表の綺麗な刺繍だけじゃなくて、裏側のぐちゃぐちゃに絡まった糸の結び目をそのまま見せるようなもの。でも、その絡まりを隠さず見つめたからこそ、彼は「人間の魂の深さ」を誰よりも優しく美しく解き明かすことができた。苦しみも弱さも、ぜんぶ自分を形作る大切なプロセスだ 🌿
+    </div>
+  </div>
+
+</main>
+
+<div class="foot-nav">
+  <a href="https://h9966882-max.github.io/study/">← 哲学者一覧に戻る</a>
+  <span class="foot-center">Gemini講義 · Augustine · 354–430</span>
+  <a href="#">次の哲学者 →</a>
+</div>
+
+</body>
+</html>
